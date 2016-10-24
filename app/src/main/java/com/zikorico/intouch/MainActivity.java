@@ -21,6 +21,7 @@ public class MainActivity extends AppCompatActivity
         implements LoaderManager.LoaderCallbacks<Cursor>,
         AdapterView.OnItemClickListener
 ***REMOVED***
+    //result codes to pass with the editoractivity intents
     private static final int EDITOR_REQUEST_CODE = 1001;
     private static final int NEW_REQUEST_CODE = 1002;
     //id of the loader
@@ -50,7 +51,7 @@ public class MainActivity extends AppCompatActivity
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        // TODO: 23-Oct-16 add a search bar at the top of the listview 
+        // TODO: 23-Oct-16 add a search bar at the top of the listview
         //columns to get the data from
         String[] emailFrom = ***REMOVED***ContactsContract.Data.DISPLAY_NAME_PRIMARY,
                               ContactsContract.CommonDataKinds.Email.ADDRESS,
