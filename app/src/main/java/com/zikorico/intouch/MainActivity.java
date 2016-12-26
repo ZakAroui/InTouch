@@ -13,9 +13,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
-import android.widget.CursorAdapter;
 import android.widget.ListView;
-import android.widget.SimpleCursorAdapter;
 
 public class MainActivity extends AppCompatActivity
         implements LoaderManager.LoaderCallbacks<Cursor>,
@@ -26,7 +24,7 @@ public class MainActivity extends AppCompatActivity
     private static final int NEW_REQUEST_CODE = 1002;
     //id of the loader
     private static final int EMAIL_QUERY_ID = 0;
-    private CursorAdapter cursorAdapterEmail;
+    private ContactAdapter mCursorAdapterEmail;
     //define the projection of the query
     private static final String[] EMAIL_PROJECTION  = new String[] ***REMOVED***
             ContactsContract.Data._ID,
@@ -49,30 +47,22 @@ public class MainActivity extends AppCompatActivity
     @Override
     protected void onCreate(Bundle savedInstanceState) ***REMOVED***
         super.onCreate(savedInstanceState);
+        getSupportActionBar().setDisplayShowHomeEnabled(true);
+        getSupportActionBar().setLogo(R.mipmap.ic_launcher);
+        getSupportActionBar().setDisplayUseLogoEnabled(true);
         setContentView(R.layout.activity_main);
 
+
+
         // TODO: 23-Oct-16 add a search bar at the top of the listview
-        //columns to get the data from
-        String[] emailFrom = ***REMOVED***ContactsContract.Data.DISPLAY_NAME_PRIMARY,
-                              ContactsContract.CommonDataKinds.Email.ADDRESS,
-                 ***REMOVED***;
-        //the elements to show the data retrieved
-        int[] emailTo = ***REMOVED***R.id.contact_textview,
-                         R.id.email_textView
-            ***REMOVED***;
-        // TODO: 23-Oct-16 create a custom cursorAdapter
+        // TODO: 01-Nov-16 add business card text recognition
         //create cursor adapter for listview
-        cursorAdapterEmail = new SimpleCursorAdapter(this,
-                R.layout.contact_list_item,
-                null,
-                emailFrom,
-                emailTo,
-                0);
-        
+        mCursorAdapterEmail = new ContactAdapter(this,null,0);
+//
         //initialize the listview
         ListView list = (ListView) findViewById(R.id.contactsListview);
         //set the adapter to our listeview, to populate the data
-        list.setAdapter(cursorAdapterEmail);
+        list.setAdapter(mCursorAdapterEmail);
         //set the onclicklistener for listview
         list.setOnItemClickListener(this);
         //initialize the loader
@@ -92,10 +82,9 @@ public class MainActivity extends AppCompatActivity
 
         switch (id)***REMOVED***
             case R.id.action_create_contact:
-                //// TODO: 20-Oct-16 createContact()
-                break;
-            case R.id.action_settings:
-                // TODO: 20-Oct-16 settings shared prefs
+                Intent intent = new Intent(this, EditorActivity.class);
+                intent.putExtra(EditorActivity.EDITOR_TYPE, "insert");
+                startActivityForResult(intent, NEW_REQUEST_CODE);
                 break;
 ***REMOVED***
         return super.onOptionsItemSelected(item);
@@ -121,12 +110,12 @@ public class MainActivity extends AppCompatActivity
 
     @Override
     public void onLoadFinished(Loader<Cursor> loader, Cursor data) ***REMOVED***
-        cursorAdapterEmail.swapCursor(data);
+        mCursorAdapterEmail.swapCursor(data);
 ***REMOVED***
 
     @Override
     public void onLoaderReset(Loader<Cursor> loader) ***REMOVED***
-        cursorAdapterEmail.swapCursor(null);
+        mCursorAdapterEmail.swapCursor(null);
 ***REMOVED***
 
     public void openContactsInsert(View view) ***REMOVED***
@@ -138,19 +127,21 @@ public class MainActivity extends AppCompatActivity
     @Override
     public void onItemClick(AdapterView<?> parent, View view, int position, long id) ***REMOVED***
         // Get the Cursor
-        Cursor cursor = cursorAdapterEmail.getCursor();
+        Cursor cursor = mCursorAdapterEmail.getCursor();
         // Move to the selected contact
         cursor.moveToPosition(position);
         // Get the selected LOOKUP KEY
         mContactKey = cursor.getString(cursor.getColumnIndex(ContactsContract.Data.LOOKUP_KEY));
+        //get the selected contact name
+        String mContactName = cursor.getString(cursor.getColumnIndex(ContactsContract.Data.DISPLAY_NAME_PRIMARY));
         //You can use mContactKey as the content LookupKey to retrieve the details for a contact.
         Intent intent = new Intent(MainActivity.this, EditorActivity.class);
-        intent.putExtra(EditorActivity.CONTENT_ITEM_TYPE, mContactKey);
+        intent.putExtra(EditorActivity.CONTACT_LOOKUP, mContactKey);
+        intent.putExtra(EditorActivity.CONTACT_NAME, mContactName);
         startActivityForResult(intent, EDITOR_REQUEST_CODE);
 ***REMOVED***
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) ***REMOVED***
-        // TODO: 23-Oct-16 check this method 
         if (requestCode == EDITOR_REQUEST_CODE && resultCode == RESULT_OK)***REMOVED***
             restartLoader();
 ***REMOVED*** else if (requestCode == NEW_REQUEST_CODE && resultCode == RESULT_OK)***REMOVED***

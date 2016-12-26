@@ -6,7 +6,6 @@
     <string name="new_contact">New Contact</string>
     <string name="note_updated">Note updated</string>
     <string name="delete_contact">Delete Contact</string>
-    <string name="note_deleted">Note Deleted</string>
     <string name="edit_note">Edit</string>
-    <string name="settings">Settings</string>
+    <string name="action_share">Share contact</string>
 </resources>
