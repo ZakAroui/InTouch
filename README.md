@@ -11,9 +11,9 @@ All the contacts that you save are stored in you phone's contacts local database
 
 ![main activity] (Screenshot_mainactivity.png)
 
-![edit activity](Screenshot_editTouch.png)
-
 ![new activity](Screenshot_newTouch.png)
+
+![edit activity](Screenshot_editTouch.png)
 
 ![share](Screenshot_shareTouch.png)
 
