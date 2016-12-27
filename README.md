@@ -11,7 +11,7 @@ All the contacts that you save using InTouch are stored in you phone's contacts 
 
 InTouch is a simply designed app that helps you stay in touch with the people that you meet and want them to be in you network.
 
-The below screenshot is the first avtivity (view), which is started when the app is launched. Is shows a list of contacts that you have stored in your phone. The app is designed to show only the contact that have email addresses, meaning that if you have a contact that doesn't have an email address then it won't showup on the list (**NOTE:** *the contacts that are shown in the below screenshot are fake as well as all of their informations, even mine !! *). 
+The below screenshot is the first avtivity (view), which is started when the app is launched. Is shows a list of contacts that you have stored in your phone. The app is designed to show only the contact that have email addresses, meaning that if you have a contact that doesn't have an email address then it won't showup on the list (**NOTE:** _*the contacts that are shown in the below screenshot are fake as well as all of their informations, even mine !!_ *). 
 Additionally, the contacts' information shown in this activity includes only name, email and phone number, which makes the app simple and gives quick review of the contact.
 
 This app makes use of Android's content providers to get the contacts list stored in your phone.
