@@ -20,14 +20,22 @@ Also, the "Plus" floating button in this activity is for adding new Touch (new c
 
 ![main activity] (Screenshot_mainactivity.png)
 
-Th
+This below screenshot represents the new contact activity that will start when a user presses the "Plus" floating point or chooses "Create Contact" from the drop-down menu.
+Again, for the simplicity of the app, this activity has four inputs for name, email, phone number and a note. The user can add a new contact by typing the contact's information in the specified fields and then press the "Plus" floating point. 
+The app uses implicit intents to store contacts to the phone, by using the phone's default contacts app.
+
 ![new activity](Screenshot_newTouch.png)
+
+
+
+![phone contact app activity](Screenshot_phoneContactApp.png)
 
 ![edit activity](Screenshot_editTouch.png)
 
 ![share](Screenshot_shareTouch.png)
 
-![phone contact app activity](Screenshot_phoneContactApp.png)
+# Needed Permissions
+
 
 # Future implementations
 
