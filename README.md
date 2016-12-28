@@ -13,12 +13,12 @@ InTouch is a simply designed app that helps you stay in touch with the people th
 
 __The Main Activity__
 
-The below screenshot is the first avtivity (view), which is started when the app is launched. Is shows a list of contacts that you have stored in your phone. The app is designed to show only the contact that have email addresses, meaning that if you have a contact that doesn't have an email address then it won't showup on the list (**NOTE:** _**the contacts that are shown in the below screenshot are fake as well as all of their informations, even mine !!**_ ). 
+The below screenshot is the first activity (view), which is started when the app is launched. Is shows a list of contacts that you have stored in your phone. The app is designed to show only the contact that have email addresses, meaning that if you have a contact that doesn't have an email address then it won't show up on the list (**NOTE:** _**the contacts that are shown in the below screenshot are fake as well as all of their information, even mine !!**_ ). 
 Additionally, the contacts' information shown in this activity includes only name, email and phone number, which makes the app simple and gives quick review of the contact.
 
 This app makes use of Android's content providers to get the contacts list stored in your phone.
 
-Also, the "Plus" floating button in this activity is for adding new Touch (new contact). Once pressed, it will take you the the activity of creating a new Touch.
+Also, the "Plus" floating button in this activity is for adding new Touch (new contact). Once pressed, it will take you the activity of creating a new Touch.
 
 ![main activity] (Screenshot_mainactivity.png)
 
@@ -38,15 +38,15 @@ When the users types the contact's information in the specified fields and then 
 
 ![phone contact app activity](Screenshot_phoneContactApp.png)
 
-__The Contact's Edit Activity
+__The Contact's Edit Activity__
 
 The user can click on any of his contacts in the main activity to see more info about that specific contact; when the user does this, the below activity starts. This activity provides some functions to be done on the contact's information, like: sharing, editing or deleting.
 
-The share button in the action bar allows the user to share some information about the contact with other contacts, using any of the apps that has the share action, which the user has installed in the phone, like the Messaging app.
+The share button in the action bar allows the user to share some information about the contact with other contacts, using any of the apps that have the share action, which the user has installed in the phone, like the Messaging app.
 
-The delete button in the action bar allows the user the delete the selected contact and all its information definetly from the phone !!
+The delete button in the action bar allows the user the delete the selected contact and all its information definitely  from the phone !!
 
-The floading point in the bottom right side of the screen allows the user to edit the selected contact. If pressed, the user will be able to continue editing the contact using the phone's default contacts app. Once done or by pressing Back, the user will go back to InTouch's mainactivity.
+The floating point in the bottom right side of the screen allows the user to edit the selected contact. If pressed, the user will be able to continue editing the contact using the phone's default contacts app. Once done or by pressing Back, the user will go back to InTouch's mainactivity.
 
 ![edit activity](Screenshot_editTouch.png)
 
@@ -62,4 +62,15 @@ As InTouch focuses on user contacts, it needs permission to access user contacts
 
 # Future implementations
 
+This is the first version of InTouch, which is pretty much basic (Actually that's what the app is intended for. Simplicity!!); However, few more features can make the app more enjoyable. First, the integration of a search bar to allow the user to search for specific contacts in the contact list; for this purpose, this [link][1] is really useful to use Android Search Dialog with some of its cool features.
 
+Second, the use of the text recognition API, in order to allow the user to scan business cards and retrieve  the contact's information from them; to achieve this, the [Google's text recognition api][2] would be used.
+
+## Further resources
+
+[Android's search dialog setup][1]
+[Google's text recognition api][2]
+
+
+[1]: https://developer.android.com/guide/topics/search/search-dialog.html "Title"
+[2]: https://developers.google.com/vision/text-overview "Title"
