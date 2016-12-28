@@ -69,7 +69,7 @@ Second, the use of the text recognition API, in order to allow the user to scan 
 ## Further resources
 
 [Android's search dialog setup][1]
-#
+
 [Google's text recognition api][2]
 
 
