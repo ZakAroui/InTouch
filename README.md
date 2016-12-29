@@ -56,6 +56,10 @@ When the user presses the share button, a menu of all the available apps that ca
 
 ![share](Screenshot_shareTouch.png)
 
+# Try InTouch
+
+You can try InTouch in two different ways. One, by downloading the source code, and then build the app using Android Studio (which is the IDE used to develop InTouch). Two, by downloading the apk file included in this repo under the name of __InTouch_debug.apk__ (this is a debug apk) and then install it in your phone.
+
 # Needed Permissions
 
 As InTouch focuses on user contacts, it needs permission to access user contacts stored locally in the phone.
