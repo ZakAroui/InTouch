@@ -12,7 +12,7 @@ import android.widget.TextView;
 import java.util.Random;
 
 /**
- *
+ * Created by ikazme
  */
 
 public class ContactAdapter extends CursorAdapter***REMOVED***

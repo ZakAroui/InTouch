@@ -1,11 +1,14 @@
 package com.zikorico.intouch;
 
+import android.Manifest;
 import android.app.LoaderManager;
 import android.content.CursorLoader;
 import android.content.Intent;
 import android.content.Loader;
+import android.content.pm.PackageManager;
 import android.database.Cursor;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
 import android.provider.ContactsContract;
 import android.support.v7.app.AppCompatActivity;
@@ -14,6 +17,11 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ListView;
+import android.widget.Toast;
+
+/**
+ * Created by ikazme
+ */
 
 public class MainActivity extends AppCompatActivity
         implements LoaderManager.LoaderCallbacks<Cursor>,
@@ -44,6 +52,9 @@ public class MainActivity extends AppCompatActivity
     private String mContactKey;
     private Uri mContactUri;
 
+    // Request code for READ_CONTACTS. It can be any number > 0.
+    private static final int PERMISSIONS_REQUEST_READ_CONTACTS = 100;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) ***REMOVED***
         super.onCreate(savedInstanceState);
@@ -53,12 +64,18 @@ public class MainActivity extends AppCompatActivity
         setContentView(R.layout.activity_main);
 
 
+        // Check the SDK version and whether the permission is already granted or not.
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M
+                && checkSelfPermission(Manifest.permission.READ_CONTACTS) != PackageManager.PERMISSION_GRANTED) ***REMOVED***
+            requestPermissions(new String[]***REMOVED***Manifest.permission.READ_CONTACTS***REMOVED***, PERMISSIONS_REQUEST_READ_CONTACTS);
+            //After this point you wait for callback in onRequestPermissionsResult(int, String[], int[]) overriden method
+***REMOVED***
 
         // TODO: 23-Oct-16 add a search bar at the top of the listview
         // TODO: 01-Nov-16 add business card text recognition
         //create cursor adapter for listview
         mCursorAdapterEmail = new ContactAdapter(this,null,0);
-//
+
         //initialize the listview
         ListView list = (ListView) findViewById(R.id.contactsListview);
         //set the adapter to our listeview, to populate the data
@@ -67,6 +84,19 @@ public class MainActivity extends AppCompatActivity
         list.setOnItemClickListener(this);
         //initialize the loader
         getLoaderManager().initLoader(EMAIL_QUERY_ID, null, this);
+***REMOVED***
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, String[] permissions,
+                                           int[] grantResults) ***REMOVED***
+        if (requestCode == PERMISSIONS_REQUEST_READ_CONTACTS) ***REMOVED***
+            if (grantResults[0] == PackageManager.PERMISSION_GRANTED) ***REMOVED***
+                // Permission is granted
+                Toast.makeText(this, "Permission granted!", Toast.LENGTH_SHORT).show();
+    ***REMOVED*** else ***REMOVED***
+                Toast.makeText(this, "Until you grant the permission, we canot display the names", Toast.LENGTH_SHORT).show();
+    ***REMOVED***
+***REMOVED***
 ***REMOVED***
 
     @Override

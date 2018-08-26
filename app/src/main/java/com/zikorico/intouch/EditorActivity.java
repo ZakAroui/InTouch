@@ -16,6 +16,10 @@ import android.view.View;
 import android.widget.EditText;
 import android.widget.Toast;
 
+/**
+ * Created by ikazme
+ */
+
 public class EditorActivity extends AppCompatActivity ***REMOVED***
     public static final String EDITOR_TYPE = "Type";
     public static final String CONTACT_LOOKUP = "ContactLookup";
