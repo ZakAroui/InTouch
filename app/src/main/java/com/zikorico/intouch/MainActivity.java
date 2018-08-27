@@ -63,26 +63,24 @@ public class MainActivity extends AppCompatActivity
         getSupportActionBar().setDisplayUseLogoEnabled(true);
         setContentView(R.layout.activity_main);
 
-
-        // Check the SDK version and whether the permission is already granted or not.
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M
                 && checkSelfPermission(Manifest.permission.READ_CONTACTS) != PackageManager.PERMISSION_GRANTED) ***REMOVED***
             requestPermissions(new String[]***REMOVED***Manifest.permission.READ_CONTACTS***REMOVED***, PERMISSIONS_REQUEST_READ_CONTACTS);
-            //After this point you wait for callback in onRequestPermissionsResult(int, String[], int[]) overriden method
+***REMOVED*** else ***REMOVED***
+            populateContacts();
 ***REMOVED***
 
         // TODO: 23-Oct-16 add a search bar at the top of the listview
         // TODO: 01-Nov-16 add business card text recognition
-        //create cursor adapter for listview
+
+***REMOVED***
+
+    private void populateContacts()***REMOVED***
         mCursorAdapterEmail = new ContactAdapter(this,null,0);
 
-        //initialize the listview
         ListView list = (ListView) findViewById(R.id.contactsListview);
-        //set the adapter to our listeview, to populate the data
         list.setAdapter(mCursorAdapterEmail);
-        //set the onclicklistener for listview
         list.setOnItemClickListener(this);
-        //initialize the loader
         getLoaderManager().initLoader(EMAIL_QUERY_ID, null, this);
 ***REMOVED***
 
@@ -93,6 +91,7 @@ public class MainActivity extends AppCompatActivity
             if (grantResults[0] == PackageManager.PERMISSION_GRANTED) ***REMOVED***
                 // Permission is granted
                 Toast.makeText(this, "Permission granted!", Toast.LENGTH_SHORT).show();
+                populateContacts();
     ***REMOVED*** else ***REMOVED***
                 Toast.makeText(this, "Until you grant the permission, we canot display the names", Toast.LENGTH_SHORT).show();
     ***REMOVED***

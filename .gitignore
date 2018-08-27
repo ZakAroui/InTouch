@@ -1,4 +1,15 @@
+#built app files
+*.apk
+*.ap_
+
+#dex vm
+*.dex
+
+#local config
+local.properties
+
 *.iml
+.idea
 .gradle
 /local.properties
 /.idea/workspace.xml
