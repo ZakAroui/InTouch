@@ -1,8 +1,11 @@
 package com.zikorico.intouch;
 
+import android.Manifest;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.database.Cursor;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
 import android.provider.ContactsContract;
 import android.support.design.widget.FloatingActionButton;
@@ -35,6 +38,9 @@ public class EditorActivity extends AppCompatActivity ***REMOVED***
     private Uri mSelectedContactUri;
     private String mName;
     private String mContactShare;
+
+    private static final int PERMISSIONS_REQUEST_WRITE_CONTACTS = 101;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) ***REMOVED***
@@ -166,10 +172,28 @@ public class EditorActivity extends AppCompatActivity ***REMOVED***
         int id = item.getItemId();
         switch (id)***REMOVED***
             case R.id.action_delete:
-                deleteContact();
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M
+                        && checkSelfPermission(Manifest.permission.WRITE_CONTACTS) != PackageManager.PERMISSION_GRANTED) ***REMOVED***
+                    requestPermissions(new String[]***REMOVED***Manifest.permission.WRITE_CONTACTS***REMOVED***, PERMISSIONS_REQUEST_WRITE_CONTACTS);
+        ***REMOVED*** else ***REMOVED***
+                    deleteContact();
+        ***REMOVED***
                 break;
 ***REMOVED***
         return super.onOptionsItemSelected(item);
+***REMOVED***
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, String[] permissions,
+                                           int[] grantResults) ***REMOVED***
+        if (requestCode == PERMISSIONS_REQUEST_WRITE_CONTACTS) ***REMOVED***
+            if (grantResults[0] == PackageManager.PERMISSION_GRANTED) ***REMOVED***
+                Toast.makeText(this, "Permission granted!", Toast.LENGTH_SHORT).show();
+                deleteContact();
+    ***REMOVED*** else ***REMOVED***
+                Toast.makeText(this, "Grant the permission to delete the contact.", Toast.LENGTH_SHORT).show();
+    ***REMOVED***
+***REMOVED***
 ***REMOVED***
 
     //delete the contact from phone and show a toast

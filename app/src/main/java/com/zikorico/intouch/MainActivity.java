@@ -52,7 +52,6 @@ public class MainActivity extends AppCompatActivity
     private String mContactKey;
     private Uri mContactUri;
 
-    // Request code for READ_CONTACTS. It can be any number > 0.
     private static final int PERMISSIONS_REQUEST_READ_CONTACTS = 100;
 
     @Override
@@ -89,11 +88,10 @@ public class MainActivity extends AppCompatActivity
                                            int[] grantResults) ***REMOVED***
         if (requestCode == PERMISSIONS_REQUEST_READ_CONTACTS) ***REMOVED***
             if (grantResults[0] == PackageManager.PERMISSION_GRANTED) ***REMOVED***
-                // Permission is granted
                 Toast.makeText(this, "Permission granted!", Toast.LENGTH_SHORT).show();
                 populateContacts();
     ***REMOVED*** else ***REMOVED***
-                Toast.makeText(this, "Until you grant the permission, we canot display the names", Toast.LENGTH_SHORT).show();
+                Toast.makeText(this, "Grant the permission to display contacts.", Toast.LENGTH_SHORT).show();
     ***REMOVED***
 ***REMOVED***
 ***REMOVED***
