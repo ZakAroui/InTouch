@@ -2,12 +2,13 @@ package com.zikorico.intouch;
 
 import android.content.Context;
 import android.database.Cursor;
-import android.provider.ContactsContract;
+import android.provider.ContactsContract.Data;
 import android.support.v4.widget.CursorAdapter;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
+import android.provider.ContactsContract.CommonDataKinds;
 
 import java.util.Random;
 
@@ -15,11 +16,13 @@ import java.util.Random;
  * Created by ikazme
  */
 
-public class ContactAdapter extends CursorAdapter***REMOVED***
+public class ContactAdapter extends CursorAdapter ***REMOVED***
 
+    private Context context;
 
     public ContactAdapter(Context context, Cursor c, int flags) ***REMOVED***
         super(context, c, flags);
+        this.context = context;
 ***REMOVED***
 
     @Override
@@ -31,29 +34,33 @@ public class ContactAdapter extends CursorAdapter***REMOVED***
     @Override
     public void bindView(View view, Context context, Cursor cursor) ***REMOVED***
         TextView nameTv = (TextView)view.findViewById(R.id.contact_textview);
-        String contactName = cursor.getString(cursor.getColumnIndex(ContactsContract.Data.DISPLAY_NAME_PRIMARY));
+        String contactName = cursor.getString(cursor.getColumnIndex(Data.DISPLAY_NAME_PRIMARY));
         nameTv.setText(contactName);
 
         TextView emailTv = (TextView)view.findViewById(R.id.email_textView);
-        String contactEmail = cursor.getString(cursor.getColumnIndex(ContactsContract.CommonDataKinds.Email.ADDRESS));
+        String contactEmail = cursor.getString(cursor.getColumnIndex(CommonDataKinds.Email.ADDRESS));
+//        String contactEmail = getEmail(cursor.getInt(cursor.getColumnIndex(Data._ID)));
         emailTv.setText(contactEmail);
 
-        Random randomGenerator = new Random();
-        String mockNumber = "(";
-        int cnt = 0;
-        for (int idx = 1; idx <= 10; ++idx)***REMOVED***
-            int randomInt = randomGenerator.nextInt(10);
-
-            if (cnt == 3)***REMOVED***
-                mockNumber += ") ";
-    ***REMOVED***
-            if (cnt == 6)***REMOVED***
-                mockNumber += "-";
-    ***REMOVED***
-            mockNumber += randomInt;
-            cnt++;
-***REMOVED***
         TextView phoneTv = (TextView) view.findViewById(R.id.phone_textView);
-        phoneTv.setText(mockNumber);
+//        String phoneNumber = cursor.getString(cursor.getColumnIndex(CommonDataKinds.Phone.NUMBER));
+        String phoneNumber = "9999";
+        phoneTv.setText(phoneNumber);
 ***REMOVED***
+
+    private String getEmail(int contactId)***REMOVED***
+        Cursor emails = context.getContentResolver().query(CommonDataKinds.Email.CONTENT_URI,
+                null,
+                CommonDataKinds.Email.CONTACT_ID + " = " + contactId,
+                null,
+                null);
+
+        while (emails.moveToNext())
+        ***REMOVED***
+            return emails.getString(emails.getColumnIndex(CommonDataKinds.Email.DATA));
+***REMOVED***
+        emails.close();
+        return null;
+***REMOVED***
+
 ***REMOVED***
