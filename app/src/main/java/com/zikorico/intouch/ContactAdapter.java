@@ -2,6 +2,7 @@ package com.zikorico.intouch;
 
 import android.content.Context;
 import android.database.Cursor;
+import android.provider.ContactsContract;
 import android.provider.ContactsContract.Data;
 import android.support.v4.widget.CursorAdapter;
 import android.view.LayoutInflater;
@@ -19,6 +20,15 @@ import java.util.Random;
 public class ContactAdapter extends CursorAdapter ***REMOVED***
 
     private Context context;
+    private static final String[] PHONE_PROJECTION  = new String[] ***REMOVED***
+            ContactsContract.Data._ID,
+            ContactsContract.Data.LOOKUP_KEY,
+            ContactsContract.Data.DISPLAY_NAME_PRIMARY,
+            CommonDataKinds.Phone.NUMBER
+***REMOVED***;
+
+    private static final String SELECTION = ContactsContract.Data.MIMETYPE + " = '" + CommonDataKinds.Phone.CONTENT_ITEM_TYPE + "'";
+
 
     public ContactAdapter(Context context, Cursor c, int flags) ***REMOVED***
         super(context, c, flags);
@@ -39,28 +49,35 @@ public class ContactAdapter extends CursorAdapter ***REMOVED***
 
         TextView emailTv = (TextView)view.findViewById(R.id.email_textView);
         String contactEmail = cursor.getString(cursor.getColumnIndex(CommonDataKinds.Email.ADDRESS));
-//        String contactEmail = getEmail(cursor.getInt(cursor.getColumnIndex(Data._ID)));
         emailTv.setText(contactEmail);
 
         TextView phoneTv = (TextView) view.findViewById(R.id.phone_textView);
-//        String phoneNumber = cursor.getString(cursor.getColumnIndex(CommonDataKinds.Phone.NUMBER));
-        String phoneNumber = "9999";
-        phoneTv.setText(phoneNumber);
+        int hasPnumber = cursor.getInt(cursor.getColumnIndex(CommonDataKinds.Phone.HAS_PHONE_NUMBER));
+        if (hasPnumber == 1)***REMOVED***
+            String phoneNumber = getPhoneNumber(cursor.getString(cursor.getColumnIndex(Data.LOOKUP_KEY)));
+            phoneTv.setText(phoneNumber);
+***REMOVED***
 ***REMOVED***
 
-    private String getEmail(int contactId)***REMOVED***
-        Cursor emails = context.getContentResolver().query(CommonDataKinds.Email.CONTENT_URI,
+    private String getPhoneNumber(String lookupId)***REMOVED***
+        //TODO REUSABLE CODE - CHECK EDITORACTIVITY
+        String[] mSelectionArgs = ***REMOVED*** lookupId ***REMOVED***;
+        Cursor pNumbers = context.getContentResolver().query(CommonDataKinds.Phone.CONTENT_URI,
                 null,
-                CommonDataKinds.Email.CONTACT_ID + " = " + contactId,
-                null,
+                Data.LOOKUP_KEY + " = ?",
+                mSelectionArgs,
                 null);
 
-        while (emails.moveToNext())
+        String contactPhone = "";
+        if (pNumbers.getCount() > 0)
         ***REMOVED***
-            return emails.getString(emails.getColumnIndex(CommonDataKinds.Email.DATA));
+            pNumbers.moveToFirst();
+            contactPhone = pNumbers.getString(pNumbers.getColumnIndex(CommonDataKinds.Phone.NUMBER));
+
 ***REMOVED***
-        emails.close();
-        return null;
+        pNumbers.close();
+
+        return contactPhone;
 ***REMOVED***
 
 ***REMOVED***

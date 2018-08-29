@@ -18,6 +18,7 @@ import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ListView;
 import android.widget.Toast;
+import android.provider.ContactsContract.CommonDataKinds.Email;
 
 /**
  * Created by ikazme
@@ -39,9 +40,9 @@ public class MainActivity extends AppCompatActivity
             ContactsContract.Data.DISPLAY_NAME_PRIMARY,
             ContactsContract.CommonDataKinds.Email.ADDRESS,
             ContactsContract.CommonDataKinds.Phone.HAS_PHONE_NUMBER
-//            ContactsContract.CommonDataKinds.Phone.NUMBER
 ***REMOVED***;
 
+    private static final String SELECTION = ContactsContract.Data.MIMETYPE + " = '" + Email.CONTENT_ITEM_TYPE + "'";
     private static final String SORT_ORDER = ContactsContract.Data.DISPLAY_NAME_PRIMARY + " ASC ";
     private long mContactId;
     private String mContactKey;
@@ -121,7 +122,7 @@ public class MainActivity extends AppCompatActivity
         return new CursorLoader(this,
                 ContactsContract.Data.CONTENT_URI,
                 EMAIL_PROJECTION,
-                null,
+                SELECTION,
                 null,
                 SORT_ORDER);
 ***REMOVED***
