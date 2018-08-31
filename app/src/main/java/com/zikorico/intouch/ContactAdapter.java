@@ -11,7 +11,7 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 import android.provider.ContactsContract.CommonDataKinds;
 
-import java.util.Random;
+import com.zikorico.intouch.service.ContactsService;
 
 /**
  * Created by ikazme
@@ -54,30 +54,12 @@ public class ContactAdapter extends CursorAdapter ***REMOVED***
         TextView phoneTv = (TextView) view.findViewById(R.id.phone_textView);
         int hasPnumber = cursor.getInt(cursor.getColumnIndex(CommonDataKinds.Phone.HAS_PHONE_NUMBER));
         if (hasPnumber == 1)***REMOVED***
-            String phoneNumber = getPhoneNumber(cursor.getString(cursor.getColumnIndex(Data.LOOKUP_KEY)));
+            ContactsService cs = ContactsService.getInstance();
+            String[] mSelectionArgs = ***REMOVED*** cursor.getString(cursor.getColumnIndex(Data.LOOKUP_KEY)) ***REMOVED***;
+            String phoneNumber = cs.getPhoneNumber(mSelectionArgs, context);
             phoneTv.setText(phoneNumber);
 ***REMOVED***
 ***REMOVED***
 
-    private String getPhoneNumber(String lookupId)***REMOVED***
-        //TODO REUSABLE CODE - CHECK EDITORACTIVITY
-        String[] mSelectionArgs = ***REMOVED*** lookupId ***REMOVED***;
-        Cursor pNumbers = context.getContentResolver().query(CommonDataKinds.Phone.CONTENT_URI,
-                null,
-                Data.LOOKUP_KEY + " = ?",
-                mSelectionArgs,
-                null);
-
-        String contactPhone = "";
-        if (pNumbers.getCount() > 0)
-        ***REMOVED***
-            pNumbers.moveToFirst();
-            contactPhone = pNumbers.getString(pNumbers.getColumnIndex(CommonDataKinds.Phone.NUMBER));
-
-***REMOVED***
-        pNumbers.close();
-
-        return contactPhone;
-***REMOVED***
 
 ***REMOVED***

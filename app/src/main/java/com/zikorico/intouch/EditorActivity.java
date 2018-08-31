@@ -19,6 +19,8 @@ import android.view.View;
 import android.widget.EditText;
 import android.widget.Toast;
 
+import com.zikorico.intouch.service.ContactsService;
+
 /**
  * Created by ikazme
  */
@@ -87,56 +89,13 @@ public class EditorActivity extends AppCompatActivity ***REMOVED***
 
 
     public String[] getContactData(String[] uSelectionArgs)***REMOVED***
-        // get the <span class="IL_AD" id="IL_AD4">phone number</span>
-        Cursor emailCur = getContentResolver().query(
-                ContactsContract.Data.CONTENT_URI,
-                null,
-                ContactsContract.Data.LOOKUP_KEY + " = ? AND " +
-                        ContactsContract.Contacts.Data.MIMETYPE + " = '"
-                        + ContactsContract.CommonDataKinds.Email.CONTENT_ITEM_TYPE + "'",
-                uSelectionArgs,
-                null);
-        String contactName="";
-        String contactEmail="";
-        long contactId = 0;
-        if (emailCur.getCount() > 0) ***REMOVED***
-            emailCur.moveToFirst();
-            contactName = emailCur.getString(emailCur.getColumnIndex(ContactsContract.Data.DISPLAY_NAME_PRIMARY));
-            contactEmail = emailCur.getString(emailCur.getColumnIndex(ContactsContract.CommonDataKinds.Email.ADDRESS));
-            contactId = emailCur.getLong(emailCur.getColumnIndex(ContactsContract.Data._ID));
-***REMOVED***
-        emailCur.close();
+        ContactsService cs = ContactsService.getInstance();
 
-        Cursor phoneCur = getContentResolver().query(
-                ContactsContract.Data.CONTENT_URI,
-                null,
-                ContactsContract.Data.LOOKUP_KEY + " = ? AND " +
-                        ContactsContract.Contacts.Data.MIMETYPE + " = '"
-                        + ContactsContract.CommonDataKinds.Phone.CONTENT_ITEM_TYPE + "'",
-                uSelectionArgs,
-                null);
-        String contactPhone = "";
-        if (phoneCur.getCount() > 0) ***REMOVED***
-            phoneCur.moveToFirst();
-            contactPhone = phoneCur.getString(phoneCur.getColumnIndex(ContactsContract.CommonDataKinds.Phone.NUMBER));
-***REMOVED***
-        phoneCur.close();
+        String[] nameEmailContactid = cs.getNameEmailContactId(uSelectionArgs, getApplicationContext());
+        String contactPhone = cs.getPhoneNumber(uSelectionArgs, getApplicationContext());
+        String contactNote = cs.getNote(uSelectionArgs, getApplicationContext());
 
-        Cursor noteCur = getContentResolver().query(
-                ContactsContract.Data.CONTENT_URI,
-                null,
-                ContactsContract.Data.LOOKUP_KEY + " = ? AND " +
-                        ContactsContract.Contacts.Data.MIMETYPE + " = '"
-                        + ContactsContract.CommonDataKinds.Note.CONTENT_ITEM_TYPE + "'",
-                uSelectionArgs,
-                null);
-        String contactNote = "";
-        if (noteCur.getCount() > 0) ***REMOVED***
-            noteCur.moveToFirst();
-            contactNote = noteCur.getString(noteCur.getColumnIndex(ContactsContract.CommonDataKinds.Note.NOTE));
-***REMOVED***
-        noteCur.close();
-        return new String[]***REMOVED***contactName, contactEmail, contactPhone, contactNote, Long.toString(contactId)***REMOVED***;
+        return new String[]***REMOVED***nameEmailContactid[0], nameEmailContactid[1], contactPhone, contactNote, nameEmailContactid[2]***REMOVED***;
 ***REMOVED***
 
     @Override
