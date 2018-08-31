@@ -30,13 +30,14 @@ public class EditorActivity extends AppCompatActivity ***REMOVED***
     public static final String CONTACT_LOOKUP = "ContactLookup";
     public static final String CONTACT_NAME = "ContactName";
     private static final String LOG_TAG = EditorActivity.class.getSimpleName();
+
     private String nextAction;
     private final String NEW_CONTACT = "new";
     private final String EDIT_CONTACT = "edit";
-    //define the search string for the selection of the query
+
     private String[] mSelectionArgs = ***REMOVED*** "" ***REMOVED***;
     private int INSERT_CONTACT_REQUEST = 201;
-    //contact uri for edit
+
     private Uri mSelectedContactUri;
     private String mName;
     private String mContactShare;
@@ -57,22 +58,25 @@ public class EditorActivity extends AppCompatActivity ***REMOVED***
         Intent intent = getIntent();
         String newActionType = intent.getStringExtra(EDITOR_TYPE);
         if (newActionType == null) ***REMOVED***
-            String mlookup = intent.getStringExtra(CONTACT_LOOKUP);
+            String mLookup = intent.getStringExtra(CONTACT_LOOKUP);
             nextAction = EDIT_CONTACT;
-            mSelectionArgs[0] = mlookup;
+            mSelectionArgs[0] = mLookup;
             mName = intent.getStringExtra(CONTACT_NAME);
             String[] contactData = getContactData(mSelectionArgs);
             setTitle(contactData[0]);
             mContactShare = contactData[0]+"\n"+contactData[1]+"\n"+contactData[2];
+
             nameEditor.setText(contactData[0]);
             emailEditor.setText(contactData[1]);
             phoneEditor.setText(contactData[2]);
             noteEditor.setText(contactData[3]);
+
             disableTexteditor(nameEditor);
             disableTexteditor(emailEditor);
             disableTexteditor(phoneEditor);
             disableTexteditor(noteEditor);
-            mSelectedContactUri = ContactsContract.Contacts.getLookupUri(Long.parseLong(contactData[4]), mlookup);
+
+            mSelectedContactUri = ContactsContract.Contacts.getLookupUri(Long.parseLong(contactData[4]), mLookup);
 ***REMOVED***else ***REMOVED***
             setTitle("New Contact");
             nextAction = NEW_CONTACT;
@@ -80,13 +84,13 @@ public class EditorActivity extends AppCompatActivity ***REMOVED***
             newContactFl.setImageResource(R.drawable.ic_action_add);
 ***REMOVED***
 ***REMOVED***
+
     public void disableTexteditor(EditText editText)***REMOVED***
         editText.setClickable(false);
         editText.setCursorVisible(false);
         editText.setFocusable(false);
         editText.setFocusableInTouchMode(false);
 ***REMOVED***
-
 
     public String[] getContactData(String[] uSelectionArgs)***REMOVED***
         ContactsService cs = ContactsService.getInstance();
@@ -101,22 +105,19 @@ public class EditorActivity extends AppCompatActivity ***REMOVED***
     @Override
     public boolean onCreateOptionsMenu(Menu menu) ***REMOVED***
         if (nextAction == EDIT_CONTACT) ***REMOVED***
-            //inflate the menu
             getMenuInflater().inflate(R.menu.menu_editor, menu);
-            // Retrieve the share menu item
             MenuItem menuItem = menu.findItem(R.id.action_share);
-            // Get the provider and hold onto it to set/change the share intent.
             ShareActionProvider mShareActionProvider =
                     (ShareActionProvider) MenuItemCompat.getActionProvider(menuItem);
-            // Attach an intent to this ShareActionProvider.  You can update this at any time,
             if (mShareActionProvider != null ) ***REMOVED***
                 mShareActionProvider.setShareIntent(createShareContactIntent());
     ***REMOVED*** else ***REMOVED***
-                Log.d(LOG_TAG, "Share Action Provider is null?");
+                Log.w(LOG_TAG, "onCreateOptionsMenu(): Share Action Provider is null!");
     ***REMOVED***
 ***REMOVED***
         return true;
 ***REMOVED***
+
     private Intent createShareContactIntent() ***REMOVED***
         Intent shareIntent = new Intent(Intent.ACTION_SEND);
         shareIntent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_WHEN_TASK_RESET);
@@ -155,11 +156,10 @@ public class EditorActivity extends AppCompatActivity ***REMOVED***
 ***REMOVED***
 ***REMOVED***
 
-    //delete the contact from phone and show a toast
     private void deleteContact() ***REMOVED***
         getContentResolver().delete(ContactsContract.RawContacts.CONTENT_URI,
                 ContactsContract.RawContacts.DISPLAY_NAME_PRIMARY+" = ?", new String[]***REMOVED***mName***REMOVED***);
-        Toast.makeText(this, mName+" Deleted", Toast.LENGTH_SHORT).show();
+        Toast.makeText(this, mName+" Deleted.", Toast.LENGTH_SHORT).show();
         finish();
         setResult(RESULT_OK);
 ***REMOVED***
@@ -169,10 +169,12 @@ public class EditorActivity extends AppCompatActivity ***REMOVED***
         EditText emailEditor = (EditText) findViewById(R.id.email_editText);
         EditText phoneEditor = (EditText) findViewById(R.id.phone_editText);
         EditText noteEditor = (EditText) findViewById(R.id.note_editText);
+
         String nameNw = String.valueOf(nameEditor.getText());
         String emailNw = String.valueOf(emailEditor.getText());
         String phoneNw = String.valueOf(phoneEditor.getText());
         String noteNw = String.valueOf(noteEditor.getText());
+
         switch (nextAction)***REMOVED***
             case NEW_CONTACT:
                 Intent intent = new Intent(Intent.ACTION_INSERT);
@@ -188,7 +190,6 @@ public class EditorActivity extends AppCompatActivity ***REMOVED***
         ***REMOVED***
                 break;
             case EDIT_CONTACT:
-                // Creates a new Intent to edit a contact
                 Intent editIntent = new Intent(Intent.ACTION_EDIT);
                 editIntent.setDataAndType(mSelectedContactUri, ContactsContract.Contacts.CONTENT_ITEM_TYPE);
                 if (editIntent.resolveActivity(getPackageManager()) != null) ***REMOVED***
