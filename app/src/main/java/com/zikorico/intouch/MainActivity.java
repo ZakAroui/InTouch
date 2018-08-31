@@ -109,6 +109,9 @@ public class MainActivity extends AppCompatActivity
                 intent.putExtra(EditorActivity.EDITOR_TYPE, "insert");
                 startActivityForResult(intent, NEW_REQUEST_CODE);
                 break;
+            case R.id.action_scan_card:
+                scanBusinessCard(null);
+                break;
 ***REMOVED***
         return super.onOptionsItemSelected(item);
 ***REMOVED***
@@ -143,6 +146,10 @@ public class MainActivity extends AppCompatActivity
         Intent intent = new Intent(this, EditorActivity.class);
         intent.putExtra(EditorActivity.EDITOR_TYPE, "insert");
         startActivityForResult(intent, NEW_REQUEST_CODE);
+***REMOVED***
+
+    public void scanBusinessCard(View view)***REMOVED***
+
 ***REMOVED***
 
     @Override

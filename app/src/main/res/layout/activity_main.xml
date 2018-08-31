@@ -29,4 +29,17 @@
         android:onClick="openContactsInsert"
         app:elevation="0dp" />
 
+    <android.support.design.widget.FloatingActionButton
+        android:id="@+id/scanCardFloatingButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentLeft="true"
+        android:clickable="true"
+        android:onClick="scanBusinessCard"
+        app:backgroundTint="@android:color/holo_green_dark"
+        app:elevation="0dp"
+        app:fabSize="mini"
+        app:srcCompat="@drawable/ic_camera" />
+
 </RelativeLayout>
