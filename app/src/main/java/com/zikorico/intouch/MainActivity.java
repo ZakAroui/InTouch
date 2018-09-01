@@ -7,18 +7,41 @@ import android.content.Intent;
 import android.content.Loader;
 import android.content.pm.PackageManager;
 import android.database.Cursor;
+import android.graphics.Bitmap;
+import android.graphics.Point;
+import android.graphics.Rect;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.Environment;
 import android.provider.ContactsContract;
+import android.provider.MediaStore;
+import android.support.annotation.NonNull;
+import android.support.v4.content.FileProvider;
 import android.support.v7.app.AppCompatActivity;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
+import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.Toast;
 import android.provider.ContactsContract.CommonDataKinds.Email;
+
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.firebase.ml.vision.FirebaseVision;
+import com.google.firebase.ml.vision.common.FirebaseVisionImage;
+import com.google.firebase.ml.vision.text.FirebaseVisionText;
+import com.google.firebase.ml.vision.text.FirebaseVisionTextRecognizer;
+import com.google.firebase.ml.vision.text.RecognizedLanguage;
+
+import java.io.File;
+import java.io.IOException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.List;
 
 /**
  * Created by ikazme
@@ -30,6 +53,10 @@ public class MainActivity extends AppCompatActivity
 ***REMOVED***
     private static final int EDITOR_REQUEST_CODE = 1001;
     private static final int NEW_REQUEST_CODE = 1002;
+    private static final int REQUEST_IMAGE_CAPTURE = 1;
+
+    private static final int PERMISSIONS_REQUEST_READ_CONTACTS = 100;
+
 
     private static final int EMAIL_QUERY_ID = 0;
     private ContactAdapter mCursorAdapterEmail;
@@ -48,7 +75,9 @@ public class MainActivity extends AppCompatActivity
     private String mContactKey;
     private Uri mContactUri;
 
-    private static final int PERMISSIONS_REQUEST_READ_CONTACTS = 100;
+    private ImageView mImageView;
+    private LinearLayout mLinearLayout;
+    private String mCurrentPhotoPath;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) ***REMOVED***
@@ -65,6 +94,8 @@ public class MainActivity extends AppCompatActivity
             populateContacts();
 ***REMOVED***
 
+        mImageView = findViewById(R.id.imageView);
+        mLinearLayout = findViewById(R.id.imagePreviewLayout);
         // TODO: 23-Oct-16 add a search bar at the top of the listview
         // TODO - IMPLEMENT LANDING PAGE
         // TODO - IMPLEMENT BOTTOM NAVIGATION MENU
@@ -148,7 +179,97 @@ public class MainActivity extends AppCompatActivity
 ***REMOVED***
 
     public void scanBusinessCard(View view)***REMOVED***
-        // TODO: 01-Nov-16 add business card text recognition - ML Kit or OCR api
+
+        if(getPackageManager().hasSystemFeature(PackageManager.FEATURE_CAMERA_ANY))***REMOVED***
+            dispatchTakePictureIntent();
+***REMOVED***
+***REMOVED***
+
+    private void processImage(Bitmap imageBitmap)***REMOVED***
+        //TODO - GET IMAGE FROM OTHER SOURCES
+
+        FirebaseVisionImage image;
+        image = FirebaseVisionImage.fromBitmap(imageBitmap);
+
+        FirebaseVisionTextRecognizer textRecognizer = FirebaseVision.getInstance()
+                .getOnDeviceTextRecognizer();
+
+        textRecognizer.processImage(image)
+                .addOnSuccessListener(new OnSuccessListener<FirebaseVisionText>() ***REMOVED***
+                    @Override
+                    public void onSuccess(FirebaseVisionText result) ***REMOVED***
+                        processResultText(result);
+            ***REMOVED***
+        ***REMOVED***)
+                .addOnFailureListener( new OnFailureListener() ***REMOVED***
+                            @Override
+                            public void onFailure(@NonNull Exception e) ***REMOVED***
+                                Toast.makeText(getApplicationContext(), "failed to process text!", Toast.LENGTH_SHORT).show();
+                    ***REMOVED***
+                ***REMOVED***);
+***REMOVED***
+
+    private void processResultText(FirebaseVisionText result)***REMOVED***
+        String resultText = result.getText();
+        Toast.makeText(getApplicationContext(), resultText, Toast.LENGTH_LONG).show();
+
+        for (FirebaseVisionText.TextBlock block: result.getTextBlocks()) ***REMOVED***
+            String blockText = block.getText();
+            Float blockConfidence = block.getConfidence();
+            List<RecognizedLanguage> blockLanguages = block.getRecognizedLanguages();
+            Point[] blockCornerPoints = block.getCornerPoints();
+            Rect blockFrame = block.getBoundingBox();
+            for (FirebaseVisionText.Line line: block.getLines()) ***REMOVED***
+                String lineText = line.getText();
+                Float lineConfidence = line.getConfidence();
+                List<RecognizedLanguage> lineLanguages = line.getRecognizedLanguages();
+                Point[] lineCornerPoints = line.getCornerPoints();
+                Rect lineFrame = line.getBoundingBox();
+                for (FirebaseVisionText.Element element: line.getElements()) ***REMOVED***
+                    String elementText = element.getText();
+                    Float elementConfidence = element.getConfidence();
+                    List<RecognizedLanguage> elementLanguages = element.getRecognizedLanguages();
+                    Point[] elementCornerPoints = element.getCornerPoints();
+                    Rect elementFrame = element.getBoundingBox();
+        ***REMOVED***
+    ***REMOVED***
+***REMOVED***
+
+***REMOVED***
+
+    private void dispatchTakePictureIntent() ***REMOVED***
+
+        Intent takePictureIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+        if (takePictureIntent.resolveActivity(getPackageManager()) != null) ***REMOVED***
+            File photoFile = null;
+            try ***REMOVED***
+                photoFile = createImageFile();
+    ***REMOVED*** catch (IOException ex) ***REMOVED***
+                // Error occurred while creating the File
+                return;
+    ***REMOVED***
+            if (photoFile != null) ***REMOVED***
+                Uri photoURI = FileProvider.getUriForFile(this,
+                        "com.zikorico.intouch.fileprovider",
+                        photoFile);
+                takePictureIntent.putExtra(MediaStore.EXTRA_OUTPUT, photoURI);
+                startActivityForResult(takePictureIntent, REQUEST_IMAGE_CAPTURE);
+    ***REMOVED***
+***REMOVED***
+***REMOVED***
+
+    private File createImageFile() throws IOException ***REMOVED***
+        String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date());
+        String imageFileName = "JPEG_" + timeStamp + "_";
+        File storageDir = getExternalFilesDir(Environment.DIRECTORY_PICTURES);
+        File image = File.createTempFile(
+                imageFileName,
+                ".jpg",
+                storageDir
+        );
+
+        mCurrentPhotoPath = image.getAbsolutePath();
+        return image;
 ***REMOVED***
 
     @Override
@@ -170,6 +291,18 @@ public class MainActivity extends AppCompatActivity
             restartLoader();
 ***REMOVED*** else if (requestCode == NEW_REQUEST_CODE && resultCode == RESULT_OK)***REMOVED***
             restartLoader();
+***REMOVED*** else if (requestCode == REQUEST_IMAGE_CAPTURE && resultCode == RESULT_OK)***REMOVED***
+//            Bundle extras = data.getExtras();
+//            Bitmap imageBitmap = (Bitmap) extras.get("data");
+            mLinearLayout.setVisibility(View.VISIBLE);
+//            mImageView.setImageBitmap(imageBitmap);
+            mImageView.setImageURI( Uri.fromFile(new File(mCurrentPhotoPath)));
+            mImageView.setClickable(true);
+//            processImage(imageBitmap);
 ***REMOVED***
+***REMOVED***
+
+    protected void hidImageView(View view)***REMOVED***
+        mLinearLayout.setVisibility(View.INVISIBLE);
 ***REMOVED***
 ***REMOVED***
