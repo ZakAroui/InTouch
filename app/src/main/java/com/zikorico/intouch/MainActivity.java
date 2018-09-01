@@ -66,7 +66,6 @@ public class MainActivity extends AppCompatActivity
 ***REMOVED***
 
         // TODO: 23-Oct-16 add a search bar at the top of the listview
-        // TODO: 01-Nov-16 add business card text recognition - ML Kit or OCR api
         // TODO - IMPLEMENT LANDING PAGE
         // TODO - IMPLEMENT BOTTOM NAVIGATION MENU
 ***REMOVED***
@@ -149,7 +148,7 @@ public class MainActivity extends AppCompatActivity
 ***REMOVED***
 
     public void scanBusinessCard(View view)***REMOVED***
-
+        // TODO: 01-Nov-16 add business card text recognition - ML Kit or OCR api
 ***REMOVED***
 
     @Override
