@@ -10,21 +10,21 @@ import android.provider.ContactsContract;
  * Created by ikazme on 8/30/18.
  */
 
-public class ContactsService ***REMOVED***
+public class ContactsService {
 
     public static final String BC_IMAGE_PATH = "data2";
     public static final String BC_CONTENT_TYPE = "com.zikorico.intouch/bc_path";
 
     private static ContactsService contactsService;
 
-    public static ContactsService getInstance()***REMOVED***
-        if (contactsService == null)***REMOVED***
+    public static ContactsService getInstance(){
+        if (contactsService == null){
             return new ContactsService();
-***REMOVED***
+        }
         return contactsService;
-***REMOVED***
+    }
 
-    public String getPhoneNumber(String[] uSelectionArgs, Context context)***REMOVED***
+    public String getPhoneNumber(String[] uSelectionArgs, Context context){
         Cursor pNumbersCur = context.getContentResolver().query(ContactsContract.CommonDataKinds.Phone.CONTENT_URI,
                 null,
                 ContactsContract.Data.LOOKUP_KEY + " = ?",
@@ -33,17 +33,17 @@ public class ContactsService ***REMOVED***
 
         String contactPhone = "";
         if (pNumbersCur.getCount() > 0)
-        ***REMOVED***
+        {
             pNumbersCur.moveToFirst();
             contactPhone = pNumbersCur.getString(pNumbersCur.getColumnIndex(ContactsContract.CommonDataKinds.Phone.NUMBER));
 
-***REMOVED***
+        }
         pNumbersCur.close();
 
         return contactPhone;
-***REMOVED***
+    }
 
-    public String[] getNameEmailContactId(String[] uSelectionArgs, Context context)***REMOVED***
+    public String[] getNameEmailContactId(String[] uSelectionArgs, Context context){
         Cursor emailCur = context.getContentResolver().query(
                 ContactsContract.Data.CONTENT_URI,
                 null,
@@ -56,29 +56,29 @@ public class ContactsService ***REMOVED***
         String contactEmail="";
         long contactId = 0;
         long rawContactId = 0;
-        if (emailCur.getCount() > 0) ***REMOVED***
+        if (emailCur.getCount() > 0) {
             emailCur.moveToFirst();
             contactName = emailCur.getString(emailCur.getColumnIndex(ContactsContract.Data.DISPLAY_NAME_PRIMARY));
             contactEmail = emailCur.getString(emailCur.getColumnIndex(ContactsContract.CommonDataKinds.Email.ADDRESS));
             contactId = emailCur.getLong(emailCur.getColumnIndex(ContactsContract.Data._ID));
             rawContactId = emailCur.getLong(emailCur.getColumnIndex(ContactsContract.Data.RAW_CONTACT_ID));
-***REMOVED***
+        }
         emailCur.close();
 
-        return new String[]***REMOVED***contactName, contactEmail, Long.toString(contactId), Long.toString(rawContactId)***REMOVED***;
-***REMOVED***
+        return new String[]{contactName, contactEmail, Long.toString(contactId), Long.toString(rawContactId)};
+    }
 
-    public void setImagePath(Context context, int rawContactId)***REMOVED***
+    public void setImagePath(Context context, int rawContactId){
         ContentValues cvs = new ContentValues();
         cvs.put(ContactsContract.Data.RAW_CONTACT_ID, 232);
         cvs.put(ContactsContract.Data.MIMETYPE, BC_CONTENT_TYPE);
         cvs.put(BC_IMAGE_PATH, "asdf://adfasa/ddd");
 
         Uri uri = context.getContentResolver().insert(ContactsContract.Data.CONTENT_URI, cvs);
-***REMOVED***
+    }
 
 
-    public String getNote(String[] uSelectionArgs, Context context)***REMOVED***
+    public String getNote(String[] uSelectionArgs, Context context){
         Cursor noteCur = context.getContentResolver().query(
                 ContactsContract.Data.CONTENT_URI,
                 null,
@@ -88,16 +88,16 @@ public class ContactsService ***REMOVED***
                 uSelectionArgs,
                 null);
         String contactNote = "";
-        if (noteCur.getCount() > 0) ***REMOVED***
+        if (noteCur.getCount() > 0) {
             noteCur.moveToFirst();
             contactNote = noteCur.getString(noteCur.getColumnIndex(ContactsContract.CommonDataKinds.Note.NOTE));
-***REMOVED***
+        }
         noteCur.close();
 
         return contactNote;
-***REMOVED***
+    }
 
-    public String getBcImagePath(String[] uSelectionArgs, Context context)***REMOVED***
+    public String getBcImagePath(String[] uSelectionArgs, Context context){
         Cursor pathCur = context.getContentResolver().query(
                 ContactsContract.Data.CONTENT_URI,
                 null,
@@ -107,14 +107,14 @@ public class ContactsService ***REMOVED***
                 uSelectionArgs,
                 null);
         String contactImagePath = "";
-        if (pathCur.getCount() > 0) ***REMOVED***
+        if (pathCur.getCount() > 0) {
             pathCur.moveToFirst();
             contactImagePath = pathCur.getString(pathCur.getColumnIndex(BC_IMAGE_PATH));
-***REMOVED***
+        }
         pathCur.close();
 
         return contactImagePath;
-***REMOVED***
+    }
 
-***REMOVED***
+}
 

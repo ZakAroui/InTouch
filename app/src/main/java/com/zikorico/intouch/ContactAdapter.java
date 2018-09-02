@@ -17,32 +17,32 @@ import com.zikorico.intouch.service.ContactsService;
  * Created by ikazme
  */
 
-public class ContactAdapter extends CursorAdapter ***REMOVED***
+public class ContactAdapter extends CursorAdapter {
 
     private Context context;
-    private static final String[] PHONE_PROJECTION  = new String[] ***REMOVED***
+    private static final String[] PHONE_PROJECTION  = new String[] {
             ContactsContract.Data._ID,
             ContactsContract.Data.LOOKUP_KEY,
             ContactsContract.Data.DISPLAY_NAME_PRIMARY,
             CommonDataKinds.Phone.NUMBER
-***REMOVED***;
+    };
 
     private static final String SELECTION = ContactsContract.Data.MIMETYPE + " = '" + CommonDataKinds.Phone.CONTENT_ITEM_TYPE + "'";
 
 
-    public ContactAdapter(Context context, Cursor c, int flags) ***REMOVED***
+    public ContactAdapter(Context context, Cursor c, int flags) {
         super(context, c, flags);
         this.context = context;
-***REMOVED***
+    }
 
     @Override
-    public View newView(Context context, Cursor cursor, ViewGroup parent) ***REMOVED***
+    public View newView(Context context, Cursor cursor, ViewGroup parent) {
         View view = LayoutInflater.from(context).inflate(R.layout.contact_list_item, parent, false);
         return view;
-***REMOVED***
+    }
 
     @Override
-    public void bindView(View view, Context context, Cursor cursor) ***REMOVED***
+    public void bindView(View view, Context context, Cursor cursor) {
         TextView nameTv = (TextView)view.findViewById(R.id.contact_textview);
         String contactName = cursor.getString(cursor.getColumnIndex(Data.DISPLAY_NAME_PRIMARY));
         nameTv.setText(contactName);
@@ -53,13 +53,13 @@ public class ContactAdapter extends CursorAdapter ***REMOVED***
 
         TextView phoneTv = (TextView) view.findViewById(R.id.phone_textView);
         int hasPnumber = cursor.getInt(cursor.getColumnIndex(CommonDataKinds.Phone.HAS_PHONE_NUMBER));
-        if (hasPnumber == 1)***REMOVED***
+        if (hasPnumber == 1){
             ContactsService cs = ContactsService.getInstance();
-            String[] mSelectionArgs = ***REMOVED*** cursor.getString(cursor.getColumnIndex(Data.LOOKUP_KEY)) ***REMOVED***;
+            String[] mSelectionArgs = { cursor.getString(cursor.getColumnIndex(Data.LOOKUP_KEY)) };
             String phoneNumber = cs.getPhoneNumber(mSelectionArgs, context);
             phoneTv.setText(phoneNumber);
-***REMOVED***
-***REMOVED***
+        }
+    }
 
 
-***REMOVED***
+}
