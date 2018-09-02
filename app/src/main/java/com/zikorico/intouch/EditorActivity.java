@@ -50,6 +50,7 @@ public class EditorActivity extends AppCompatActivity ***REMOVED***
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_editor);
 
+        //TODO - SHOW PHOTO OF CONTACT
         EditText nameEditor = (EditText) findViewById(R.id.name_editText);
         EditText emailEditor = (EditText) findViewById(R.id.email_editText);
         EditText phoneEditor = (EditText) findViewById(R.id.phone_editText);
@@ -98,6 +99,16 @@ public class EditorActivity extends AppCompatActivity ***REMOVED***
         String[] nameEmailContactid = cs.getNameEmailContactId(uSelectionArgs, getApplicationContext());
         String contactPhone = cs.getPhoneNumber(uSelectionArgs, getApplicationContext());
         String contactNote = cs.getNote(uSelectionArgs, getApplicationContext());
+
+        //TODO - MAKE THIS CLEANER
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M
+                && checkSelfPermission(Manifest.permission.WRITE_CONTACTS) != PackageManager.PERMISSION_GRANTED) ***REMOVED***
+            requestPermissions(new String[]***REMOVED***Manifest.permission.WRITE_CONTACTS***REMOVED***, MainActivity.PERMISSIONS_REQUEST_WRITE_CONTACTS);
+***REMOVED*** else ***REMOVED***
+            cs.setImagePath(getApplicationContext(), Integer.valueOf(nameEmailContactid[3]));
+            mSelectionArgs[0] = nameEmailContactid[3];
+            cs.getBcImagePath(mSelectionArgs , getApplicationContext());
+***REMOVED***
 
         return new String[]***REMOVED***nameEmailContactid[0], nameEmailContactid[1], contactPhone, contactNote, nameEmailContactid[2]***REMOVED***;
 ***REMOVED***

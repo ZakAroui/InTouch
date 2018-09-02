@@ -56,9 +56,8 @@ public class MainActivity extends AppCompatActivity
     private static final int REQUEST_IMAGE_CAPTURE = 1003;
 
     private static final int PERMISSIONS_REQUEST_READ_CONTACTS = 100;
-    private static final int PERMISSIONS_REQUEST_WRITE_EXT_STORAGE = 101;
-    private static final int PERMISSIONS_REQUEST_READ_EXT_STORAGE = 102;
-
+    public static final int PERMISSIONS_REQUEST_WRITE_CONTACTS = 102;
+    private static final int PERMISSIONS_REQUEST_WRITE_EXT_STORAGE = 103;
 
     private static final int EMAIL_QUERY_ID = 0;
     private ContactAdapter mCursorAdapterEmail;
@@ -98,7 +97,7 @@ public class MainActivity extends AppCompatActivity
 
         mImageView = findViewById(R.id.imageView);
         mLinearLayout = findViewById(R.id.imagePreviewLayout);
-        // TODO: 23-Oct-16 add a search bar at the top of the listview
+        // TODO - add a search bar at the top of the listview
         // TODO - IMPLEMENT LANDING PAGE
         // TODO - IMPLEMENT BOTTOM NAVIGATION MENU
 ***REMOVED***
