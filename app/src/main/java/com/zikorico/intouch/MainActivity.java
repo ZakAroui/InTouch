@@ -53,9 +53,11 @@ public class MainActivity extends AppCompatActivity
 ***REMOVED***
     private static final int EDITOR_REQUEST_CODE = 1001;
     private static final int NEW_REQUEST_CODE = 1002;
-    private static final int REQUEST_IMAGE_CAPTURE = 1;
+    private static final int REQUEST_IMAGE_CAPTURE = 1003;
 
     private static final int PERMISSIONS_REQUEST_READ_CONTACTS = 100;
+    private static final int PERMISSIONS_REQUEST_WRITE_EXT_STORAGE = 101;
+    private static final int PERMISSIONS_REQUEST_READ_EXT_STORAGE = 102;
 
 
     private static final int EMAIL_QUERY_ID = 0;
@@ -120,6 +122,13 @@ public class MainActivity extends AppCompatActivity
     ***REMOVED*** else ***REMOVED***
                 Toast.makeText(this, "Grant the permission to display contacts.", Toast.LENGTH_SHORT).show();
     ***REMOVED***
+***REMOVED*** else if(requestCode == PERMISSIONS_REQUEST_WRITE_EXT_STORAGE)***REMOVED***
+            if (grantResults[0] == PackageManager.PERMISSION_GRANTED) ***REMOVED***
+                Toast.makeText(this, "Permission granted!", Toast.LENGTH_SHORT).show();
+                dispatchTakePictureIntent();
+    ***REMOVED*** else ***REMOVED***
+                Toast.makeText(this, "Grant the permission to use the camera.", Toast.LENGTH_SHORT).show();
+    ***REMOVED***
 ***REMOVED***
 ***REMOVED***
 
@@ -181,15 +190,25 @@ public class MainActivity extends AppCompatActivity
     public void scanBusinessCard(View view)***REMOVED***
 
         if(getPackageManager().hasSystemFeature(PackageManager.FEATURE_CAMERA_ANY))***REMOVED***
-            dispatchTakePictureIntent();
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M
+                    && checkSelfPermission(Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) ***REMOVED***
+                requestPermissions(new String[]***REMOVED***Manifest.permission.WRITE_EXTERNAL_STORAGE***REMOVED***, PERMISSIONS_REQUEST_WRITE_EXT_STORAGE);
+    ***REMOVED*** else ***REMOVED***
+                dispatchTakePictureIntent();
+    ***REMOVED***
 ***REMOVED***
 ***REMOVED***
 
-    private void processImage(Bitmap imageBitmap)***REMOVED***
-        //TODO - GET IMAGE FROM OTHER SOURCES
+    private void processImage(Uri imageUri)***REMOVED***
+        //TODO - GET IMAGE FROM Media Type
 
         FirebaseVisionImage image;
-        image = FirebaseVisionImage.fromBitmap(imageBitmap);
+        try ***REMOVED***
+            image = FirebaseVisionImage.fromFilePath(getApplicationContext(), imageUri);
+***REMOVED*** catch (IOException e) ***REMOVED***
+            e.printStackTrace();
+            return;
+***REMOVED***
 
         FirebaseVisionTextRecognizer textRecognizer = FirebaseVision.getInstance()
                 .getOnDeviceTextRecognizer();
@@ -210,6 +229,7 @@ public class MainActivity extends AppCompatActivity
 ***REMOVED***
 
     private void processResultText(FirebaseVisionText result)***REMOVED***
+        //TODO - PROCESS TEXT RESULT
         String resultText = result.getText();
         Toast.makeText(getApplicationContext(), resultText, Toast.LENGTH_LONG).show();
 
@@ -245,13 +265,14 @@ public class MainActivity extends AppCompatActivity
             try ***REMOVED***
                 photoFile = createImageFile();
     ***REMOVED*** catch (IOException ex) ***REMOVED***
-                // Error occurred while creating the File
+                Toast.makeText(getApplicationContext(), "Error occurred while creating the File", Toast.LENGTH_SHORT);
                 return;
     ***REMOVED***
             if (photoFile != null) ***REMOVED***
                 Uri photoURI = FileProvider.getUriForFile(this,
                         "com.zikorico.intouch.fileprovider",
                         photoFile);
+
                 takePictureIntent.putExtra(MediaStore.EXTRA_OUTPUT, photoURI);
                 startActivityForResult(takePictureIntent, REQUEST_IMAGE_CAPTURE);
     ***REMOVED***
@@ -259,15 +280,20 @@ public class MainActivity extends AppCompatActivity
 ***REMOVED***
 
     private File createImageFile() throws IOException ***REMOVED***
+
         String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date());
         String imageFileName = "JPEG_" + timeStamp + "_";
-        File storageDir = getExternalFilesDir(Environment.DIRECTORY_PICTURES);
+        File storageDir = new File(Environment.getExternalStoragePublicDirectory(
+                Environment.DIRECTORY_PICTURES).getPath() + "/InTouch");
+        storageDir.mkdir();
+
         File image = File.createTempFile(
                 imageFileName,
                 ".jpg",
                 storageDir
         );
 
+        //TODO - PERSIST THE PATH FOR EACH CONTACT'S BC
         mCurrentPhotoPath = image.getAbsolutePath();
         return image;
 ***REMOVED***
@@ -291,14 +317,22 @@ public class MainActivity extends AppCompatActivity
             restartLoader();
 ***REMOVED*** else if (requestCode == NEW_REQUEST_CODE && resultCode == RESULT_OK)***REMOVED***
             restartLoader();
-***REMOVED*** else if (requestCode == REQUEST_IMAGE_CAPTURE && resultCode == RESULT_OK)***REMOVED***
-//            Bundle extras = data.getExtras();
-//            Bitmap imageBitmap = (Bitmap) extras.get("data");
-            mLinearLayout.setVisibility(View.VISIBLE);
-//            mImageView.setImageBitmap(imageBitmap);
-            mImageView.setImageURI( Uri.fromFile(new File(mCurrentPhotoPath)));
-            mImageView.setClickable(true);
-//            processImage(imageBitmap);
+***REMOVED*** else if (requestCode == REQUEST_IMAGE_CAPTURE)***REMOVED***
+            if(resultCode == RESULT_OK)***REMOVED***
+                mLinearLayout.setVisibility(View.VISIBLE);
+                File f = new File(mCurrentPhotoPath);
+                Uri imageUri = Uri.fromFile(f);
+                mImageView.setImageURI(imageUri);
+                mImageView.setClickable(true);
+
+                processImage(imageUri);
+
+    ***REMOVED*** else if(resultCode == RESULT_CANCELED)***REMOVED***
+                File f = new File(mCurrentPhotoPath);
+                f.delete();
+                mCurrentPhotoPath = null;
+
+    ***REMOVED***
 ***REMOVED***
 ***REMOVED***
 
