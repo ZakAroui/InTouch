@@ -5,11 +5,14 @@
 #dex vm
 *.dex
 
+google-services.json
+
 #local config
 local.properties
 
 *.iml
 .idea
+.idea/misc.xml
 .gradle
 /local.properties
 /.idea/workspace.xml

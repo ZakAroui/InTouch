@@ -50,7 +50,7 @@ import java.util.List;
 public class MainActivity extends AppCompatActivity
         implements LoaderManager.LoaderCallbacks<Cursor>,
         AdapterView.OnItemClickListener
-***REMOVED***
+{
     private static final int EDITOR_REQUEST_CODE = 1001;
     private static final int NEW_REQUEST_CODE = 1002;
     private static final int REQUEST_IMAGE_CAPTURE = 1003;
@@ -62,13 +62,13 @@ public class MainActivity extends AppCompatActivity
     private static final int EMAIL_QUERY_ID = 0;
     private ContactAdapter mCursorAdapterEmail;
 
-    private static final String[] EMAIL_PROJECTION  = new String[] ***REMOVED***
+    private static final String[] EMAIL_PROJECTION  = new String[] {
             ContactsContract.Data._ID,
             ContactsContract.Data.LOOKUP_KEY,
             ContactsContract.Data.DISPLAY_NAME_PRIMARY,
             ContactsContract.CommonDataKinds.Email.ADDRESS,
             ContactsContract.CommonDataKinds.Phone.HAS_PHONE_NUMBER
-***REMOVED***;
+    };
 
     private static final String SELECTION = ContactsContract.Data.MIMETYPE + " = '" + Email.CONTENT_ITEM_TYPE + "'";
     private static final String SORT_ORDER = ContactsContract.Data.DISPLAY_NAME_PRIMARY + " ASC ";
@@ -81,7 +81,7 @@ public class MainActivity extends AppCompatActivity
     private String mCurrentPhotoPath;
 
     @Override
-    protected void onCreate(Bundle savedInstanceState) ***REMOVED***
+    protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         getSupportActionBar().setDisplayShowHomeEnabled(true);
         getSupportActionBar().setLogo(R.mipmap.ic_launcher);
@@ -89,59 +89,59 @@ public class MainActivity extends AppCompatActivity
         setContentView(R.layout.activity_main);
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M
-                && checkSelfPermission(Manifest.permission.READ_CONTACTS) != PackageManager.PERMISSION_GRANTED) ***REMOVED***
-            requestPermissions(new String[]***REMOVED***Manifest.permission.READ_CONTACTS***REMOVED***, PERMISSIONS_REQUEST_READ_CONTACTS);
-***REMOVED*** else ***REMOVED***
+                && checkSelfPermission(Manifest.permission.READ_CONTACTS) != PackageManager.PERMISSION_GRANTED) {
+            requestPermissions(new String[]{Manifest.permission.READ_CONTACTS}, PERMISSIONS_REQUEST_READ_CONTACTS);
+        } else {
             populateContacts();
-***REMOVED***
+        }
 
         mImageView = findViewById(R.id.imageView);
         mLinearLayout = findViewById(R.id.imagePreviewLayout);
         // TODO - add a search bar at the top of the listview
         // TODO - IMPLEMENT LANDING PAGE
         // TODO - IMPLEMENT BOTTOM NAVIGATION MENU
-***REMOVED***
+    }
 
-    private void populateContacts()***REMOVED***
+    private void populateContacts(){
         mCursorAdapterEmail = new ContactAdapter(this,null,0);
 
         ListView list = (ListView) findViewById(R.id.contactsListview);
         list.setAdapter(mCursorAdapterEmail);
         list.setOnItemClickListener(this);
         getLoaderManager().initLoader(EMAIL_QUERY_ID, null, this);
-***REMOVED***
+    }
 
     @Override
     public void onRequestPermissionsResult(int requestCode, String[] permissions,
-                                           int[] grantResults) ***REMOVED***
-        if (requestCode == PERMISSIONS_REQUEST_READ_CONTACTS) ***REMOVED***
-            if (grantResults[0] == PackageManager.PERMISSION_GRANTED) ***REMOVED***
+                                           int[] grantResults) {
+        if (requestCode == PERMISSIONS_REQUEST_READ_CONTACTS) {
+            if (grantResults[0] == PackageManager.PERMISSION_GRANTED) {
                 Toast.makeText(this, "Permission granted!", Toast.LENGTH_SHORT).show();
                 populateContacts();
-    ***REMOVED*** else ***REMOVED***
+            } else {
                 Toast.makeText(this, "Grant the permission to display contacts.", Toast.LENGTH_SHORT).show();
-    ***REMOVED***
-***REMOVED*** else if(requestCode == PERMISSIONS_REQUEST_WRITE_EXT_STORAGE)***REMOVED***
-            if (grantResults[0] == PackageManager.PERMISSION_GRANTED) ***REMOVED***
+            }
+        } else if(requestCode == PERMISSIONS_REQUEST_WRITE_EXT_STORAGE){
+            if (grantResults[0] == PackageManager.PERMISSION_GRANTED) {
                 Toast.makeText(this, "Permission granted!", Toast.LENGTH_SHORT).show();
                 dispatchTakePictureIntent();
-    ***REMOVED*** else ***REMOVED***
+            } else {
                 Toast.makeText(this, "Grant the permission to use the camera.", Toast.LENGTH_SHORT).show();
-    ***REMOVED***
-***REMOVED***
-***REMOVED***
+            }
+        }
+    }
 
     @Override
-    public boolean onCreateOptionsMenu(Menu menu) ***REMOVED***
+    public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.menu_main, menu);
         return true;
-***REMOVED***
+    }
 
     @Override
-    public boolean onOptionsItemSelected(MenuItem item) ***REMOVED***
+    public boolean onOptionsItemSelected(MenuItem item) {
         int id = item.getItemId();
 
-        switch (id)***REMOVED***
+        switch (id){
             case R.id.action_create_contact:
                 Intent intent = new Intent(this, EditorActivity.class);
                 intent.putExtra(EditorActivity.EDITOR_TYPE, "insert");
@@ -150,17 +150,17 @@ public class MainActivity extends AppCompatActivity
             case R.id.action_scan_card:
                 scanBusinessCard(null);
                 break;
-***REMOVED***
+        }
         return super.onOptionsItemSelected(item);
-***REMOVED***
+    }
 
 
-    private void restartLoader() ***REMOVED***
+    private void restartLoader() {
         getLoaderManager().restartLoader(EMAIL_QUERY_ID, null, this);
-***REMOVED***
+    }
 
     @Override
-    public Loader<Cursor> onCreateLoader(int id, Bundle args) ***REMOVED***
+    public Loader<Cursor> onCreateLoader(int id, Bundle args) {
 
         return new CursorLoader(this,
                 ContactsContract.Data.CONTENT_URI,
@@ -168,117 +168,117 @@ public class MainActivity extends AppCompatActivity
                 SELECTION,
                 null,
                 SORT_ORDER);
-***REMOVED***
+    }
 
     @Override
-    public void onLoadFinished(Loader<Cursor> loader, Cursor data) ***REMOVED***
+    public void onLoadFinished(Loader<Cursor> loader, Cursor data) {
         mCursorAdapterEmail.swapCursor(data);
-***REMOVED***
+    }
 
     @Override
-    public void onLoaderReset(Loader<Cursor> loader) ***REMOVED***
+    public void onLoaderReset(Loader<Cursor> loader) {
         mCursorAdapterEmail.swapCursor(null);
-***REMOVED***
+    }
 
-    public void openContactsInsert(View view) ***REMOVED***
+    public void openContactsInsert(View view) {
         Intent intent = new Intent(this, EditorActivity.class);
         intent.putExtra(EditorActivity.EDITOR_TYPE, "insert");
         startActivityForResult(intent, NEW_REQUEST_CODE);
-***REMOVED***
+    }
 
-    public void scanBusinessCard(View view)***REMOVED***
+    public void scanBusinessCard(View view){
 
-        if(getPackageManager().hasSystemFeature(PackageManager.FEATURE_CAMERA_ANY))***REMOVED***
+        if(getPackageManager().hasSystemFeature(PackageManager.FEATURE_CAMERA_ANY)){
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M
-                    && checkSelfPermission(Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) ***REMOVED***
-                requestPermissions(new String[]***REMOVED***Manifest.permission.WRITE_EXTERNAL_STORAGE***REMOVED***, PERMISSIONS_REQUEST_WRITE_EXT_STORAGE);
-    ***REMOVED*** else ***REMOVED***
+                    && checkSelfPermission(Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
+                requestPermissions(new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE}, PERMISSIONS_REQUEST_WRITE_EXT_STORAGE);
+            } else {
                 dispatchTakePictureIntent();
-    ***REMOVED***
-***REMOVED***
-***REMOVED***
+            }
+        }
+    }
 
-    private void processImage(Uri imageUri)***REMOVED***
+    private void processImage(Uri imageUri){
         //TODO - GET IMAGE FROM Media Type
 
         FirebaseVisionImage image;
-        try ***REMOVED***
+        try {
             image = FirebaseVisionImage.fromFilePath(getApplicationContext(), imageUri);
-***REMOVED*** catch (IOException e) ***REMOVED***
+        } catch (IOException e) {
             e.printStackTrace();
             return;
-***REMOVED***
+        }
 
         FirebaseVisionTextRecognizer textRecognizer = FirebaseVision.getInstance()
                 .getOnDeviceTextRecognizer();
 
         textRecognizer.processImage(image)
-                .addOnSuccessListener(new OnSuccessListener<FirebaseVisionText>() ***REMOVED***
+                .addOnSuccessListener(new OnSuccessListener<FirebaseVisionText>() {
                     @Override
-                    public void onSuccess(FirebaseVisionText result) ***REMOVED***
+                    public void onSuccess(FirebaseVisionText result) {
                         processResultText(result);
-            ***REMOVED***
-        ***REMOVED***)
-                .addOnFailureListener( new OnFailureListener() ***REMOVED***
+                    }
+                })
+                .addOnFailureListener( new OnFailureListener() {
                             @Override
-                            public void onFailure(@NonNull Exception e) ***REMOVED***
+                            public void onFailure(@NonNull Exception e) {
                                 Toast.makeText(getApplicationContext(), "failed to process text!", Toast.LENGTH_SHORT).show();
-                    ***REMOVED***
-                ***REMOVED***);
-***REMOVED***
+                            }
+                        });
+    }
 
-    private void processResultText(FirebaseVisionText result)***REMOVED***
+    private void processResultText(FirebaseVisionText result){
         //TODO - PROCESS TEXT RESULT
         String resultText = result.getText();
         Toast.makeText(getApplicationContext(), resultText, Toast.LENGTH_LONG).show();
 
-        for (FirebaseVisionText.TextBlock block: result.getTextBlocks()) ***REMOVED***
+        for (FirebaseVisionText.TextBlock block: result.getTextBlocks()) {
             String blockText = block.getText();
             Float blockConfidence = block.getConfidence();
             List<RecognizedLanguage> blockLanguages = block.getRecognizedLanguages();
             Point[] blockCornerPoints = block.getCornerPoints();
             Rect blockFrame = block.getBoundingBox();
-            for (FirebaseVisionText.Line line: block.getLines()) ***REMOVED***
+            for (FirebaseVisionText.Line line: block.getLines()) {
                 String lineText = line.getText();
                 Float lineConfidence = line.getConfidence();
                 List<RecognizedLanguage> lineLanguages = line.getRecognizedLanguages();
                 Point[] lineCornerPoints = line.getCornerPoints();
                 Rect lineFrame = line.getBoundingBox();
-                for (FirebaseVisionText.Element element: line.getElements()) ***REMOVED***
+                for (FirebaseVisionText.Element element: line.getElements()) {
                     String elementText = element.getText();
                     Float elementConfidence = element.getConfidence();
                     List<RecognizedLanguage> elementLanguages = element.getRecognizedLanguages();
                     Point[] elementCornerPoints = element.getCornerPoints();
                     Rect elementFrame = element.getBoundingBox();
-        ***REMOVED***
-    ***REMOVED***
-***REMOVED***
+                }
+            }
+        }
 
-***REMOVED***
+    }
 
-    private void dispatchTakePictureIntent() ***REMOVED***
+    private void dispatchTakePictureIntent() {
 
         Intent takePictureIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-        if (takePictureIntent.resolveActivity(getPackageManager()) != null) ***REMOVED***
+        if (takePictureIntent.resolveActivity(getPackageManager()) != null) {
             File photoFile = null;
-            try ***REMOVED***
+            try {
                 photoFile = createImageFile();
-    ***REMOVED*** catch (IOException ex) ***REMOVED***
+            } catch (IOException ex) {
                 Toast.makeText(getApplicationContext(), "Error occurred while creating the File", Toast.LENGTH_SHORT);
                 return;
-    ***REMOVED***
-            if (photoFile != null) ***REMOVED***
+            }
+            if (photoFile != null) {
                 Uri photoURI = FileProvider.getUriForFile(this,
                         "com.zikorico.intouch.fileprovider",
                         photoFile);
 
                 takePictureIntent.putExtra(MediaStore.EXTRA_OUTPUT, photoURI);
                 startActivityForResult(takePictureIntent, REQUEST_IMAGE_CAPTURE);
-    ***REMOVED***
-***REMOVED***
-***REMOVED***
+            }
+        }
+    }
 
-    private File createImageFile() throws IOException ***REMOVED***
+    private File createImageFile() throws IOException {
 
         String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date());
         String imageFileName = "JPEG_" + timeStamp + "_";
@@ -295,10 +295,10 @@ public class MainActivity extends AppCompatActivity
         //TODO - PERSIST THE PATH FOR EACH CONTACT'S BC
         mCurrentPhotoPath = image.getAbsolutePath();
         return image;
-***REMOVED***
+    }
 
     @Override
-    public void onItemClick(AdapterView<?> parent, View view, int position, long id) ***REMOVED***
+    public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
         Cursor cursor = mCursorAdapterEmail.getCursor();
         cursor.moveToPosition(position);
         mContactKey = cursor.getString(cursor.getColumnIndex(ContactsContract.Data.LOOKUP_KEY));
@@ -308,16 +308,16 @@ public class MainActivity extends AppCompatActivity
         intent.putExtra(EditorActivity.CONTACT_LOOKUP, mContactKey);
         intent.putExtra(EditorActivity.CONTACT_NAME, mContactName);
         startActivityForResult(intent, EDITOR_REQUEST_CODE);
-***REMOVED***
+    }
 
     @Override
-    protected void onActivityResult(int requestCode, int resultCode, Intent data) ***REMOVED***
-        if (requestCode == EDITOR_REQUEST_CODE && resultCode == RESULT_OK)***REMOVED***
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        if (requestCode == EDITOR_REQUEST_CODE && resultCode == RESULT_OK){
             restartLoader();
-***REMOVED*** else if (requestCode == NEW_REQUEST_CODE && resultCode == RESULT_OK)***REMOVED***
+        } else if (requestCode == NEW_REQUEST_CODE && resultCode == RESULT_OK){
             restartLoader();
-***REMOVED*** else if (requestCode == REQUEST_IMAGE_CAPTURE)***REMOVED***
-            if(resultCode == RESULT_OK)***REMOVED***
+        } else if (requestCode == REQUEST_IMAGE_CAPTURE){
+            if(resultCode == RESULT_OK){
                 mLinearLayout.setVisibility(View.VISIBLE);
                 File f = new File(mCurrentPhotoPath);
                 Uri imageUri = Uri.fromFile(f);
@@ -326,16 +326,16 @@ public class MainActivity extends AppCompatActivity
 
                 processImage(imageUri);
 
-    ***REMOVED*** else if(resultCode == RESULT_CANCELED)***REMOVED***
+            } else if(resultCode == RESULT_CANCELED){
                 File f = new File(mCurrentPhotoPath);
                 f.delete();
                 mCurrentPhotoPath = null;
 
-    ***REMOVED***
-***REMOVED***
-***REMOVED***
+            }
+        }
+    }
 
-    protected void hidImageView(View view)***REMOVED***
+    protected void hidImageView(View view){
         mLinearLayout.setVisibility(View.INVISIBLE);
-***REMOVED***
-***REMOVED***
+    }
+}

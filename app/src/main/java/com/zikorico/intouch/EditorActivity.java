@@ -25,7 +25,7 @@ import com.zikorico.intouch.service.ContactsService;
  * Created by ikazme
  */
 
-public class EditorActivity extends AppCompatActivity ***REMOVED***
+public class EditorActivity extends AppCompatActivity {
     public static final String EDITOR_TYPE = "Type";
     public static final String CONTACT_LOOKUP = "ContactLookup";
     public static final String CONTACT_NAME = "ContactName";
@@ -35,7 +35,7 @@ public class EditorActivity extends AppCompatActivity ***REMOVED***
     private final String NEW_CONTACT = "new";
     private final String EDIT_CONTACT = "edit";
 
-    private String[] mSelectionArgs = ***REMOVED*** "" ***REMOVED***;
+    private String[] mSelectionArgs = { "" };
     private int INSERT_CONTACT_REQUEST = 201;
 
     private Uri mSelectedContactUri;
@@ -46,7 +46,7 @@ public class EditorActivity extends AppCompatActivity ***REMOVED***
 
 
     @Override
-    protected void onCreate(Bundle savedInstanceState) ***REMOVED***
+    protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_editor);
 
@@ -58,7 +58,7 @@ public class EditorActivity extends AppCompatActivity ***REMOVED***
 
         Intent intent = getIntent();
         String newActionType = intent.getStringExtra(EDITOR_TYPE);
-        if (newActionType == null) ***REMOVED***
+        if (newActionType == null) {
             String mLookup = intent.getStringExtra(CONTACT_LOOKUP);
             nextAction = EDIT_CONTACT;
             mSelectionArgs[0] = mLookup;
@@ -78,22 +78,22 @@ public class EditorActivity extends AppCompatActivity ***REMOVED***
             disableTexteditor(noteEditor);
 
             mSelectedContactUri = ContactsContract.Contacts.getLookupUri(Long.parseLong(contactData[4]), mLookup);
-***REMOVED***else ***REMOVED***
+        }else {
             setTitle("New Contact");
             nextAction = NEW_CONTACT;
             FloatingActionButton newContactFl = (FloatingActionButton) findViewById(R.id.editorFloatingButton);
             newContactFl.setImageResource(R.drawable.ic_action_add);
-***REMOVED***
-***REMOVED***
+        }
+    }
 
-    public void disableTexteditor(EditText editText)***REMOVED***
+    public void disableTexteditor(EditText editText){
         editText.setClickable(false);
         editText.setCursorVisible(false);
         editText.setFocusable(false);
         editText.setFocusableInTouchMode(false);
-***REMOVED***
+    }
 
-    public String[] getContactData(String[] uSelectionArgs)***REMOVED***
+    public String[] getContactData(String[] uSelectionArgs){
         ContactsService cs = ContactsService.getInstance();
 
         String[] nameEmailContactid = cs.getNameEmailContactId(uSelectionArgs, getApplicationContext());
@@ -102,80 +102,80 @@ public class EditorActivity extends AppCompatActivity ***REMOVED***
 
         //TODO - MAKE THIS CLEANER
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M
-                && checkSelfPermission(Manifest.permission.WRITE_CONTACTS) != PackageManager.PERMISSION_GRANTED) ***REMOVED***
-            requestPermissions(new String[]***REMOVED***Manifest.permission.WRITE_CONTACTS***REMOVED***, MainActivity.PERMISSIONS_REQUEST_WRITE_CONTACTS);
-***REMOVED*** else ***REMOVED***
+                && checkSelfPermission(Manifest.permission.WRITE_CONTACTS) != PackageManager.PERMISSION_GRANTED) {
+            requestPermissions(new String[]{Manifest.permission.WRITE_CONTACTS}, MainActivity.PERMISSIONS_REQUEST_WRITE_CONTACTS);
+        } else {
             cs.setImagePath(getApplicationContext(), Integer.valueOf(nameEmailContactid[3]));
             mSelectionArgs[0] = nameEmailContactid[3];
             cs.getBcImagePath(mSelectionArgs , getApplicationContext());
-***REMOVED***
+        }
 
-        return new String[]***REMOVED***nameEmailContactid[0], nameEmailContactid[1], contactPhone, contactNote, nameEmailContactid[2]***REMOVED***;
-***REMOVED***
+        return new String[]{nameEmailContactid[0], nameEmailContactid[1], contactPhone, contactNote, nameEmailContactid[2]};
+    }
 
     @Override
-    public boolean onCreateOptionsMenu(Menu menu) ***REMOVED***
-        if (nextAction == EDIT_CONTACT) ***REMOVED***
+    public boolean onCreateOptionsMenu(Menu menu) {
+        if (nextAction == EDIT_CONTACT) {
             getMenuInflater().inflate(R.menu.menu_editor, menu);
             MenuItem menuItem = menu.findItem(R.id.action_share);
             ShareActionProvider mShareActionProvider =
                     (ShareActionProvider) MenuItemCompat.getActionProvider(menuItem);
-            if (mShareActionProvider != null ) ***REMOVED***
+            if (mShareActionProvider != null ) {
                 mShareActionProvider.setShareIntent(createShareContactIntent());
-    ***REMOVED*** else ***REMOVED***
+            } else {
                 Log.w(LOG_TAG, "onCreateOptionsMenu(): Share Action Provider is null!");
-    ***REMOVED***
-***REMOVED***
+            }
+        }
         return true;
-***REMOVED***
+    }
 
-    private Intent createShareContactIntent() ***REMOVED***
+    private Intent createShareContactIntent() {
         Intent shareIntent = new Intent(Intent.ACTION_SEND);
         shareIntent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_WHEN_TASK_RESET);
         shareIntent.setType("text/plain");
         shareIntent.putExtra(Intent.EXTRA_TEXT,
                 mContactShare);
         return shareIntent;
-***REMOVED***
+    }
 
     @Override
-    public boolean onOptionsItemSelected(MenuItem item) ***REMOVED***
+    public boolean onOptionsItemSelected(MenuItem item) {
         int id = item.getItemId();
-        switch (id)***REMOVED***
+        switch (id){
             case R.id.action_delete:
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M
-                        && checkSelfPermission(Manifest.permission.WRITE_CONTACTS) != PackageManager.PERMISSION_GRANTED) ***REMOVED***
-                    requestPermissions(new String[]***REMOVED***Manifest.permission.WRITE_CONTACTS***REMOVED***, PERMISSIONS_REQUEST_WRITE_CONTACTS);
-        ***REMOVED*** else ***REMOVED***
+                        && checkSelfPermission(Manifest.permission.WRITE_CONTACTS) != PackageManager.PERMISSION_GRANTED) {
+                    requestPermissions(new String[]{Manifest.permission.WRITE_CONTACTS}, PERMISSIONS_REQUEST_WRITE_CONTACTS);
+                } else {
                     deleteContact();
-        ***REMOVED***
+                }
                 break;
-***REMOVED***
+        }
         return super.onOptionsItemSelected(item);
-***REMOVED***
+    }
 
     @Override
     public void onRequestPermissionsResult(int requestCode, String[] permissions,
-                                           int[] grantResults) ***REMOVED***
-        if (requestCode == PERMISSIONS_REQUEST_WRITE_CONTACTS) ***REMOVED***
-            if (grantResults[0] == PackageManager.PERMISSION_GRANTED) ***REMOVED***
+                                           int[] grantResults) {
+        if (requestCode == PERMISSIONS_REQUEST_WRITE_CONTACTS) {
+            if (grantResults[0] == PackageManager.PERMISSION_GRANTED) {
                 Toast.makeText(this, "Permission granted!", Toast.LENGTH_SHORT).show();
                 deleteContact();
-    ***REMOVED*** else ***REMOVED***
+            } else {
                 Toast.makeText(this, "Grant the permission to delete the contact.", Toast.LENGTH_SHORT).show();
-    ***REMOVED***
-***REMOVED***
-***REMOVED***
+            }
+        }
+    }
 
-    private void deleteContact() ***REMOVED***
+    private void deleteContact() {
         getContentResolver().delete(ContactsContract.RawContacts.CONTENT_URI,
-                ContactsContract.RawContacts.DISPLAY_NAME_PRIMARY+" = ?", new String[]***REMOVED***mName***REMOVED***);
+                ContactsContract.RawContacts.DISPLAY_NAME_PRIMARY+" = ?", new String[]{mName});
         Toast.makeText(this, mName+" Deleted.", Toast.LENGTH_SHORT).show();
         finish();
         setResult(RESULT_OK);
-***REMOVED***
+    }
 
-    public void openContactsEditor(View view) ***REMOVED***
+    public void openContactsEditor(View view) {
         EditText nameEditor = (EditText) findViewById(R.id.name_editText);
         EditText emailEditor = (EditText) findViewById(R.id.email_editText);
         EditText phoneEditor = (EditText) findViewById(R.id.phone_editText);
@@ -186,7 +186,7 @@ public class EditorActivity extends AppCompatActivity ***REMOVED***
         String phoneNw = String.valueOf(phoneEditor.getText());
         String noteNw = String.valueOf(noteEditor.getText());
 
-        switch (nextAction)***REMOVED***
+        switch (nextAction){
             case NEW_CONTACT:
                 Intent intent = new Intent(Intent.ACTION_INSERT);
                 intent.setType(ContactsContract.Contacts.CONTENT_TYPE);
@@ -194,21 +194,21 @@ public class EditorActivity extends AppCompatActivity ***REMOVED***
                 intent.putExtra(ContactsContract.Intents.Insert.EMAIL, emailNw);
                 intent.putExtra(ContactsContract.Intents.Insert.PHONE, phoneNw);
                 intent.putExtra(ContactsContract.Intents.Insert.NOTES, noteNw);
-                if (intent.resolveActivity(getPackageManager()) != null) ***REMOVED***
+                if (intent.resolveActivity(getPackageManager()) != null) {
                     startActivity(intent);
                     finish();
                     setResult(RESULT_OK);
-        ***REMOVED***
+                }
                 break;
             case EDIT_CONTACT:
                 Intent editIntent = new Intent(Intent.ACTION_EDIT);
                 editIntent.setDataAndType(mSelectedContactUri, ContactsContract.Contacts.CONTENT_ITEM_TYPE);
-                if (editIntent.resolveActivity(getPackageManager()) != null) ***REMOVED***
+                if (editIntent.resolveActivity(getPackageManager()) != null) {
                     startActivity(editIntent);
                     finish();
                     setResult(RESULT_OK);
-        ***REMOVED***
+                }
                 break;
-***REMOVED***
-***REMOVED***
-***REMOVED***
+        }
+    }
+}

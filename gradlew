@@ -15,16 +15,16 @@ APP_BASE_NAME=`basename "$0"`
 # Use the maximum available, or set MAX_FD != -1 to use that value.
 MAX_FD="maximum"
 
-warn ( ) ***REMOVED***
+warn ( ) {
     echo "$*"
-***REMOVED***
+}
 
-die ( ) ***REMOVED***
+die ( ) {
     echo
     echo "$*"
     echo
     exit 1
-***REMOVED***
+}
 
 # OS specific support (must be 'true' or 'false').
 cygwin=false
@@ -151,10 +151,10 @@ if $cygwin ; then
 fi
 
 # Split up the JVM_OPTS And GRADLE_OPTS values into an array, following the shell quoting and substitution rules
-function splitJvmOpts() ***REMOVED***
+function splitJvmOpts() {
     JVM_OPTS=("$@")
-***REMOVED***
+}
 eval splitJvmOpts $DEFAULT_JVM_OPTS $JAVA_OPTS $GRADLE_OPTS
-JVM_OPTS[$***REMOVED***#JVM_OPTS[*]***REMOVED***]="-Dorg.gradle.appname=$APP_BASE_NAME"
+JVM_OPTS[${#JVM_OPTS[*]}]="-Dorg.gradle.appname=$APP_BASE_NAME"
 
-exec "$JAVACMD" "$***REMOVED***JVM_OPTS[@]***REMOVED***" -classpath "$CLASSPATH" org.gradle.wrapper.GradleWrapperMain "$@"
+exec "$JAVACMD" "${JVM_OPTS[@]}" -classpath "$CLASSPATH" org.gradle.wrapper.GradleWrapperMain "$@"
