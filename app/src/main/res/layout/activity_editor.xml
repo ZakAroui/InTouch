@@ -72,4 +72,40 @@
         android:id="@+id/editorFloatingButton"
         android:onClick="openContactsEditor"
         app:elevation="0dp" />
+
+    <android.support.design.widget.FloatingActionButton
+        android:id="@+id/scanCardFloatingButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentLeft="true"
+        android:clickable="true"
+        android:onClick="scanBusinessCard"
+        app:backgroundTint="@android:color/holo_green_dark"
+        app:elevation="0dp"
+        app:fabSize="mini"
+        app:srcCompat="@drawable/ic_camera" />
+
+    <LinearLayout
+        android:id="@+id/imagePreviewLayout"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical"
+        android:visibility="invisible">
+
+        <ImageButton
+            android:id="@+id/imageCloseButton"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:onClick="hideImageView"
+            app:srcCompat="@drawable/ic_close_image" />
+
+        <ImageView
+            android:id="@+id/imageView"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:padding="0dp"
+            app:srcCompat="@drawable/common_full_open_on_phone" />
+
+    </LinearLayout>
 </RelativeLayout>

@@ -3,7 +3,6 @@ package com.zikorico.intouch;
 import android.Manifest;
 import android.content.Intent;
 import android.content.pm.PackageManager;
-import android.database.Cursor;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
@@ -17,9 +16,17 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.EditText;
+import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.Toast;
 
 import com.zikorico.intouch.service.ContactsService;
+import com.zikorico.intouch.service.PermissionsService;
+import com.zikorico.intouch.service.ScanningService;
+
+import static com.zikorico.intouch.utils.Utils.PERMISSIONS_REQUEST_WRITE_CONTACTS;
+import static com.zikorico.intouch.utils.Utils.PERMISSIONS_REQUEST_WRITE_EXT_STORAGE;
+import static com.zikorico.intouch.utils.Utils.REQUEST_IMAGE_CAPTURE;
 
 /**
  * Created by ikazme
@@ -36,19 +43,22 @@ public class EditorActivity extends AppCompatActivity {
     private final String EDIT_CONTACT = "edit";
 
     private String[] mSelectionArgs = { "" };
-    private int INSERT_CONTACT_REQUEST = 201;
 
     private Uri mSelectedContactUri;
     private String mName;
     private String mContactShare;
 
-    private static final int PERMISSIONS_REQUEST_WRITE_CONTACTS = 101;
-
+    private ImageView mImageView;
+    private LinearLayout mLinearLayout;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_editor);
+
+        mImageView = findViewById(R.id.imageView);
+        mLinearLayout = findViewById(R.id.imagePreviewLayout);
+
 
         //TODO - SHOW PHOTO OF CONTACT
         EditText nameEditor = (EditText) findViewById(R.id.name_editText);
@@ -101,10 +111,7 @@ public class EditorActivity extends AppCompatActivity {
         String contactNote = cs.getNote(uSelectionArgs, getApplicationContext());
 
         //TODO - MAKE THIS CLEANER
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M
-                && checkSelfPermission(Manifest.permission.WRITE_CONTACTS) != PackageManager.PERMISSION_GRANTED) {
-            requestPermissions(new String[]{Manifest.permission.WRITE_CONTACTS}, MainActivity.PERMISSIONS_REQUEST_WRITE_CONTACTS);
-        } else {
+        if(PermissionsService.getInstance().hasContactsWritePerm(this)){
             cs.setImagePath(getApplicationContext(), Integer.valueOf(nameEmailContactid[3]));
             mSelectionArgs[0] = nameEmailContactid[3];
             cs.getBcImagePath(mSelectionArgs , getApplicationContext());
@@ -143,10 +150,7 @@ public class EditorActivity extends AppCompatActivity {
         int id = item.getItemId();
         switch (id){
             case R.id.action_delete:
-                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M
-                        && checkSelfPermission(Manifest.permission.WRITE_CONTACTS) != PackageManager.PERMISSION_GRANTED) {
-                    requestPermissions(new String[]{Manifest.permission.WRITE_CONTACTS}, PERMISSIONS_REQUEST_WRITE_CONTACTS);
-                } else {
+                if(PermissionsService.getInstance().hasContactsWritePerm(this)){
                     deleteContact();
                 }
                 break;
@@ -163,6 +167,13 @@ public class EditorActivity extends AppCompatActivity {
                 deleteContact();
             } else {
                 Toast.makeText(this, "Grant the permission to delete the contact.", Toast.LENGTH_SHORT).show();
+            }
+        } else if(requestCode == PERMISSIONS_REQUEST_WRITE_EXT_STORAGE){
+            if (grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                Toast.makeText(this, "Permission granted!", Toast.LENGTH_SHORT).show();
+                ScanningService.getInstance().dispatchTakePictureIntent(getPackageManager(), getApplicationContext(), this);
+            } else {
+                Toast.makeText(this, "Grant the permission to use the camera.", Toast.LENGTH_SHORT).show();
             }
         }
     }
@@ -211,4 +222,35 @@ public class EditorActivity extends AppCompatActivity {
                 break;
         }
     }
+
+    public void scanBusinessCard(View view){
+        if(getPackageManager().hasSystemFeature(PackageManager.FEATURE_CAMERA_ANY)){
+            if(PermissionsService.getInstance().hasWriteExternalStoragePerm(this)){
+                ScanningService.getInstance().dispatchTakePictureIntent(getPackageManager(), getApplicationContext(), this);
+            }
+        }
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+         if (requestCode == REQUEST_IMAGE_CAPTURE){
+
+             if(resultCode == RESULT_OK){
+                 Uri imageUri = ScanningService.getInstance().getUriOfImage();
+                 mLinearLayout.setVisibility(View.VISIBLE);
+                 mImageView.setImageURI(imageUri);
+                 mImageView.setClickable(true);
+
+                 ScanningService.getInstance().processImage(imageUri, getApplicationContext());
+
+             } else if(resultCode == RESULT_CANCELED){
+                 ScanningService.getInstance().clearImage();
+             }
+         }
+    }
+
+    protected void hideImageView(View view){
+        mLinearLayout.setVisibility(View.INVISIBLE);
+    }
+
 }
