@@ -17,9 +17,12 @@ public class ContactsService {
 
     private static ContactsService contactsService;
 
+    private ContactsService() {
+    }
+
     public static ContactsService getInstance(){
         if (contactsService == null){
-            return new ContactsService();
+            contactsService = new ContactsService();
         }
         return contactsService;
     }
