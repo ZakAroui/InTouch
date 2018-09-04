@@ -36,12 +36,16 @@ import com.google.firebase.ml.vision.common.FirebaseVisionImage;
 import com.google.firebase.ml.vision.text.FirebaseVisionText;
 import com.google.firebase.ml.vision.text.FirebaseVisionTextRecognizer;
 import com.google.firebase.ml.vision.text.RecognizedLanguage;
+import com.zikorico.intouch.service.PermissionsService;
+import com.zikorico.intouch.service.ScanningService;
 
 import java.io.File;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
+
+import static com.zikorico.intouch.utils.Utils.*;
 
 /**
  * Created by ikazme
@@ -51,16 +55,7 @@ public class MainActivity extends AppCompatActivity
         implements LoaderManager.LoaderCallbacks<Cursor>,
         AdapterView.OnItemClickListener
 {
-    private static final int EDITOR_REQUEST_CODE = 1001;
-    private static final int NEW_REQUEST_CODE = 1002;
-    private static final int REQUEST_IMAGE_CAPTURE = 1003;
-
-    private static final int PERMISSIONS_REQUEST_READ_CONTACTS = 100;
-    public static final int PERMISSIONS_REQUEST_WRITE_CONTACTS = 102;
-    private static final int PERMISSIONS_REQUEST_WRITE_EXT_STORAGE = 103;
-
-    private static final int EMAIL_QUERY_ID = 0;
-    private ContactAdapter mCursorAdapterEmail;
+     private ContactAdapter mCursorAdapterEmail;
 
     private static final String[] EMAIL_PROJECTION  = new String[] {
             ContactsContract.Data._ID,
@@ -78,7 +73,6 @@ public class MainActivity extends AppCompatActivity
 
     private ImageView mImageView;
     private LinearLayout mLinearLayout;
-    private String mCurrentPhotoPath;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -88,10 +82,7 @@ public class MainActivity extends AppCompatActivity
         getSupportActionBar().setDisplayUseLogoEnabled(true);
         setContentView(R.layout.activity_main);
 
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M
-                && checkSelfPermission(Manifest.permission.READ_CONTACTS) != PackageManager.PERMISSION_GRANTED) {
-            requestPermissions(new String[]{Manifest.permission.READ_CONTACTS}, PERMISSIONS_REQUEST_READ_CONTACTS);
-        } else {
+        if(PermissionsService.getInstance().hasContactsReadPerm(this)){
             populateContacts();
         }
 
@@ -124,7 +115,7 @@ public class MainActivity extends AppCompatActivity
         } else if(requestCode == PERMISSIONS_REQUEST_WRITE_EXT_STORAGE){
             if (grantResults[0] == PackageManager.PERMISSION_GRANTED) {
                 Toast.makeText(this, "Permission granted!", Toast.LENGTH_SHORT).show();
-                dispatchTakePictureIntent();
+                ScanningService.getInstance().dispatchTakePictureIntent(getPackageManager(), getApplicationContext(), this);
             } else {
                 Toast.makeText(this, "Grant the permission to use the camera.", Toast.LENGTH_SHORT).show();
             }
@@ -161,7 +152,6 @@ public class MainActivity extends AppCompatActivity
 
     @Override
     public Loader<Cursor> onCreateLoader(int id, Bundle args) {
-
         return new CursorLoader(this,
                 ContactsContract.Data.CONTENT_URI,
                 EMAIL_PROJECTION,
@@ -187,114 +177,13 @@ public class MainActivity extends AppCompatActivity
     }
 
     public void scanBusinessCard(View view){
-
+        //TODO - ALLOW USER TO CHOOSE BETWEEN FILE AND PHOTO
+        //TODO - ALLOW USER TO ROTATE PICTURE
         if(getPackageManager().hasSystemFeature(PackageManager.FEATURE_CAMERA_ANY)){
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M
-                    && checkSelfPermission(Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
-                requestPermissions(new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE}, PERMISSIONS_REQUEST_WRITE_EXT_STORAGE);
-            } else {
-                dispatchTakePictureIntent();
+            if(PermissionsService.getInstance().hasWriteExternalStoragePerm(this)){
+                ScanningService.getInstance().dispatchTakePictureIntent(getPackageManager(), getApplicationContext(), this);
             }
         }
-    }
-
-    private void processImage(Uri imageUri){
-        //TODO - GET IMAGE FROM Media Type
-
-        FirebaseVisionImage image;
-        try {
-            image = FirebaseVisionImage.fromFilePath(getApplicationContext(), imageUri);
-        } catch (IOException e) {
-            e.printStackTrace();
-            return;
-        }
-
-        FirebaseVisionTextRecognizer textRecognizer = FirebaseVision.getInstance()
-                .getOnDeviceTextRecognizer();
-
-        textRecognizer.processImage(image)
-                .addOnSuccessListener(new OnSuccessListener<FirebaseVisionText>() {
-                    @Override
-                    public void onSuccess(FirebaseVisionText result) {
-                        processResultText(result);
-                    }
-                })
-                .addOnFailureListener( new OnFailureListener() {
-                            @Override
-                            public void onFailure(@NonNull Exception e) {
-                                Toast.makeText(getApplicationContext(), "failed to process text!", Toast.LENGTH_SHORT).show();
-                            }
-                        });
-    }
-
-    private void processResultText(FirebaseVisionText result){
-        //TODO - PROCESS TEXT RESULT
-        String resultText = result.getText();
-        Toast.makeText(getApplicationContext(), resultText, Toast.LENGTH_LONG).show();
-
-        for (FirebaseVisionText.TextBlock block: result.getTextBlocks()) {
-            String blockText = block.getText();
-            Float blockConfidence = block.getConfidence();
-            List<RecognizedLanguage> blockLanguages = block.getRecognizedLanguages();
-            Point[] blockCornerPoints = block.getCornerPoints();
-            Rect blockFrame = block.getBoundingBox();
-            for (FirebaseVisionText.Line line: block.getLines()) {
-                String lineText = line.getText();
-                Float lineConfidence = line.getConfidence();
-                List<RecognizedLanguage> lineLanguages = line.getRecognizedLanguages();
-                Point[] lineCornerPoints = line.getCornerPoints();
-                Rect lineFrame = line.getBoundingBox();
-                for (FirebaseVisionText.Element element: line.getElements()) {
-                    String elementText = element.getText();
-                    Float elementConfidence = element.getConfidence();
-                    List<RecognizedLanguage> elementLanguages = element.getRecognizedLanguages();
-                    Point[] elementCornerPoints = element.getCornerPoints();
-                    Rect elementFrame = element.getBoundingBox();
-                }
-            }
-        }
-
-    }
-
-    private void dispatchTakePictureIntent() {
-
-        Intent takePictureIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-        if (takePictureIntent.resolveActivity(getPackageManager()) != null) {
-            File photoFile = null;
-            try {
-                photoFile = createImageFile();
-            } catch (IOException ex) {
-                Toast.makeText(getApplicationContext(), "Error occurred while creating the File", Toast.LENGTH_SHORT);
-                return;
-            }
-            if (photoFile != null) {
-                Uri photoURI = FileProvider.getUriForFile(this,
-                        "com.zikorico.intouch.fileprovider",
-                        photoFile);
-
-                takePictureIntent.putExtra(MediaStore.EXTRA_OUTPUT, photoURI);
-                startActivityForResult(takePictureIntent, REQUEST_IMAGE_CAPTURE);
-            }
-        }
-    }
-
-    private File createImageFile() throws IOException {
-
-        String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date());
-        String imageFileName = "JPEG_" + timeStamp + "_";
-        File storageDir = new File(Environment.getExternalStoragePublicDirectory(
-                Environment.DIRECTORY_PICTURES).getPath() + "/InTouch");
-        storageDir.mkdir();
-
-        File image = File.createTempFile(
-                imageFileName,
-                ".jpg",
-                storageDir
-        );
-
-        //TODO - PERSIST THE PATH FOR EACH CONTACT'S BC
-        mCurrentPhotoPath = image.getAbsolutePath();
-        return image;
     }
 
     @Override
@@ -317,25 +206,22 @@ public class MainActivity extends AppCompatActivity
         } else if (requestCode == NEW_REQUEST_CODE && resultCode == RESULT_OK){
             restartLoader();
         } else if (requestCode == REQUEST_IMAGE_CAPTURE){
+
             if(resultCode == RESULT_OK){
+                Uri imageUri = ScanningService.getInstance().getUriOfImage();
                 mLinearLayout.setVisibility(View.VISIBLE);
-                File f = new File(mCurrentPhotoPath);
-                Uri imageUri = Uri.fromFile(f);
                 mImageView.setImageURI(imageUri);
                 mImageView.setClickable(true);
 
-                processImage(imageUri);
+                ScanningService.getInstance().processImage(imageUri, getApplicationContext());
 
             } else if(resultCode == RESULT_CANCELED){
-                File f = new File(mCurrentPhotoPath);
-                f.delete();
-                mCurrentPhotoPath = null;
-
+                ScanningService.getInstance().clearImage();
             }
         }
     }
 
-    protected void hidImageView(View view){
+    protected void hideImageView(View view){
         mLinearLayout.setVisibility(View.INVISIBLE);
     }
 }

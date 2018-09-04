@@ -53,7 +53,7 @@
             android:id="@+id/imageCloseButton"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:onClick="hidImageView"
+            android:onClick="hideImageView"
             app:srcCompat="@drawable/ic_close_image" />
 
         <ImageView
