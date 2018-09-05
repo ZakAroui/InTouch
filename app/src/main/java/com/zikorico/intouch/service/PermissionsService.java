@@ -6,9 +6,7 @@ import android.content.pm.PackageManager;
 import android.os.Build;
 import android.support.v7.app.AppCompatActivity;
 
-import static com.zikorico.intouch.utils.Utils.PERMISSIONS_REQUEST_READ_CONTACTS;
-import static com.zikorico.intouch.utils.Utils.PERMISSIONS_REQUEST_WRITE_CONTACTS;
-import static com.zikorico.intouch.utils.Utils.PERMISSIONS_REQUEST_WRITE_EXT_STORAGE;
+import static com.zikorico.intouch.utils.Utils.*;
 
 /**
  * Created by ikazme on 9/3/18.
@@ -54,11 +52,11 @@ public class PermissionsService {
         }
     }
 
-    public boolean hasContactsWritePerm(AppCompatActivity activity){
+    public boolean hasContactsWritePerm(AppCompatActivity activity, int reqCode){
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M
                 && activity.checkSelfPermission(Manifest.permission.WRITE_CONTACTS) != PackageManager.PERMISSION_GRANTED) {
-            activity.requestPermissions(new String[]{Manifest.permission.WRITE_CONTACTS}, PERMISSIONS_REQUEST_WRITE_CONTACTS);
+            activity.requestPermissions(new String[]{Manifest.permission.WRITE_CONTACTS}, reqCode);
             return false;
         } else {
             return true;

@@ -24,9 +24,7 @@ import com.zikorico.intouch.service.ContactsService;
 import com.zikorico.intouch.service.PermissionsService;
 import com.zikorico.intouch.service.ScanningService;
 
-import static com.zikorico.intouch.utils.Utils.PERMISSIONS_REQUEST_WRITE_CONTACTS;
-import static com.zikorico.intouch.utils.Utils.PERMISSIONS_REQUEST_WRITE_EXT_STORAGE;
-import static com.zikorico.intouch.utils.Utils.REQUEST_IMAGE_CAPTURE;
+import static com.zikorico.intouch.utils.Utils.*;
 
 /**
  * Created by ikazme
@@ -111,7 +109,7 @@ public class EditorActivity extends AppCompatActivity {
         String contactNote = cs.getNote(uSelectionArgs, getApplicationContext());
 
         //TODO - MAKE THIS CLEANER
-        if(PermissionsService.getInstance().hasContactsWritePerm(this)){
+        if(PermissionsService.getInstance().hasContactsWritePerm(this, PERMISSIONS_REQUEST_WRITE_CONTACTS)){
             cs.setImagePath(getApplicationContext(), Integer.valueOf(nameEmailContactid[3]));
             mSelectionArgs[0] = nameEmailContactid[3];
             cs.getBcImagePath(mSelectionArgs , getApplicationContext());
@@ -150,7 +148,7 @@ public class EditorActivity extends AppCompatActivity {
         int id = item.getItemId();
         switch (id){
             case R.id.action_delete:
-                if(PermissionsService.getInstance().hasContactsWritePerm(this)){
+                if(PermissionsService.getInstance().hasContactsWritePerm(this, PERMISSIONS_REQUEST_DELETE_CONTACTS)){
                     deleteContact();
                 }
                 break;
@@ -162,6 +160,12 @@ public class EditorActivity extends AppCompatActivity {
     public void onRequestPermissionsResult(int requestCode, String[] permissions,
                                            int[] grantResults) {
         if (requestCode == PERMISSIONS_REQUEST_WRITE_CONTACTS) {
+            if (grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                Toast.makeText(this, "Permission granted!", Toast.LENGTH_SHORT).show();
+            } else {
+                Toast.makeText(this, "Grant the permission to delete the contact.", Toast.LENGTH_SHORT).show();
+            }
+        } else if (requestCode == PERMISSIONS_REQUEST_DELETE_CONTACTS) {
             if (grantResults[0] == PackageManager.PERMISSION_GRANTED) {
                 Toast.makeText(this, "Permission granted!", Toast.LENGTH_SHORT).show();
                 deleteContact();

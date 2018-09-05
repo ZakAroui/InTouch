@@ -13,6 +13,7 @@ public class Utils {
 
     public static final int PERMISSIONS_REQUEST_READ_CONTACTS = 100;
     public static final int PERMISSIONS_REQUEST_WRITE_CONTACTS = 102;
+    public static final int PERMISSIONS_REQUEST_DELETE_CONTACTS = 102;
     public static final int PERMISSIONS_REQUEST_WRITE_EXT_STORAGE = 103;
 
     public int INSERT_CONTACT_REQUEST = 201;
