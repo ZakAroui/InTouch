@@ -102,7 +102,7 @@ public class ContactsService {
 
     public String getBcImagePath(String[] uSelectionArgs, Context context){
         Cursor pathCur = context.getContentResolver().query(
-                ContactsContract.Data.CONTENT_URI,
+                ContactsContract.Contacts.CONTENT_URI,
                 null,
                 ContactsContract.Data.RAW_CONTACT_ID + " = ? AND " +
                         ContactsContract.Contacts.Data.MIMETYPE + " = '"

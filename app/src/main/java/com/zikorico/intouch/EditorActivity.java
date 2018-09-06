@@ -1,6 +1,7 @@
 package com.zikorico.intouch;
 
 import android.Manifest;
+import android.content.ContentValues;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.net.Uri;
@@ -23,6 +24,8 @@ import android.widget.Toast;
 import com.zikorico.intouch.service.ContactsService;
 import com.zikorico.intouch.service.PermissionsService;
 import com.zikorico.intouch.service.ScanningService;
+
+import java.util.ArrayList;
 
 import static com.zikorico.intouch.utils.Utils.*;
 
@@ -203,16 +206,28 @@ public class EditorActivity extends AppCompatActivity {
 
         switch (nextAction){
             case NEW_CONTACT:
-                Intent intent = new Intent(Intent.ACTION_INSERT);
+                Intent intent = new Intent(Intent.ACTION_INSERT, ContactsContract.Contacts.CONTENT_URI);
                 intent.setType(ContactsContract.Contacts.CONTENT_TYPE);
                 intent.putExtra(ContactsContract.Intents.Insert.NAME, nameNw);
                 intent.putExtra(ContactsContract.Intents.Insert.EMAIL, emailNw);
                 intent.putExtra(ContactsContract.Intents.Insert.PHONE, phoneNw);
                 intent.putExtra(ContactsContract.Intents.Insert.NOTES, noteNw);
+
+                ArrayList<ContentValues> data = new ArrayList<ContentValues>();
+
+                ContentValues cvs = new ContentValues();
+                cvs.put(ContactsContract.Data.MIMETYPE, ContactsService.BC_CONTENT_TYPE);
+                cvs.put(ContactsService.BC_IMAGE_PATH, "asdf://adfasa/iamhereyoyo");
+                data.add(cvs);
+
+                intent.putParcelableArrayListExtra(ContactsContract.Intents.Insert.DATA, data);
+
+                startActivity(intent);
+
                 if (intent.resolveActivity(getPackageManager()) != null) {
-                    startActivity(intent);
-                    finish();
-                    setResult(RESULT_OK);
+                    startActivityForResult(intent, REQUEST_ADD_CONTACT);
+//                    finish();
+//                    setResult(RESULT_OK);
                 }
                 break;
             case EDIT_CONTACT:
