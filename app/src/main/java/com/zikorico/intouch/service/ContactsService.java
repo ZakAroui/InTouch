@@ -71,16 +71,6 @@ public class ContactsService {
         return new String[]{contactName, contactEmail, Long.toString(contactId), Long.toString(rawContactId)};
     }
 
-    public void setImagePath(Context context, int rawContactId){
-        ContentValues cvs = new ContentValues();
-        cvs.put(ContactsContract.Data.RAW_CONTACT_ID, 232);
-        cvs.put(ContactsContract.Data.MIMETYPE, BC_CONTENT_TYPE);
-        cvs.put(BC_IMAGE_PATH, "asdf://adfasa/ddd");
-
-        Uri uri = context.getContentResolver().insert(ContactsContract.Data.CONTENT_URI, cvs);
-    }
-
-
     public String getNote(String[] uSelectionArgs, Context context){
         Cursor noteCur = context.getContentResolver().query(
                 ContactsContract.Data.CONTENT_URI,
@@ -102,14 +92,16 @@ public class ContactsService {
 
     public String getBcImagePath(String[] uSelectionArgs, Context context){
         Cursor pathCur = context.getContentResolver().query(
-                ContactsContract.Contacts.CONTENT_URI,
+                ContactsContract.Data.CONTENT_URI,
                 null,
-                ContactsContract.Data.RAW_CONTACT_ID + " = ? AND " +
-                        ContactsContract.Contacts.Data.MIMETYPE + " = '"
+                        ContactsContract.Data.MIMETYPE + " = '"
                         + BC_CONTENT_TYPE + "'",
-                uSelectionArgs,
+                null,
                 null);
         String contactImagePath = "";
+        while (pathCur.moveToNext()){
+            contactImagePath = pathCur.getString(pathCur.getColumnIndex(BC_IMAGE_PATH));
+        }
         if (pathCur.getCount() > 0) {
             pathCur.moveToFirst();
             contactImagePath = pathCur.getString(pathCur.getColumnIndex(BC_IMAGE_PATH));

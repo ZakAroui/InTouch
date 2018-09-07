@@ -1,6 +1,7 @@
 package com.zikorico.intouch;
 
 import android.Manifest;
+import android.content.ContentProviderOperation;
 import android.content.ContentValues;
 import android.content.Intent;
 import android.content.pm.PackageManager;
@@ -49,6 +50,8 @@ public class EditorActivity extends AppCompatActivity {
     private String mName;
     private String mContactShare;
 
+    private String mLookup;
+
     private ImageView mImageView;
     private LinearLayout mLinearLayout;
 
@@ -67,10 +70,11 @@ public class EditorActivity extends AppCompatActivity {
         EditText phoneEditor = (EditText) findViewById(R.id.phone_editText);
         EditText noteEditor = (EditText) findViewById(R.id.note_editText);
 
+
         Intent intent = getIntent();
         String newActionType = intent.getStringExtra(EDITOR_TYPE);
         if (newActionType == null) {
-            String mLookup = intent.getStringExtra(CONTACT_LOOKUP);
+            mLookup = intent.getStringExtra(CONTACT_LOOKUP);
             nextAction = EDIT_CONTACT;
             mSelectionArgs[0] = mLookup;
             mName = intent.getStringExtra(CONTACT_NAME);
@@ -113,9 +117,9 @@ public class EditorActivity extends AppCompatActivity {
 
         //TODO - MAKE THIS CLEANER
         if(PermissionsService.getInstance().hasContactsWritePerm(this, PERMISSIONS_REQUEST_WRITE_CONTACTS)){
-            cs.setImagePath(getApplicationContext(), Integer.valueOf(nameEmailContactid[3]));
-            mSelectionArgs[0] = nameEmailContactid[3];
-            cs.getBcImagePath(mSelectionArgs , getApplicationContext());
+//            cs.setImagePath(getApplicationContext(), Integer.valueOf(nameEmailContactid[3]));
+//            mSelectionArgs[0] = nameEmailContactid[3];
+            cs.getBcImagePath(uSelectionArgs , getApplicationContext());
         }
 
         return new String[]{nameEmailContactid[0], nameEmailContactid[1], contactPhone, contactNote, nameEmailContactid[2]};
@@ -199,6 +203,8 @@ public class EditorActivity extends AppCompatActivity {
         EditText phoneEditor = (EditText) findViewById(R.id.phone_editText);
         EditText noteEditor = (EditText) findViewById(R.id.note_editText);
 
+        FloatingActionButton fButton = findViewById(R.id.editorFloatingButton);
+
         String nameNw = String.valueOf(nameEditor.getText());
         String emailNw = String.valueOf(emailEditor.getText());
         String phoneNw = String.valueOf(phoneEditor.getText());
@@ -206,29 +212,75 @@ public class EditorActivity extends AppCompatActivity {
 
         switch (nextAction){
             case NEW_CONTACT:
-                Intent intent = new Intent(Intent.ACTION_INSERT, ContactsContract.Contacts.CONTENT_URI);
-                intent.setType(ContactsContract.Contacts.CONTENT_TYPE);
-                intent.putExtra(ContactsContract.Intents.Insert.NAME, nameNw);
-                intent.putExtra(ContactsContract.Intents.Insert.EMAIL, emailNw);
-                intent.putExtra(ContactsContract.Intents.Insert.PHONE, phoneNw);
-                intent.putExtra(ContactsContract.Intents.Insert.NOTES, noteNw);
+                //TODO - TEST THIS MORE
+                ArrayList <ContentProviderOperation> ops = new ArrayList <> ();
 
-                ArrayList<ContentValues> data = new ArrayList<ContentValues>();
+                ops.add(ContentProviderOperation.newInsert(
+                        ContactsContract.RawContacts.CONTENT_URI)
+                        .withValue(ContactsContract.RawContacts.ACCOUNT_TYPE, null)
+                        .withValue(ContactsContract.RawContacts.ACCOUNT_NAME, null)
+                        .build());
 
-                ContentValues cvs = new ContentValues();
-                cvs.put(ContactsContract.Data.MIMETYPE, ContactsService.BC_CONTENT_TYPE);
-                cvs.put(ContactsService.BC_IMAGE_PATH, "asdf://adfasa/iamhereyoyo");
-                data.add(cvs);
-
-                intent.putParcelableArrayListExtra(ContactsContract.Intents.Insert.DATA, data);
-
-                startActivity(intent);
-
-                if (intent.resolveActivity(getPackageManager()) != null) {
-                    startActivityForResult(intent, REQUEST_ADD_CONTACT);
-//                    finish();
-//                    setResult(RESULT_OK);
+                if(nameNw != null){
+                    ops.add(ContentProviderOperation.newInsert(
+                            ContactsContract.Data.CONTENT_URI)
+                            .withValueBackReference(ContactsContract.Data.RAW_CONTACT_ID, 0)
+                            .withValue(ContactsContract.Data.MIMETYPE,
+                                    ContactsContract.CommonDataKinds.StructuredName.CONTENT_ITEM_TYPE)
+                            .withValue(ContactsContract.CommonDataKinds.StructuredName.DISPLAY_NAME,
+                                    nameNw)
+                            .build());
                 }
+
+                if(emailNw != null){
+                    ops.add(ContentProviderOperation.newInsert(ContactsContract.Data.CONTENT_URI)
+                            .withValueBackReference(ContactsContract.Data.RAW_CONTACT_ID, 0)
+                            .withValue(ContactsContract.Data.MIMETYPE,
+                                    ContactsContract.CommonDataKinds.Email.CONTENT_ITEM_TYPE)
+                            .withValue(ContactsContract.CommonDataKinds.Email.DATA, emailNw)
+                            .withValue(ContactsContract.CommonDataKinds.Email.TYPE, ContactsContract.CommonDataKinds.Email.TYPE_WORK)
+                            .build());
+                }
+
+                if (phoneNw != null) {
+                    ops.add(ContentProviderOperation.newInsert(ContactsContract.Data.CONTENT_URI)
+                            .withValueBackReference(ContactsContract.Data.RAW_CONTACT_ID, 0)
+                            .withValue(ContactsContract.Data.MIMETYPE,
+                                    ContactsContract.CommonDataKinds.Phone.CONTENT_ITEM_TYPE)
+                            .withValue(ContactsContract.CommonDataKinds.Phone.NUMBER, phoneNw)
+                            .withValue(ContactsContract.CommonDataKinds.Phone.TYPE,
+                                    ContactsContract.CommonDataKinds.Phone.TYPE_MOBILE)
+                            .build());
+                }
+
+                if (noteNw != null) {
+                    ops.add(ContentProviderOperation.newInsert(ContactsContract.Data.CONTENT_URI)
+                            .withValueBackReference(ContactsContract.Data.RAW_CONTACT_ID, 0)
+                            .withValue(ContactsContract.Data.MIMETYPE,
+                                    ContactsContract.CommonDataKinds.Note.CONTENT_ITEM_TYPE)
+                            .withValue(ContactsContract.CommonDataKinds.Note.NOTE, noteNw)
+                            .build());
+                }
+
+                if(ScanningService.getInstance().getUriOfImage() != null){
+                    ops.add(ContentProviderOperation.newInsert(ContactsContract.Data.CONTENT_URI)
+                            .withValueBackReference(ContactsContract.Data.RAW_CONTACT_ID, 0)
+                            .withValue(ContactsContract.Data.MIMETYPE, ContactsService.BC_CONTENT_TYPE)
+                            .withValue(ContactsService.BC_IMAGE_PATH, ScanningService.getInstance().getUriOfImage())
+                            .build());
+                }
+
+                try {
+                    getContentResolver().applyBatch(ContactsContract.AUTHORITY, ops);
+                    fButton.setEnabled(false);
+                    Toast.makeText(this, "Contact Created!", Toast.LENGTH_SHORT).show();
+                    finish();
+                    setResult(RESULT_OK);
+                } catch (Exception e) {
+                    Toast.makeText(this, "Can't create contact!", Toast.LENGTH_SHORT).show();
+                    e.printStackTrace();
+                }
+
                 break;
             case EDIT_CONTACT:
                 Intent editIntent = new Intent(Intent.ACTION_EDIT);
