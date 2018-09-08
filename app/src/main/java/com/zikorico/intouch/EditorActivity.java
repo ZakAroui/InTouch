@@ -53,7 +53,6 @@ public class EditorActivity extends AppCompatActivity {
     private String mLookup;
 
     private ImageView mImageView;
-    private LinearLayout mLinearLayout;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -61,9 +60,8 @@ public class EditorActivity extends AppCompatActivity {
         setContentView(R.layout.activity_editor);
 
         mImageView = findViewById(R.id.imageView);
-        mLinearLayout = findViewById(R.id.imagePreviewLayout);
 
-
+        //TODO - USE CONSTRAINT LAYOUT
         //TODO - SHOW PHOTO OF CONTACT
         EditText nameEditor = (EditText) findViewById(R.id.name_editText);
         EditText emailEditor = (EditText) findViewById(R.id.email_editText);
@@ -86,6 +84,11 @@ public class EditorActivity extends AppCompatActivity {
             emailEditor.setText(contactData[1]);
             phoneEditor.setText(contactData[2]);
             noteEditor.setText(contactData[3]);
+
+            if(contactData[5] != null){
+                Uri bcUri = Uri.parse(contactData[5]);
+                showBcImage(bcUri);
+            }
 
             disableTexteditor(nameEditor);
             disableTexteditor(emailEditor);
@@ -116,7 +119,13 @@ public class EditorActivity extends AppCompatActivity {
         String contactNote = cs.getNote(uSelectionArgs, getApplicationContext());
         String bcImagePath = cs.getBcImagePath(uSelectionArgs , getApplicationContext());
 
-        return new String[]{nameEmailContactid[0], nameEmailContactid[1], contactPhone, contactNote, nameEmailContactid[2], bcImagePath};
+        return new String[]{
+                nameEmailContactid[0],
+                nameEmailContactid[1],
+                contactPhone,
+                contactNote,
+                nameEmailContactid[2],
+                bcImagePath};
     }
 
     @Override
@@ -291,9 +300,7 @@ public class EditorActivity extends AppCompatActivity {
 
              if(resultCode == RESULT_OK){
                  Uri imageUri = ScanningService.getInstance().getUriOfImage();
-                 mLinearLayout.setVisibility(View.VISIBLE);
-                 mImageView.setImageURI(imageUri);
-                 mImageView.setClickable(true);
+                 showBcImage(imageUri);
 
                  ScanningService.getInstance().processImage(imageUri, getApplicationContext());
 
@@ -303,8 +310,11 @@ public class EditorActivity extends AppCompatActivity {
          }
     }
 
-    protected void hideImageView(View view){
-        mLinearLayout.setVisibility(View.INVISIBLE);
+    private void showBcImage(Uri imageUri){
+        mImageView.setVisibility(View.VISIBLE);
+        mImageView.setImageURI(imageUri);
+        mImageView.setClickable(true);
     }
+
 
 }

@@ -60,6 +60,17 @@
         android:layout_below="@+id/phone_editText"
         android:layout_alignParentLeft="true"
         android:layout_alignParentStart="true" />
+
+    <ImageView
+        android:id="@+id/imageView"
+        android:layout_alignTop="@+id/note_editText"
+        android:layout_alignParentBottom="true"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:padding="0dp"
+        android:visibility="invisible"
+        app:srcCompat="@drawable/common_full_open_on_phone" />
+
     <android.support.design.widget.FloatingActionButton
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -86,26 +97,4 @@
         app:fabSize="mini"
         app:srcCompat="@drawable/ic_camera" />
 
-    <LinearLayout
-        android:id="@+id/imagePreviewLayout"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:orientation="vertical"
-        android:visibility="invisible">
-
-        <ImageButton
-            android:id="@+id/imageCloseButton"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:onClick="hideImageView"
-            app:srcCompat="@drawable/ic_close_image" />
-
-        <ImageView
-            android:id="@+id/imageView"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:padding="0dp"
-            app:srcCompat="@drawable/common_full_open_on_phone" />
-
-    </LinearLayout>
 </RelativeLayout>
