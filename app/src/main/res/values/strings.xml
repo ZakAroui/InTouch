@@ -2,6 +2,7 @@
     <string name="app_name">InTouch</string>
     <string name="create_contact">Create contact</string>
     <string name="scan_card">Scan Business Card</string>
+    <string name="pick_card">Pick Business Card</string>
     <string name="are_you_sure">Are you sure?</string>
     <string name="title_activity_editor">EditorActivity</string>
     <string name="new_contact">New Contact</string>

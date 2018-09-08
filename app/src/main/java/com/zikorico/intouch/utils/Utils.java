@@ -11,7 +11,7 @@ public class Utils {
     public static final int NEW_REQUEST_CODE = 1002;
     public static final int REQUEST_IMAGE_CAPTURE = 1003;
 
-    public static final int REQUEST_ADD_CONTACT = 1004;
+    public static final int REQUEST_PICK_FROM_FILE = 1004;
 
     public static final int PERMISSIONS_REQUEST_READ_CONTACTS = 100;
     public static final int PERMISSIONS_REQUEST_WRITE_CONTACTS = 101;

@@ -138,9 +138,6 @@ public class MainActivity extends AppCompatActivity
                 intent.putExtra(EditorActivity.EDITOR_TYPE, "insert");
                 startActivityForResult(intent, NEW_REQUEST_CODE);
                 break;
-            case R.id.action_scan_card:
-                scanBusinessCard(null);
-                break;
         }
         return super.onOptionsItemSelected(item);
     }

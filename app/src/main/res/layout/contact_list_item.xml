@@ -9,7 +9,7 @@
         android:id="@+id/imageDocIcon"
         android:layout_width="36dp"
         android:layout_height="36dp"
-        android:src="@drawable/ic_document" />
+        android:src="@drawable/ic_profile_image" />
     <TextView
         android:text="Contact Name"
         android:id="@+id/contact_textview"

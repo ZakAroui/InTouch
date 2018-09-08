@@ -91,7 +91,6 @@ public class ScanningService {
                 storageDir
         );
 
-        //TODO - PERSIST THE PATH FOR EACH CONTACT'S BC
         mCurrentPhotoPath = image.getAbsolutePath();
         return image;
     }
@@ -166,9 +165,11 @@ public class ScanningService {
     }
 
     public void clearImage(){
-        File f = new File(mCurrentPhotoPath);
-        f.delete();
-        mCurrentPhotoPath = null;
+        if(mCurrentPhotoPath != null){
+            File f = new File(mCurrentPhotoPath);
+            f.delete();
+            mCurrentPhotoPath = null;
+        }
     }
 
 

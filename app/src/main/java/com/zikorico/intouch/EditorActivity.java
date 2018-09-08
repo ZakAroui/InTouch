@@ -5,10 +5,13 @@ import android.content.ContentProviderOperation;
 import android.content.ContentValues;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.provider.ContactsContract;
+import android.provider.MediaStore;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.view.MenuItemCompat;
 import android.support.v7.app.AppCompatActivity;
@@ -26,6 +29,7 @@ import com.zikorico.intouch.service.ContactsService;
 import com.zikorico.intouch.service.PermissionsService;
 import com.zikorico.intouch.service.ScanningService;
 
+import java.io.IOException;
 import java.util.ArrayList;
 
 import static com.zikorico.intouch.utils.Utils.*;
@@ -140,6 +144,8 @@ public class EditorActivity extends AppCompatActivity {
             } else {
                 Log.w(LOG_TAG, "onCreateOptionsMenu(): Share Action Provider is null!");
             }
+        } else if(nextAction == NEW_CONTACT){
+            getMenuInflater().inflate(R.menu.menu_editor_new, menu);
         }
         return true;
     }
@@ -162,7 +168,13 @@ public class EditorActivity extends AppCompatActivity {
                     deleteContact();
                 }
                 break;
+            case R.id.action_scan_bc_card:
+                scanBusinessCard(null);
+                break;
+            case R.id.action_bc_picker:
+                pickBcFromFile();
         }
+
         return super.onOptionsItemSelected(item);
     }
 
@@ -211,6 +223,7 @@ public class EditorActivity extends AppCompatActivity {
         String phoneNw = String.valueOf(phoneEditor.getText());
         String noteNw = String.valueOf(noteEditor.getText());
 
+        //TODO - ADD VALIDTIONS
         switch (nextAction){
             case NEW_CONTACT:
                 ArrayList<ContentProviderOperation> ops = new ArrayList<>();
@@ -286,6 +299,19 @@ public class EditorActivity extends AppCompatActivity {
         }
     }
 
+    @Override
+    public void onBackPressed() {
+        ScanningService.getInstance().clearImage();
+        super.onBackPressed();
+    }
+
+    public void pickBcFromFile(){
+        Intent intent = new Intent();
+        intent.setType("image/*");
+        intent.setAction(Intent.ACTION_GET_CONTENT);
+        startActivityForResult(Intent.createChooser(intent, "Complete action using"), REQUEST_PICK_FROM_FILE);
+    }
+
     public void scanBusinessCard(View view){
         if(getPackageManager().hasSystemFeature(PackageManager.FEATURE_CAMERA_ANY)){
             if(PermissionsService.getInstance().hasWriteExternalStoragePerm(this)){
@@ -297,16 +323,27 @@ public class EditorActivity extends AppCompatActivity {
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
          if (requestCode == REQUEST_IMAGE_CAPTURE){
-
              if(resultCode == RESULT_OK){
                  Uri imageUri = ScanningService.getInstance().getUriOfImage();
                  showBcImage(imageUri);
 
                  ScanningService.getInstance().processImage(imageUri, getApplicationContext());
-
              } else if(resultCode == RESULT_CANCELED){
                  ScanningService.getInstance().clearImage();
              }
+         } else if (requestCode == REQUEST_PICK_FROM_FILE) {
+             Uri pickedBcUri = data.getData();
+             String path = pickedBcUri.toString();
+//             showBcImage(pickedBcUri);
+             Bitmap bitmap = null;
+             try {
+                 bitmap = MediaStore.Images.Media.getBitmap(this.getContentResolver(), pickedBcUri);
+             } catch (IOException e) {
+                 e.printStackTrace();
+             }
+             mImageView.setVisibility(View.VISIBLE);
+             mImageView.setImageBitmap(bitmap);
+             mImageView.setClickable(true);
          }
     }
 
