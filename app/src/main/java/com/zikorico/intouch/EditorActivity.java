@@ -114,15 +114,9 @@ public class EditorActivity extends AppCompatActivity {
         String[] nameEmailContactid = cs.getNameEmailContactId(uSelectionArgs, getApplicationContext());
         String contactPhone = cs.getPhoneNumber(uSelectionArgs, getApplicationContext());
         String contactNote = cs.getNote(uSelectionArgs, getApplicationContext());
+        String bcImagePath = cs.getBcImagePath(uSelectionArgs , getApplicationContext());
 
-        //TODO - MAKE THIS CLEANER
-        if(PermissionsService.getInstance().hasContactsWritePerm(this, PERMISSIONS_REQUEST_WRITE_CONTACTS)){
-//            cs.setImagePath(getApplicationContext(), Integer.valueOf(nameEmailContactid[3]));
-//            mSelectionArgs[0] = nameEmailContactid[3];
-            cs.getBcImagePath(uSelectionArgs , getApplicationContext());
-        }
-
-        return new String[]{nameEmailContactid[0], nameEmailContactid[1], contactPhone, contactNote, nameEmailContactid[2]};
+        return new String[]{nameEmailContactid[0], nameEmailContactid[1], contactPhone, contactNote, nameEmailContactid[2], bcImagePath};
     }
 
     @Override
@@ -203,8 +197,6 @@ public class EditorActivity extends AppCompatActivity {
         EditText phoneEditor = (EditText) findViewById(R.id.phone_editText);
         EditText noteEditor = (EditText) findViewById(R.id.note_editText);
 
-        FloatingActionButton fButton = findViewById(R.id.editorFloatingButton);
-
         String nameNw = String.valueOf(nameEditor.getText());
         String emailNw = String.valueOf(emailEditor.getText());
         String phoneNw = String.valueOf(phoneEditor.getText());
@@ -212,31 +204,25 @@ public class EditorActivity extends AppCompatActivity {
 
         switch (nextAction){
             case NEW_CONTACT:
-                //TODO - TEST THIS MORE
-                ArrayList <ContentProviderOperation> ops = new ArrayList <> ();
+                ArrayList<ContentProviderOperation> ops = new ArrayList<>();
 
-                ops.add(ContentProviderOperation.newInsert(
-                        ContactsContract.RawContacts.CONTENT_URI)
+                ops.add(ContentProviderOperation.newInsert(ContactsContract.RawContacts.CONTENT_URI)
                         .withValue(ContactsContract.RawContacts.ACCOUNT_TYPE, null)
                         .withValue(ContactsContract.RawContacts.ACCOUNT_NAME, null)
                         .build());
 
                 if(nameNw != null){
-                    ops.add(ContentProviderOperation.newInsert(
-                            ContactsContract.Data.CONTENT_URI)
+                    ops.add(ContentProviderOperation.newInsert(ContactsContract.Data.CONTENT_URI)
                             .withValueBackReference(ContactsContract.Data.RAW_CONTACT_ID, 0)
-                            .withValue(ContactsContract.Data.MIMETYPE,
-                                    ContactsContract.CommonDataKinds.StructuredName.CONTENT_ITEM_TYPE)
-                            .withValue(ContactsContract.CommonDataKinds.StructuredName.DISPLAY_NAME,
-                                    nameNw)
+                            .withValue(ContactsContract.Data.MIMETYPE, ContactsContract.CommonDataKinds.StructuredName.CONTENT_ITEM_TYPE)
+                            .withValue(ContactsContract.CommonDataKinds.StructuredName.DISPLAY_NAME, nameNw)
                             .build());
                 }
 
                 if(emailNw != null){
                     ops.add(ContentProviderOperation.newInsert(ContactsContract.Data.CONTENT_URI)
                             .withValueBackReference(ContactsContract.Data.RAW_CONTACT_ID, 0)
-                            .withValue(ContactsContract.Data.MIMETYPE,
-                                    ContactsContract.CommonDataKinds.Email.CONTENT_ITEM_TYPE)
+                            .withValue(ContactsContract.Data.MIMETYPE, ContactsContract.CommonDataKinds.Email.CONTENT_ITEM_TYPE)
                             .withValue(ContactsContract.CommonDataKinds.Email.DATA, emailNw)
                             .withValue(ContactsContract.CommonDataKinds.Email.TYPE, ContactsContract.CommonDataKinds.Email.TYPE_WORK)
                             .build());
@@ -245,34 +231,31 @@ public class EditorActivity extends AppCompatActivity {
                 if (phoneNw != null) {
                     ops.add(ContentProviderOperation.newInsert(ContactsContract.Data.CONTENT_URI)
                             .withValueBackReference(ContactsContract.Data.RAW_CONTACT_ID, 0)
-                            .withValue(ContactsContract.Data.MIMETYPE,
-                                    ContactsContract.CommonDataKinds.Phone.CONTENT_ITEM_TYPE)
+                            .withValue(ContactsContract.Data.MIMETYPE, ContactsContract.CommonDataKinds.Phone.CONTENT_ITEM_TYPE)
                             .withValue(ContactsContract.CommonDataKinds.Phone.NUMBER, phoneNw)
-                            .withValue(ContactsContract.CommonDataKinds.Phone.TYPE,
-                                    ContactsContract.CommonDataKinds.Phone.TYPE_MOBILE)
+                            .withValue(ContactsContract.CommonDataKinds.Phone.TYPE, ContactsContract.CommonDataKinds.Phone.TYPE_MOBILE)
                             .build());
                 }
 
                 if (noteNw != null) {
                     ops.add(ContentProviderOperation.newInsert(ContactsContract.Data.CONTENT_URI)
                             .withValueBackReference(ContactsContract.Data.RAW_CONTACT_ID, 0)
-                            .withValue(ContactsContract.Data.MIMETYPE,
-                                    ContactsContract.CommonDataKinds.Note.CONTENT_ITEM_TYPE)
+                            .withValue(ContactsContract.Data.MIMETYPE, ContactsContract.CommonDataKinds.Note.CONTENT_ITEM_TYPE)
                             .withValue(ContactsContract.CommonDataKinds.Note.NOTE, noteNw)
                             .build());
                 }
 
-                if(ScanningService.getInstance().getUriOfImage() != null){
+                Uri bcImageUri = ScanningService.getInstance().getUriOfImage();
+                if(bcImageUri != null){
                     ops.add(ContentProviderOperation.newInsert(ContactsContract.Data.CONTENT_URI)
                             .withValueBackReference(ContactsContract.Data.RAW_CONTACT_ID, 0)
                             .withValue(ContactsContract.Data.MIMETYPE, ContactsService.BC_CONTENT_TYPE)
-                            .withValue(ContactsService.BC_IMAGE_PATH, ScanningService.getInstance().getUriOfImage())
+                            .withValue(ContactsService.BC_IMAGE_PATH, bcImageUri.toString())
                             .build());
                 }
 
                 try {
                     getContentResolver().applyBatch(ContactsContract.AUTHORITY, ops);
-                    fButton.setEnabled(false);
                     Toast.makeText(this, "Contact Created!", Toast.LENGTH_SHORT).show();
                     finish();
                     setResult(RESULT_OK);

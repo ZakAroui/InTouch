@@ -94,14 +94,12 @@ public class ContactsService {
         Cursor pathCur = context.getContentResolver().query(
                 ContactsContract.Data.CONTENT_URI,
                 null,
+                ContactsContract.Data.LOOKUP_KEY + " = ? AND " +
                         ContactsContract.Data.MIMETYPE + " = '"
                         + BC_CONTENT_TYPE + "'",
-                null,
+                uSelectionArgs,
                 null);
         String contactImagePath = "";
-        while (pathCur.moveToNext()){
-            contactImagePath = pathCur.getString(pathCur.getColumnIndex(BC_IMAGE_PATH));
-        }
         if (pathCur.getCount() > 0) {
             pathCur.moveToFirst();
             contactImagePath = pathCur.getString(pathCur.getColumnIndex(BC_IMAGE_PATH));

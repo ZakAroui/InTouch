@@ -11,6 +11,7 @@ import android.provider.MediaStore;
 import android.support.annotation.NonNull;
 import android.support.v4.content.FileProvider;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 import android.widget.Toast;
 
 import com.google.android.gms.tasks.OnFailureListener;
@@ -28,6 +29,7 @@ import java.util.Date;
 import java.util.List;
 import java.util.Locale;
 
+import static android.content.ContentValues.TAG;
 import static com.zikorico.intouch.utils.Utils.REQUEST_IMAGE_CAPTURE;
 
 /**
@@ -154,8 +156,13 @@ public class ScanningService {
     }
 
     public Uri getUriOfImage(){
-        File f = new File(mCurrentPhotoPath);
-        return Uri.fromFile(f);
+        try {
+            File f = new File(mCurrentPhotoPath);
+            return Uri.fromFile(f);
+        } catch (Exception e){
+            Log.d(TAG, "getUriOfImage: " + e);
+            return null;
+        }
     }
 
     public void clearImage(){
