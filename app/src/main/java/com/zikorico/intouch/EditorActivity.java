@@ -333,17 +333,7 @@ public class EditorActivity extends AppCompatActivity {
              }
          } else if (requestCode == REQUEST_PICK_FROM_FILE) {
              Uri pickedBcUri = data.getData();
-             String path = pickedBcUri.toString();
-//             showBcImage(pickedBcUri);
-             Bitmap bitmap = null;
-             try {
-                 bitmap = MediaStore.Images.Media.getBitmap(this.getContentResolver(), pickedBcUri);
-             } catch (IOException e) {
-                 e.printStackTrace();
-             }
-             mImageView.setVisibility(View.VISIBLE);
-             mImageView.setImageBitmap(bitmap);
-             mImageView.setClickable(true);
+             showBcImageFromBitmap(pickedBcUri);
          }
     }
 
@@ -351,6 +341,21 @@ public class EditorActivity extends AppCompatActivity {
         mImageView.setVisibility(View.VISIBLE);
         mImageView.setImageURI(imageUri);
         mImageView.setClickable(true);
+    }
+
+    private void showBcImageFromBitmap(Uri pickedBcUri){
+        String path = pickedBcUri.toString();
+        Bitmap bitmap = null;
+        try {
+            bitmap = MediaStore.Images.Media.getBitmap(this.getContentResolver(), pickedBcUri);
+        } catch (IOException e) {
+            Log.e("showBcImage", e.toString());
+        }
+        if(bitmap != null){
+            mImageView.setVisibility(View.VISIBLE);
+            mImageView.setImageBitmap(bitmap);
+            mImageView.setClickable(true);
+        }
     }
 
 

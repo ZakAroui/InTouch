@@ -68,6 +68,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:padding="0dp"
+        android:scaleType="fitCenter"
         android:visibility="invisible"
         app:srcCompat="@drawable/common_full_open_on_phone" />
 
@@ -94,7 +95,7 @@
         android:onClick="scanBusinessCard"
         app:backgroundTint="@android:color/holo_green_dark"
         app:elevation="0dp"
-        app:fabSize="mini"
+        app:fabSize="normal"
         app:srcCompat="@drawable/ic_camera" />
 
 </RelativeLayout>

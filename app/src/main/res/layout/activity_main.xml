@@ -20,7 +20,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:clickable="true"
-        app:fabSize="mini"
+        app:fabSize="normal"
         app:srcCompat="@drawable/ic_action_add"
         android:layout_alignParentRight="true"
         android:layout_alignParentBottom="true"
@@ -39,7 +39,7 @@
         android:onClick="scanBusinessCard"
         app:backgroundTint="@android:color/holo_green_dark"
         app:elevation="0dp"
-        app:fabSize="mini"
+        app:fabSize="normal"
         app:srcCompat="@drawable/ic_camera" />
 
     <LinearLayout
