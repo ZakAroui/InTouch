@@ -174,8 +174,7 @@ public class MainActivity extends AppCompatActivity
     }
 
     public void scanBusinessCard(View view){
-        //TODO - ALLOW USER TO CHOOSE BETWEEN FILE AND PHOTO
-        //TODO - ALLOW USER TO ROTATE PICTURE
+        //TODO - ADD PICTURE ROTATION BUTTON
         if(getPackageManager().hasSystemFeature(PackageManager.FEATURE_CAMERA_ANY)){
             if(PermissionsService.getInstance().hasWriteExternalStoragePerm(this)){
                 ScanningService.getInstance().dispatchTakePictureIntent(getPackageManager(), getApplicationContext(), this);

@@ -1,17 +1,21 @@
 package com.zikorico.intouch;
 
 import android.Manifest;
+import android.annotation.TargetApi;
 import android.content.ContentProviderOperation;
 import android.content.ContentValues;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.media.ExifInterface;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.provider.ContactsContract;
 import android.provider.MediaStore;
+import android.support.annotation.RequiresApi;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.view.MenuItemCompat;
 import android.support.v7.app.AppCompatActivity;
@@ -29,7 +33,9 @@ import com.zikorico.intouch.service.ContactsService;
 import com.zikorico.intouch.service.PermissionsService;
 import com.zikorico.intouch.service.ScanningService;
 
+import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
 import java.util.ArrayList;
 
 import static com.zikorico.intouch.utils.Utils.*;
@@ -345,6 +351,9 @@ public class EditorActivity extends AppCompatActivity {
 
     private void showBcImageFromBitmap(Uri pickedBcUri){
         String path = pickedBcUri.toString();
+
+        int imageRotate = getCameraPhotoOrientation(pickedBcUri, path);
+
         Bitmap bitmap = null;
         try {
             bitmap = MediaStore.Images.Media.getBitmap(this.getContentResolver(), pickedBcUri);
@@ -356,6 +365,42 @@ public class EditorActivity extends AppCompatActivity {
             mImageView.setImageBitmap(bitmap);
             mImageView.setClickable(true);
         }
+    }
+
+    @TargetApi(Build.VERSION_CODES.N)
+    public int getCameraPhotoOrientation(Uri imageUri, String imagePath){
+        int rotate = 0;
+        InputStream in = null;
+        try {
+            in = getContentResolver().openInputStream(imageUri);
+
+            ExifInterface exif = new ExifInterface(in);
+            int orientation = exif.getAttributeInt(ExifInterface.TAG_ORIENTATION, ExifInterface.ORIENTATION_NORMAL);
+
+            switch (orientation) {
+                case ExifInterface.ORIENTATION_ROTATE_270:
+                    rotate = 270;
+                    break;
+                case ExifInterface.ORIENTATION_ROTATE_180:
+                    rotate = 180;
+                    break;
+                case ExifInterface.ORIENTATION_ROTATE_90:
+                    rotate = 90;
+                    break;
+            }
+
+            Log.i("RotateImage", "Exif orientation: " + orientation);
+            Log.i("RotateImage", "Rotate value: " + rotate);
+        } catch (Exception e) {
+            e.printStackTrace();
+        } finally {
+            if (in != null) {
+                try {
+                    in.close();
+                } catch (IOException ignored) {}
+            }
+        }
+        return rotate;
     }
 
 
