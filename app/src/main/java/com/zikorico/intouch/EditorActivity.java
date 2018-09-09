@@ -20,6 +20,7 @@ import android.support.design.widget.FloatingActionButton;
 import android.support.v4.view.MenuItemCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.ShareActionProvider;
+import android.text.TextUtils;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -29,6 +30,7 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.Toast;
 
+import com.google.android.gms.flags.impl.DataUtils;
 import com.zikorico.intouch.service.ContactsService;
 import com.zikorico.intouch.service.PermissionsService;
 import com.zikorico.intouch.service.ScanningService;
@@ -73,6 +75,7 @@ public class EditorActivity extends AppCompatActivity {
 
         //TODO - USE CONSTRAINT LAYOUT
         //TODO - SHOW PHOTO OF CONTACT
+        //TODO - HIDE KEYBOARD ON SCREEN CLICK
         EditText nameEditor = (EditText) findViewById(R.id.name_editText);
         EditText emailEditor = (EditText) findViewById(R.id.email_editText);
         EditText phoneEditor = (EditText) findViewById(R.id.phone_editText);
@@ -190,6 +193,7 @@ public class EditorActivity extends AppCompatActivity {
         if (requestCode == PERMISSIONS_REQUEST_WRITE_CONTACTS) {
             if (grantResults[0] == PackageManager.PERMISSION_GRANTED) {
                 Toast.makeText(this, "Permission granted!", Toast.LENGTH_SHORT).show();
+                addOrOpenContactsEditor(null);
             } else {
                 Toast.makeText(this, "Grant the permission to delete the contact.", Toast.LENGTH_SHORT).show();
             }
@@ -218,6 +222,12 @@ public class EditorActivity extends AppCompatActivity {
         setResult(RESULT_OK);
     }
 
+    public void addOrOpenContactsEditor(View view){
+        if(PermissionsService.getInstance().hasContactsWritePerm(this, PERMISSIONS_REQUEST_WRITE_CONTACTS)){
+            openContactsEditor(view);
+        }
+    }
+
     public void openContactsEditor(View view) {
         EditText nameEditor = (EditText) findViewById(R.id.name_editText);
         EditText emailEditor = (EditText) findViewById(R.id.email_editText);
@@ -229,9 +239,14 @@ public class EditorActivity extends AppCompatActivity {
         String phoneNw = String.valueOf(phoneEditor.getText());
         String noteNw = String.valueOf(noteEditor.getText());
 
-        //TODO - ADD VALIDTIONS
         switch (nextAction){
             case NEW_CONTACT:
+
+                if(TextUtils.isEmpty(nameNw) || (TextUtils.isEmpty(emailNw) && TextUtils.isEmpty(phoneNw))){
+                    Toast.makeText(this, " Put in some Data first!", Toast.LENGTH_SHORT).show();
+                    break;
+                }
+
                 ArrayList<ContentProviderOperation> ops = new ArrayList<>();
 
                 ops.add(ContentProviderOperation.newInsert(ContactsContract.RawContacts.CONTENT_URI)
@@ -319,6 +334,8 @@ public class EditorActivity extends AppCompatActivity {
     }
 
     public void scanBusinessCard(View view){
+        //TODO - ADD PICTURE ROTATION BUTTON
+        //TODO - SAVE PICTURE W/ CONTACT
         if(getPackageManager().hasSystemFeature(PackageManager.FEATURE_CAMERA_ANY)){
             if(PermissionsService.getInstance().hasWriteExternalStoragePerm(this)){
                 ScanningService.getInstance().dispatchTakePictureIntent(getPackageManager(), getApplicationContext(), this);
@@ -352,7 +369,7 @@ public class EditorActivity extends AppCompatActivity {
     private void showBcImageFromBitmap(Uri pickedBcUri){
         String path = pickedBcUri.toString();
 
-        int imageRotate = getCameraPhotoOrientation(pickedBcUri, path);
+        int imageRotate = getCameraPhotoOrientation(pickedBcUri);
 
         Bitmap bitmap = null;
         try {
@@ -368,7 +385,7 @@ public class EditorActivity extends AppCompatActivity {
     }
 
     @TargetApi(Build.VERSION_CODES.N)
-    public int getCameraPhotoOrientation(Uri imageUri, String imagePath){
+    public int getCameraPhotoOrientation(Uri imageUri){
         int rotate = 0;
         InputStream in = null;
         try {
@@ -389,10 +406,9 @@ public class EditorActivity extends AppCompatActivity {
                     break;
             }
 
-            Log.i("RotateImage", "Exif orientation: " + orientation);
-            Log.i("RotateImage", "Rotate value: " + rotate);
+            Toast.makeText(this, "Exif orientation: "+orientation + "\nRotate value: "+rotate, Toast.LENGTH_SHORT).show();
         } catch (Exception e) {
-            e.printStackTrace();
+            Log.e("getCameraPhotoOrient", e.toString());
         } finally {
             if (in != null) {
                 try {

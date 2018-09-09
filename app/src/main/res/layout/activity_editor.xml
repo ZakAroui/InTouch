@@ -82,7 +82,7 @@
         android:layout_alignParentBottom="true"
         android:layout_alignParentEnd="true"
         android:id="@+id/editorFloatingButton"
-        android:onClick="openContactsEditor"
+        android:onClick="addOrOpenContactsEditor"
         app:elevation="0dp" />
 
     <android.support.design.widget.FloatingActionButton
