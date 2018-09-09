@@ -6,6 +6,7 @@ import android.content.pm.PackageManager;
 import android.os.Build;
 import android.support.v7.app.AppCompatActivity;
 
+import static android.content.Intent.ACTION_OPEN_DOCUMENT;
 import static com.zikorico.intouch.utils.Utils.*;
 
 /**
@@ -62,7 +63,6 @@ public class PermissionsService {
             return true;
         }
     }
-
 
 
 }

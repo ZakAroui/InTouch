@@ -13,6 +13,7 @@ import android.media.ExifInterface;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.Environment;
 import android.provider.ContactsContract;
 import android.provider.MediaStore;
 import android.support.annotation.RequiresApi;
@@ -31,13 +32,17 @@ import android.widget.LinearLayout;
 import android.widget.Toast;
 
 import com.google.android.gms.flags.impl.DataUtils;
+import com.zikorico.intouch.model.CopyImageTask;
 import com.zikorico.intouch.service.ContactsService;
 import com.zikorico.intouch.service.PermissionsService;
 import com.zikorico.intouch.service.ScanningService;
 
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.nio.channels.FileChannel;
 import java.util.ArrayList;
 
 import static com.zikorico.intouch.utils.Utils.*;
@@ -207,6 +212,7 @@ public class EditorActivity extends AppCompatActivity {
         } else if(requestCode == PERMISSIONS_REQUEST_WRITE_EXT_STORAGE){
             if (grantResults[0] == PackageManager.PERMISSION_GRANTED) {
                 Toast.makeText(this, "Permission granted!", Toast.LENGTH_SHORT).show();
+                ScanningService.getInstance().clearImage();
                 ScanningService.getInstance().dispatchTakePictureIntent(getPackageManager(), getApplicationContext(), this);
             } else {
                 Toast.makeText(this, "Grant the permission to use the camera.", Toast.LENGTH_SHORT).show();
@@ -288,12 +294,12 @@ public class EditorActivity extends AppCompatActivity {
                             .build());
                 }
 
-                Uri bcImageUri = ScanningService.getInstance().getUriOfImage();
-                if(bcImageUri != null){
+                Uri bcPictureUri = ScanningService.getInstance().getUriOfImage();
+                if(bcPictureUri != null){
                     ops.add(ContentProviderOperation.newInsert(ContactsContract.Data.CONTENT_URI)
                             .withValueBackReference(ContactsContract.Data.RAW_CONTACT_ID, 0)
                             .withValue(ContactsContract.Data.MIMETYPE, ContactsService.BC_CONTENT_TYPE)
-                            .withValue(ContactsService.BC_IMAGE_PATH, bcImageUri.toString())
+                            .withValue(ContactsService.BC_IMAGE_PATH, bcPictureUri.toString())
                             .build());
                 }
 
@@ -322,7 +328,9 @@ public class EditorActivity extends AppCompatActivity {
 
     @Override
     public void onBackPressed() {
-        ScanningService.getInstance().clearImage();
+        if(nextAction == NEW_CONTACT){
+            ScanningService.getInstance().clearImage();
+        }
         super.onBackPressed();
     }
 
@@ -335,9 +343,9 @@ public class EditorActivity extends AppCompatActivity {
 
     public void scanBusinessCard(View view){
         //TODO - ADD PICTURE ROTATION BUTTON
-        //TODO - SAVE PICTURE W/ CONTACT
         if(getPackageManager().hasSystemFeature(PackageManager.FEATURE_CAMERA_ANY)){
             if(PermissionsService.getInstance().hasWriteExternalStoragePerm(this)){
+                ScanningService.getInstance().clearImage();
                 ScanningService.getInstance().dispatchTakePictureIntent(getPackageManager(), getApplicationContext(), this);
             }
         }
@@ -355,8 +363,14 @@ public class EditorActivity extends AppCompatActivity {
                  ScanningService.getInstance().clearImage();
              }
          } else if (requestCode == REQUEST_PICK_FROM_FILE) {
-             Uri pickedBcUri = data.getData();
-             showBcImageFromBitmap(pickedBcUri);
+             if(data != null){
+                 Uri pickedBcUri = data.getData();
+
+                 new CopyImageTask(this).execute(pickedBcUri);
+
+                 ScanningService.getInstance().clearImage();
+                 showBcImageFromBitmap(pickedBcUri);
+             }
          }
     }
 
@@ -367,7 +381,6 @@ public class EditorActivity extends AppCompatActivity {
     }
 
     private void showBcImageFromBitmap(Uri pickedBcUri){
-        String path = pickedBcUri.toString();
 
         int imageRotate = getCameraPhotoOrientation(pickedBcUri);
 
@@ -375,7 +388,7 @@ public class EditorActivity extends AppCompatActivity {
         try {
             bitmap = MediaStore.Images.Media.getBitmap(this.getContentResolver(), pickedBcUri);
         } catch (IOException e) {
-            Log.e("showBcImage", e.toString());
+            Log.e("showBcImageFromBitmap", e.toString());
         }
         if(bitmap != null){
             mImageView.setVisibility(View.VISIBLE);
@@ -418,6 +431,5 @@ public class EditorActivity extends AppCompatActivity {
         }
         return rotate;
     }
-
 
 }

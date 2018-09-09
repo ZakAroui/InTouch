@@ -1,8 +1,10 @@
 package com.zikorico.intouch.service;
 
+import android.content.ContentResolver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.graphics.Bitmap;
 import android.graphics.Point;
 import android.graphics.Rect;
 import android.net.Uri;
@@ -23,6 +25,7 @@ import com.google.firebase.ml.vision.text.FirebaseVisionTextRecognizer;
 import com.google.firebase.ml.vision.text.RecognizedLanguage;
 
 import java.io.File;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -77,7 +80,7 @@ public class ScanningService {
     }
 
 
-    private File createImageFile() throws IOException {
+    public File createImageFile() throws IOException {
 
         String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss", Locale.US).format(new Date());
         String imageFileName = "JPEG_" + timeStamp + "_";
@@ -94,7 +97,6 @@ public class ScanningService {
         mCurrentPhotoPath = image.getAbsolutePath();
         return image;
     }
-
 
     public void processImage(Uri imageUri, final Context applicationContext){
         //TODO - GET IMAGE FROM Media Type
@@ -170,9 +172,8 @@ public class ScanningService {
             f.delete();
             mCurrentPhotoPath = null;
         }
+
     }
-
-
 
     public String getmCurrentPhotoPath() {
         return mCurrentPhotoPath;
@@ -181,6 +182,7 @@ public class ScanningService {
     public void setmCurrentPhotoPath(String mCurrentPhotoPath) {
         this.mCurrentPhotoPath = mCurrentPhotoPath;
     }
+
 
 }
 
