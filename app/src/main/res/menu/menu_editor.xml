@@ -7,7 +7,7 @@
         android:orderInCategory="100"
         android:title="@string/delete_contact"
         android:icon="@drawable/ic_action_delete"
-        app:showAsAction="ifRoom" />
+        app:showAsAction="never" />
     <item
         android:id="@+id/action_share"
         android:title="@string/action_share"

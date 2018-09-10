@@ -69,6 +69,8 @@ public class EditorActivity extends AppCompatActivity {
 
     private String mLookup;
 
+    String[] contactData;
+
     private ImageView mImageView;
 
     @Override
@@ -94,7 +96,7 @@ public class EditorActivity extends AppCompatActivity {
             nextAction = EDIT_CONTACT;
             mSelectionArgs[0] = mLookup;
             mName = intent.getStringExtra(CONTACT_NAME);
-            String[] contactData = getContactData(mSelectionArgs);
+            contactData = getContactData(mSelectionArgs);
             setTitle(contactData[0]);
             mContactShare = contactData[0]+"\n"+contactData[1]+"\n"+contactData[2];
 
@@ -221,8 +223,13 @@ public class EditorActivity extends AppCompatActivity {
     }
 
     private void deleteContact() {
+        if(contactData[5] != null){
+            ScanningService.getInstance().clearImage(Uri.parse(contactData[5]).getPath());
+        }
         getContentResolver().delete(ContactsContract.RawContacts.CONTENT_URI,
-                ContactsContract.RawContacts.DISPLAY_NAME_PRIMARY+" = ?", new String[]{mName});
+                ContactsContract.RawContacts.DISPLAY_NAME_PRIMARY+" = ?",
+                new String[]{mName});
+
         Toast.makeText(this, mName+" Deleted.", Toast.LENGTH_SHORT).show();
         finish();
         setResult(RESULT_OK);
@@ -306,6 +313,7 @@ public class EditorActivity extends AppCompatActivity {
                 try {
                     getContentResolver().applyBatch(ContactsContract.AUTHORITY, ops);
                     Toast.makeText(this, "Contact Created!", Toast.LENGTH_SHORT).show();
+                    ScanningService.getInstance().setmCurrentPhotoPath(null);
                     finish();
                     setResult(RESULT_OK);
                 } catch (Exception e) {
@@ -368,6 +376,7 @@ public class EditorActivity extends AppCompatActivity {
 
                  new CopyImageTask(this).execute(pickedBcUri);
 
+                 //TODO - PROCESS IMAGE WHEN PICKED
                  ScanningService.getInstance().clearImage();
                  showBcImageFromBitmap(pickedBcUri);
              }
@@ -381,7 +390,7 @@ public class EditorActivity extends AppCompatActivity {
     }
 
     private void showBcImageFromBitmap(Uri pickedBcUri){
-
+        //TODO - ADD ROTATION FUNCTIONALITY
         int imageRotate = getCameraPhotoOrientation(pickedBcUri);
 
         Bitmap bitmap = null;

@@ -57,14 +57,14 @@ public class CopyImageTask extends AsyncTask<Uri, Void, String> {
 
             File image = File.createTempFile(
                     imageFileName,
-                    ".png",
+                    ".jpeg",
                     storageDir
             );
 
             String cPath = image.getAbsolutePath();
 
             FileOutputStream fOut = new FileOutputStream(image);
-            bitmap.compress(Bitmap.CompressFormat.PNG, 85, fOut);
+            bitmap.compress(Bitmap.CompressFormat.JPEG, 97, fOut);
 
             fOut.flush();
             fOut.close();

@@ -175,6 +175,19 @@ public class ScanningService {
 
     }
 
+
+    public void clearImage(String imagePath){
+        if(imagePath != null){
+            try{
+                File f = new File(imagePath);
+                f.delete();
+            } catch(Exception e) {
+                e.printStackTrace();
+            }
+        }
+
+    }
+
     public String getmCurrentPhotoPath() {
         return mCurrentPhotoPath;
     }
