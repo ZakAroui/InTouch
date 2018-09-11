@@ -2,6 +2,14 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     tools:context=".MainActivity">
+
+    <item
+        android:id="@+id/action_bc_picker"
+        android:orderInCategory="99"
+        android:title="@string/pick_card"
+        android:icon="@drawable/ic_pick_card"
+        app:showAsAction="ifRoom" />
+
     <item
         android:id="@+id/action_scan_bc_card"
         android:orderInCategory="100"
@@ -16,10 +24,11 @@
         app:showAsAction="never" />
 
     <item
-        android:id="@+id/action_bc_picker"
-        android:orderInCategory="101"
-        android:title="@string/pick_card"
-        android:icon="@drawable/ic_pick_card"
-        app:showAsAction="ifRoom" />
+        android:id="@+id/action_open_asset"
+        android:orderInCategory="102"
+        android:title="@string/open_asset"
+        app:showAsAction="never" />
+
+
 
 </menu>

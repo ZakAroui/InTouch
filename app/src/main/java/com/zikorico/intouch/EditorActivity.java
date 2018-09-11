@@ -3,8 +3,10 @@ package com.zikorico.intouch;
 import android.annotation.TargetApi;
 import android.app.Activity;
 import android.content.ContentProviderOperation;
+import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.content.res.AssetManager;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Matrix;
@@ -67,6 +69,8 @@ public class EditorActivity extends AppCompatActivity {
 
     private ImageView mImageView;
     private FloatingActionButton mRotateImage;
+
+    private Bitmap mSelectedBitmap;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -186,6 +190,10 @@ public class EditorActivity extends AppCompatActivity {
                 break;
             case R.id.action_remove_bc:
                 removeCurrentBc();
+                break;
+            case R.id.action_open_asset:
+                mSelectedBitmap = getBitmapFromAsset("work_street_sign.png");
+                showImage(mSelectedBitmap);
                 break;
         }
 
@@ -395,6 +403,13 @@ public class EditorActivity extends AppCompatActivity {
         mRotateImage.setVisibility(View.VISIBLE);
     }
 
+    private void showImage(Bitmap bitmap){
+        mImageView.setVisibility(View.VISIBLE);
+        mImageView.setImageBitmap(bitmap);
+        mImageView.setClickable(true);
+        mRotateImage.setVisibility(View.VISIBLE);
+    }
+
     private void showBcImageFromBitmap(Uri pickedBcUri){
         int imageRotate = getCameraPhotoOrientation(pickedBcUri);
 
@@ -460,6 +475,21 @@ public class EditorActivity extends AppCompatActivity {
 
         ScanningService.getInstance().processImage(rotated, this);
 
+    }
+
+    public Bitmap getBitmapFromAsset(String filePath) {
+        AssetManager assetManager = this.getAssets();
+
+        InputStream is;
+        Bitmap bitmap = null;
+        try {
+            is = assetManager.open(filePath);
+            bitmap = BitmapFactory.decodeStream(is);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        return bitmap;
     }
 
 }

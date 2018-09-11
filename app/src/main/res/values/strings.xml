@@ -3,6 +3,7 @@
     <string name="create_contact">Create contact</string>
     <string name="scan_card">Scan Business Card</string>
     <string name="remove_bc">Remove Current BC</string>
+    <string name="open_asset">Open Asset Image</string>
     <string name="pick_card">Pick Business Card</string>
     <string name="are_you_sure">Are you sure?</string>
     <string name="title_activity_editor">EditorActivity</string>
