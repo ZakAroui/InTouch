@@ -10,6 +10,12 @@
         app:showAsAction="never" />
 
     <item
+        android:id="@+id/action_remove_bc"
+        android:orderInCategory="101"
+        android:title="@string/remove_bc"
+        app:showAsAction="never" />
+
+    <item
         android:id="@+id/action_bc_picker"
         android:orderInCategory="101"
         android:title="@string/pick_card"

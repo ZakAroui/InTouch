@@ -23,6 +23,7 @@ import com.google.firebase.ml.vision.common.FirebaseVisionImage;
 import com.google.firebase.ml.vision.text.FirebaseVisionText;
 import com.google.firebase.ml.vision.text.FirebaseVisionTextRecognizer;
 import com.google.firebase.ml.vision.text.RecognizedLanguage;
+import com.zikorico.intouch.utils.Utils;
 
 import java.io.File;
 import java.io.FileOutputStream;
@@ -65,7 +66,7 @@ public class ScanningService {
             try {
                 photoFile = createImageFile();
             } catch (IOException ex) {
-                Toast.makeText(applicationContext, "Error occurred while creating the File", Toast.LENGTH_SHORT).show();
+                Utils.showShortToast("Error occurred while creating the File", applicationContext);
                 return;
             }
             if (photoFile != null) {
@@ -133,7 +134,7 @@ public class ScanningService {
                 .addOnFailureListener( new OnFailureListener() {
                     @Override
                     public void onFailure(@NonNull Exception e) {
-                        Toast.makeText(applicationContext, "failed to process text!", Toast.LENGTH_SHORT).show();
+                        Utils.showShortToast("Failed to process text!", applicationContext);
                     }
                 });
     }
@@ -141,7 +142,7 @@ public class ScanningService {
     private void processResultText(FirebaseVisionText result, Context applicationContext){
         //TODO - PROCESS TEXT RESULT
         String resultText = result.getText();
-        Toast.makeText(applicationContext, resultText, Toast.LENGTH_LONG).show();
+        Utils.showLongToast(resultText, applicationContext);
 
         for (FirebaseVisionText.TextBlock block: result.getTextBlocks()) {
             String blockText = block.getText();

@@ -33,6 +33,7 @@ import com.zikorico.intouch.model.CopyImageTask;
 import com.zikorico.intouch.service.ContactsService;
 import com.zikorico.intouch.service.PermissionsService;
 import com.zikorico.intouch.service.ScanningService;
+import com.zikorico.intouch.utils.Utils;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -182,6 +183,10 @@ public class EditorActivity extends AppCompatActivity {
                 break;
             case R.id.action_bc_picker:
                 pickBcFromFile();
+                break;
+            case R.id.action_remove_bc:
+                removeCurrentBc();
+                break;
         }
 
         return super.onOptionsItemSelected(item);
@@ -192,25 +197,25 @@ public class EditorActivity extends AppCompatActivity {
                                            int[] grantResults) {
         if (requestCode == PERMISSIONS_REQUEST_WRITE_CONTACTS) {
             if (grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                Toast.makeText(this, "Permission granted!", Toast.LENGTH_SHORT).show();
+                Utils.showShortToast("Permission granted!", this);
                 addOrOpenContactsEditor(null);
             } else {
-                Toast.makeText(this, "Grant the permission to delete the contact.", Toast.LENGTH_SHORT).show();
+                Utils.showShortToast("Grant the permission to delete the contact.", this);
             }
         } else if (requestCode == PERMISSIONS_REQUEST_DELETE_CONTACTS) {
             if (grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                Toast.makeText(this, "Permission granted!", Toast.LENGTH_SHORT).show();
+                Utils.showShortToast("Permission granted!", this);
                 deleteContact();
             } else {
-                Toast.makeText(this, "Grant the permission to delete the contact.", Toast.LENGTH_SHORT).show();
+                Utils.showShortToast("Grant the permission to delete the contact.", this);
             }
         } else if(requestCode == PERMISSIONS_REQUEST_WRITE_EXT_STORAGE){
             if (grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                Toast.makeText(this, "Permission granted!", Toast.LENGTH_SHORT).show();
+                Utils.showShortToast("Permission granted!", this);
                 ScanningService.getInstance().clearImage();
                 ScanningService.getInstance().dispatchTakePictureIntent(getPackageManager(), getApplicationContext(), this);
             } else {
-                Toast.makeText(this, "Grant the permission to use the camera.", Toast.LENGTH_SHORT).show();
+                Utils.showShortToast("Grant the permission to use the camera.", this);
             }
         }
     }
@@ -223,9 +228,18 @@ public class EditorActivity extends AppCompatActivity {
                 ContactsContract.RawContacts.DISPLAY_NAME_PRIMARY+" = ?",
                 new String[]{mName});
 
-        Toast.makeText(this, mName+" Deleted.", Toast.LENGTH_SHORT).show();
+        Utils.showShortToast(mName+" Deleted.", this);
         finish();
         setResult(RESULT_OK);
+    }
+
+    protected void removeCurrentBc(){
+        if(nextAction == NEW_CONTACT){
+            ScanningService.getInstance().clearImage();
+            mImageView.invalidate();
+            mImageView.setVisibility(View.INVISIBLE);
+            mRotateImage.setVisibility(View.INVISIBLE);
+        }
     }
 
     public void addOrOpenContactsEditor(View view){
@@ -249,7 +263,7 @@ public class EditorActivity extends AppCompatActivity {
             case NEW_CONTACT:
 
                 if(TextUtils.isEmpty(nameNw) || (TextUtils.isEmpty(emailNw) && TextUtils.isEmpty(phoneNw))){
-                    Toast.makeText(this, " Put in some Data first!", Toast.LENGTH_SHORT).show();
+                    Utils.showShortToast("Put in some Data first!", this);
                     break;
                 }
 
@@ -305,12 +319,12 @@ public class EditorActivity extends AppCompatActivity {
 
                 try {
                     getContentResolver().applyBatch(ContactsContract.AUTHORITY, ops);
-                    Toast.makeText(this, "Contact Created!", Toast.LENGTH_SHORT).show();
+                    Utils.showShortToast("Contact Created!", this);
                     ScanningService.getInstance().setmCurrentPhotoPath(null);
                     finish();
                     setResult(RESULT_OK);
                 } catch (Exception e) {
-                    Toast.makeText(this, "Can't create contact!", Toast.LENGTH_SHORT).show();
+                    Utils.showShortToast("Can't create contact!", this);
                     e.printStackTrace();
                 }
 
@@ -420,7 +434,7 @@ public class EditorActivity extends AppCompatActivity {
                     break;
             }
 
-            Toast.makeText(this, "Exif orientation: "+orientation + "\nRotate value: "+rotate, Toast.LENGTH_SHORT).show();
+            Utils.showShortToast("Exif orientation: "+orientation + "\nRotate value: "+rotate, this);
         } catch (Exception e) {
             Log.e("getCameraPhotoOrient", e.toString());
         } finally {

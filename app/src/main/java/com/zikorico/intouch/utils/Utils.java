@@ -1,5 +1,8 @@
 package com.zikorico.intouch.utils;
 
+import android.content.Context;
+import android.widget.Toast;
+
 /**
  * Created by ikazme on 9/3/18.
  */
@@ -22,6 +25,12 @@ public class Utils {
 
     public static final int EMAIL_QUERY_ID = 0;
 
+    public static void showShortToast(String message, Context appContext){
+        Toast.makeText(appContext, message, Toast.LENGTH_SHORT).show();
+    }
 
+    public static void showLongToast(String message, Context appContext){
+        Toast.makeText(appContext, message, Toast.LENGTH_LONG).show();
+    }
 
 }

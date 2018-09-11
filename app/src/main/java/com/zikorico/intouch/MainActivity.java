@@ -23,6 +23,7 @@ import android.provider.ContactsContract.CommonDataKinds.Email;
 import com.zikorico.intouch.model.ContactAdapter;
 import com.zikorico.intouch.service.PermissionsService;
 import com.zikorico.intouch.service.ScanningService;
+import com.zikorico.intouch.utils.Utils;
 
 import static com.zikorico.intouch.utils.Utils.*;
 
@@ -87,17 +88,17 @@ public class MainActivity extends AppCompatActivity
                                            int[] grantResults) {
         if (requestCode == PERMISSIONS_REQUEST_READ_CONTACTS) {
             if (grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                Toast.makeText(this, "Permission granted!", Toast.LENGTH_SHORT).show();
+                Utils.showShortToast("Permission granted!", this);
                 populateContacts();
             } else {
-                Toast.makeText(this, "Grant the permission to display contacts.", Toast.LENGTH_SHORT).show();
+                Utils.showShortToast("Grant the permission to display contacts.", this);
             }
         } else if(requestCode == PERMISSIONS_REQUEST_WRITE_EXT_STORAGE){
             if (grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                Toast.makeText(this, "Permission granted!", Toast.LENGTH_SHORT).show();
+                Utils.showShortToast("Permission granted!", this);
                 ScanningService.getInstance().dispatchTakePictureIntent(getPackageManager(), getApplicationContext(), this);
             } else {
-                Toast.makeText(this, "Grant the permission to use the camera.", Toast.LENGTH_SHORT).show();
+                Utils.showShortToast("Grant the permission to use the camera.", this);
             }
         }
     }
