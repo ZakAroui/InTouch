@@ -65,6 +65,7 @@ public class EditorActivity extends AppCompatActivity {
     String[] contactData;
 
     private ImageView mImageView;
+    private FloatingActionButton mRotateImage;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -72,6 +73,7 @@ public class EditorActivity extends AppCompatActivity {
         setContentView(R.layout.activity_editor);
 
         mImageView = findViewById(R.id.bcImageView);
+        mRotateImage = findViewById(R.id.rotateFloatingButton);
 
         //TODO - USE CONSTRAINT LAYOUT
         EditText nameEditor = (EditText) findViewById(R.id.name_editText);
@@ -376,6 +378,7 @@ public class EditorActivity extends AppCompatActivity {
         mImageView.setVisibility(View.VISIBLE);
         mImageView.setImageURI(imageUri);
         mImageView.setClickable(true);
+        mRotateImage.setVisibility(View.VISIBLE);
     }
 
     private void showBcImageFromBitmap(Uri pickedBcUri){
@@ -391,6 +394,7 @@ public class EditorActivity extends AppCompatActivity {
             mImageView.setVisibility(View.VISIBLE);
             mImageView.setImageBitmap(bitmap);
             mImageView.setClickable(true);
+            mRotateImage.setVisibility(View.VISIBLE);
         }
     }
 
