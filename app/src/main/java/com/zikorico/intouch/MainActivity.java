@@ -65,8 +65,9 @@ public class MainActivity extends AppCompatActivity
             populateContacts();
         }
 
-        mImageView = findViewById(R.id.imageView);
+        mImageView = findViewById(R.id.bcImageView);
         mLinearLayout = findViewById(R.id.imagePreviewLayout);
+        //TODO - SHOW PHOTO OF CONTACT
         // TODO - add a search bar at the top of the listview
         // TODO - IMPLEMENT LANDING PAGE
         // TODO - IMPLEMENT BOTTOM NAVIGATION MENU

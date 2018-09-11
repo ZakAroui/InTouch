@@ -1,22 +1,20 @@
 package com.zikorico.intouch;
 
-import android.Manifest;
 import android.annotation.TargetApi;
+import android.app.Activity;
 import android.content.ContentProviderOperation;
-import android.content.ContentValues;
 import android.content.Intent;
 import android.content.pm.PackageManager;
-import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.Matrix;
+import android.graphics.drawable.BitmapDrawable;
 import android.media.ExifInterface;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
-import android.os.Environment;
 import android.provider.ContactsContract;
 import android.provider.MediaStore;
-import android.support.annotation.RequiresApi;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.view.MenuItemCompat;
 import android.support.v7.app.AppCompatActivity;
@@ -26,23 +24,18 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
 import android.widget.ImageView;
-import android.widget.LinearLayout;
 import android.widget.Toast;
 
-import com.google.android.gms.flags.impl.DataUtils;
 import com.zikorico.intouch.model.CopyImageTask;
 import com.zikorico.intouch.service.ContactsService;
 import com.zikorico.intouch.service.PermissionsService;
 import com.zikorico.intouch.service.ScanningService;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.nio.channels.FileChannel;
 import java.util.ArrayList;
 
 import static com.zikorico.intouch.utils.Utils.*;
@@ -78,11 +71,9 @@ public class EditorActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_editor);
 
-        mImageView = findViewById(R.id.imageView);
+        mImageView = findViewById(R.id.bcImageView);
 
         //TODO - USE CONSTRAINT LAYOUT
-        //TODO - SHOW PHOTO OF CONTACT
-        //TODO - HIDE KEYBOARD ON SCREEN CLICK
         EditText nameEditor = (EditText) findViewById(R.id.name_editText);
         EditText emailEditor = (EditText) findViewById(R.id.email_editText);
         EditText phoneEditor = (EditText) findViewById(R.id.phone_editText);
@@ -350,7 +341,6 @@ public class EditorActivity extends AppCompatActivity {
     }
 
     public void scanBusinessCard(View view){
-        //TODO - ADD PICTURE ROTATION BUTTON
         if(getPackageManager().hasSystemFeature(PackageManager.FEATURE_CAMERA_ANY)){
             if(PermissionsService.getInstance().hasWriteExternalStoragePerm(this)){
                 ScanningService.getInstance().clearImage();
@@ -376,7 +366,6 @@ public class EditorActivity extends AppCompatActivity {
 
                  new CopyImageTask(this).execute(pickedBcUri);
 
-                 //TODO - PROCESS IMAGE WHEN PICKED
                  ScanningService.getInstance().clearImage();
                  showBcImageFromBitmap(pickedBcUri);
              }
@@ -390,7 +379,6 @@ public class EditorActivity extends AppCompatActivity {
     }
 
     private void showBcImageFromBitmap(Uri pickedBcUri){
-        //TODO - ADD ROTATION FUNCTIONALITY
         int imageRotate = getCameraPhotoOrientation(pickedBcUri);
 
         Bitmap bitmap = null;
@@ -439,6 +427,21 @@ public class EditorActivity extends AppCompatActivity {
             }
         }
         return rotate;
+    }
+
+    public void rotateCurrentImage(View view){
+        ImageView imageView = findViewById(R.id.bcImageView);
+        imageView.invalidate();
+        Bitmap bitmap = ((BitmapDrawable)imageView.getDrawable()).getBitmap();
+
+        Matrix matrix = new Matrix();
+        matrix.postRotate(90);
+        Bitmap rotated = Bitmap.createBitmap(bitmap, 0, 0, bitmap.getWidth(), bitmap.getHeight(),
+                matrix, true);
+        imageView.setImageBitmap(rotated);
+
+        ScanningService.getInstance().processImage(rotated, this);
+
     }
 
 }

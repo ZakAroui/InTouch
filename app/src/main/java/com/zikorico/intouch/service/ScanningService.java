@@ -98,8 +98,14 @@ public class ScanningService {
         return image;
     }
 
+    public void processImage(Bitmap bitmap, final Context applicationContext){
+
+        FirebaseVisionImage image = FirebaseVisionImage.fromBitmap(bitmap);
+
+        processResult(image, applicationContext);
+    }
+
     public void processImage(Uri imageUri, final Context applicationContext){
-        //TODO - GET IMAGE FROM Media Type
 
         FirebaseVisionImage image;
         try {
@@ -108,6 +114,11 @@ public class ScanningService {
             e.printStackTrace();
             return;
         }
+
+        processResult(image, applicationContext);
+    }
+
+    private void processResult(FirebaseVisionImage image, final Context applicationContext){
 
         FirebaseVisionTextRecognizer textRecognizer = FirebaseVision.getInstance()
                 .getOnDeviceTextRecognizer();

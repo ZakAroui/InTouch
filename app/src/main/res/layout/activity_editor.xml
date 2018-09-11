@@ -62,7 +62,7 @@
         android:layout_alignParentStart="true" />
 
     <ImageView
-        android:id="@+id/imageView"
+        android:id="@+id/bcImageView"
         android:layout_alignTop="@+id/note_editText"
         android:layout_alignParentBottom="true"
         android:layout_width="match_parent"
@@ -97,5 +97,20 @@
         app:elevation="0dp"
         app:fabSize="normal"
         app:srcCompat="@drawable/ic_camera" />
+
+    <android.support.design.widget.FloatingActionButton
+        android:id="@+id/rotateFloatingButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_centerHorizontal="true"
+        android:layout_margin="1dp"
+        android:clickable="true"
+        android:onClick="rotateCurrentImage"
+        android:scaleType="center"
+        app:backgroundTint="@color/common_google_signin_btn_text_dark_default"
+        app:elevation="1dp"
+        app:fabSize="normal"
+        app:srcCompat="@drawable/ic_rotate_right" />
 
 </RelativeLayout>

@@ -43,6 +43,9 @@ public class CopyImageTask extends AsyncTask<Uri, Void, String> {
     protected void onPostExecute(String result) {
         ScanningService.getInstance().setmCurrentPhotoPath(result);
         Toast.makeText(context, result+" copied.", Toast.LENGTH_SHORT).show();
+
+        ScanningService.getInstance().processImage(ScanningService.getInstance().getUriOfImage(), context);
+
     }
 
     private  String copyImageToAppdir(ContentResolver contentResolver, Uri pickedBcUri){
