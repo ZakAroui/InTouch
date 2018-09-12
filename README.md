@@ -1,7 +1,7 @@
 # InTouch
 This repo includes the source code of the project InTouch.
 
-![InTouch icon] (GetInTouch_icon.png)
+![InTouch icon](GetInTouch_icon.png)
 
 InTouch is a mobile app developed in Android using Android Studio. The app has a simple approach of saving the contact information of the people you get in touch with at events or meetups, in an easy and simple way, just by saving the person's name, email, phone, and a note about how did you met (to help you memorize your people!!!)
 
@@ -20,7 +20,7 @@ This app makes use of Android's content providers to get the contacts list store
 
 Also, the "Plus" floating button in this activity is for adding new Touch (new contact). Once pressed, it will take you the activity of creating a new Touch.
 
-![main activity] (Screenshot_mainactivity.png)
+![main activity](Screenshot_mainactivity.png)
 
 __The New Contact Activity__
 
