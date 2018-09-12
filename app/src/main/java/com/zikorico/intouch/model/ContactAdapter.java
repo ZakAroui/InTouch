@@ -20,20 +20,8 @@ import com.zikorico.intouch.service.ContactsService;
 
 public class ContactAdapter extends CursorAdapter {
 
-    private Context context;
-    private static final String[] PHONE_PROJECTION  = new String[] {
-            ContactsContract.Data._ID,
-            ContactsContract.Data.LOOKUP_KEY,
-            ContactsContract.Data.DISPLAY_NAME_PRIMARY,
-            CommonDataKinds.Phone.NUMBER
-    };
-
-    private static final String SELECTION = ContactsContract.Data.MIMETYPE + " = '" + CommonDataKinds.Phone.CONTENT_ITEM_TYPE + "'";
-
-
     public ContactAdapter(Context context, Cursor c, int flags) {
         super(context, c, flags);
-        this.context = context;
     }
 
     @Override
@@ -44,15 +32,15 @@ public class ContactAdapter extends CursorAdapter {
 
     @Override
     public void bindView(View view, Context context, Cursor cursor) {
-        TextView nameTv = (TextView)view.findViewById(R.id.contact_textview);
+        TextView nameTv = view.findViewById(R.id.contact_textview);
         String contactName = cursor.getString(cursor.getColumnIndex(Data.DISPLAY_NAME_PRIMARY));
         nameTv.setText(contactName);
 
-        TextView emailTv = (TextView)view.findViewById(R.id.email_textView);
+        TextView emailTv = view.findViewById(R.id.email_textView);
         String contactEmail = cursor.getString(cursor.getColumnIndex(CommonDataKinds.Email.ADDRESS));
         emailTv.setText(contactEmail);
 
-        TextView phoneTv = (TextView) view.findViewById(R.id.phone_textView);
+        TextView phoneTv =  view.findViewById(R.id.phone_textView);
         int hasPnumber = cursor.getInt(cursor.getColumnIndex(CommonDataKinds.Phone.HAS_PHONE_NUMBER));
         if (hasPnumber == 1){
             ContactsService cs = ContactsService.getInstance();

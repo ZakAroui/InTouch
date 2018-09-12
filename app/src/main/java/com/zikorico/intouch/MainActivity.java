@@ -6,26 +6,24 @@ import android.content.Intent;
 import android.content.Loader;
 import android.content.pm.PackageManager;
 import android.database.Cursor;
-import android.net.Uri;
 import android.os.Bundle;
 import android.provider.ContactsContract;
+import android.provider.ContactsContract.CommonDataKinds.Email;
 import android.support.v7.app.AppCompatActivity;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
-import android.widget.ImageView;
-import android.widget.LinearLayout;
 import android.widget.ListView;
-import android.widget.Toast;
-import android.provider.ContactsContract.CommonDataKinds.Email;
 
 import com.zikorico.intouch.model.ContactAdapter;
 import com.zikorico.intouch.service.PermissionsService;
-import com.zikorico.intouch.service.ScanningService;
 import com.zikorico.intouch.utils.Utils;
 
-import static com.zikorico.intouch.utils.Utils.*;
+import static com.zikorico.intouch.utils.Utils.EDITOR_REQUEST_CODE;
+import static com.zikorico.intouch.utils.Utils.EMAIL_QUERY_ID;
+import static com.zikorico.intouch.utils.Utils.NEW_REQUEST_CODE;
+import static com.zikorico.intouch.utils.Utils.PERMISSIONS_REQUEST_READ_CONTACTS;
 
 /**
  * Created by ikazme
@@ -35,8 +33,6 @@ public class MainActivity extends AppCompatActivity
         implements LoaderManager.LoaderCallbacks<Cursor>,
         AdapterView.OnItemClickListener
 {
-     private ContactAdapter mCursorAdapterEmail;
-
     private static final String[] EMAIL_PROJECTION  = new String[] {
             ContactsContract.Data._ID,
             ContactsContract.Data.LOOKUP_KEY,
@@ -44,15 +40,9 @@ public class MainActivity extends AppCompatActivity
             ContactsContract.CommonDataKinds.Email.ADDRESS,
             ContactsContract.CommonDataKinds.Phone.HAS_PHONE_NUMBER
     };
-
     private static final String SELECTION = ContactsContract.Data.MIMETYPE + " = '" + Email.CONTENT_ITEM_TYPE + "'";
     private static final String SORT_ORDER = ContactsContract.Data.DISPLAY_NAME_PRIMARY + " ASC ";
-    private long mContactId;
-    private String mContactKey;
-    private Uri mContactUri;
-
-    private ImageView mImageView;
-    private LinearLayout mLinearLayout;
+    private ContactAdapter mCursorAdapterEmail;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -66,8 +56,6 @@ public class MainActivity extends AppCompatActivity
             populateContacts();
         }
 
-        mImageView = findViewById(R.id.bcImageView);
-        mLinearLayout = findViewById(R.id.imagePreviewLayout);
         //TODO - SHOW PHOTO OF CONTACT
         // TODO - add a search bar at the top of the listview
         // TODO - IMPLEMENT LANDING PAGE
@@ -77,7 +65,7 @@ public class MainActivity extends AppCompatActivity
     private void populateContacts(){
         mCursorAdapterEmail = new ContactAdapter(this,null,0);
 
-        ListView list = (ListView) findViewById(R.id.contactsListview);
+        ListView list = findViewById(R.id.contactsListview);
         list.setAdapter(mCursorAdapterEmail);
         list.setOnItemClickListener(this);
         getLoaderManager().initLoader(EMAIL_QUERY_ID, null, this);
@@ -92,13 +80,6 @@ public class MainActivity extends AppCompatActivity
                 populateContacts();
             } else {
                 Utils.showShortToast("Grant the permission to display contacts.", this);
-            }
-        } else if(requestCode == PERMISSIONS_REQUEST_WRITE_EXT_STORAGE){
-            if (grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                Utils.showShortToast("Permission granted!", this);
-                ScanningService.getInstance().dispatchTakePictureIntent(getPackageManager(), getApplicationContext(), this);
-            } else {
-                Utils.showShortToast("Grant the permission to use the camera.", this);
             }
         }
     }
@@ -154,19 +135,12 @@ public class MainActivity extends AppCompatActivity
         startActivityForResult(intent, NEW_REQUEST_CODE);
     }
 
-    public void scanBusinessCard(View view){
-        if(getPackageManager().hasSystemFeature(PackageManager.FEATURE_CAMERA_ANY)){
-            if(PermissionsService.getInstance().hasWriteExternalStoragePerm(this)){
-                ScanningService.getInstance().dispatchTakePictureIntent(getPackageManager(), getApplicationContext(), this);
-            }
-        }
-    }
 
     @Override
     public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
         Cursor cursor = mCursorAdapterEmail.getCursor();
         cursor.moveToPosition(position);
-        mContactKey = cursor.getString(cursor.getColumnIndex(ContactsContract.Data.LOOKUP_KEY));
+        String mContactKey = cursor.getString(cursor.getColumnIndex(ContactsContract.Data.LOOKUP_KEY));
         String mContactName = cursor.getString(cursor.getColumnIndex(ContactsContract.Data.DISPLAY_NAME_PRIMARY));
 
         Intent intent = new Intent(MainActivity.this, EditorActivity.class);
@@ -181,23 +155,7 @@ public class MainActivity extends AppCompatActivity
             restartLoader();
         } else if (requestCode == NEW_REQUEST_CODE && resultCode == RESULT_OK){
             restartLoader();
-        } else if (requestCode == REQUEST_IMAGE_CAPTURE){
-
-            if(resultCode == RESULT_OK){
-                Uri imageUri = ScanningService.getInstance().getUriOfImage();
-                mLinearLayout.setVisibility(View.VISIBLE);
-                mImageView.setImageURI(imageUri);
-                mImageView.setClickable(true);
-
-                ScanningService.getInstance().processImage(imageUri, getApplicationContext());
-
-            } else if(resultCode == RESULT_CANCELED){
-                ScanningService.getInstance().clearImage();
-            }
         }
     }
 
-    protected void hideImageView(View view){
-        mLinearLayout.setVisibility(View.INVISIBLE);
-    }
 }

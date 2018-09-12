@@ -1,9 +1,7 @@
 package com.zikorico.intouch.service;
 
-import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
-import android.net.Uri;
 import android.provider.ContactsContract;
 
 /**
@@ -35,13 +33,15 @@ public class ContactsService {
                 null);
 
         String contactPhone = "";
-        if (pNumbersCur.getCount() > 0)
-        {
-            pNumbersCur.moveToFirst();
-            contactPhone = pNumbersCur.getString(pNumbersCur.getColumnIndex(ContactsContract.CommonDataKinds.Phone.NUMBER));
+        if(pNumbersCur != null){
+            if (pNumbersCur.getCount() > 0)
+            {
+                pNumbersCur.moveToFirst();
+                contactPhone = pNumbersCur.getString(pNumbersCur.getColumnIndex(ContactsContract.CommonDataKinds.Phone.NUMBER));
 
+            }
+            pNumbersCur.close();
         }
-        pNumbersCur.close();
 
         return contactPhone;
     }
@@ -59,14 +59,16 @@ public class ContactsService {
         String contactEmail="";
         long contactId = 0;
         long rawContactId = 0;
-        if (emailCur.getCount() > 0) {
-            emailCur.moveToFirst();
-            contactName = emailCur.getString(emailCur.getColumnIndex(ContactsContract.Data.DISPLAY_NAME_PRIMARY));
-            contactEmail = emailCur.getString(emailCur.getColumnIndex(ContactsContract.CommonDataKinds.Email.ADDRESS));
-            contactId = emailCur.getLong(emailCur.getColumnIndex(ContactsContract.Data._ID));
-            rawContactId = emailCur.getLong(emailCur.getColumnIndex(ContactsContract.Data.RAW_CONTACT_ID));
+        if(emailCur != null){
+            if (emailCur.getCount() > 0) {
+                emailCur.moveToFirst();
+                contactName = emailCur.getString(emailCur.getColumnIndex(ContactsContract.Data.DISPLAY_NAME_PRIMARY));
+                contactEmail = emailCur.getString(emailCur.getColumnIndex(ContactsContract.CommonDataKinds.Email.ADDRESS));
+                contactId = emailCur.getLong(emailCur.getColumnIndex(ContactsContract.Data._ID));
+                rawContactId = emailCur.getLong(emailCur.getColumnIndex(ContactsContract.Data.RAW_CONTACT_ID));
+            }
+            emailCur.close();
         }
-        emailCur.close();
 
         return new String[]{contactName, contactEmail, Long.toString(contactId), Long.toString(rawContactId)};
     }
@@ -81,11 +83,13 @@ public class ContactsService {
                 uSelectionArgs,
                 null);
         String contactNote = "";
-        if (noteCur.getCount() > 0) {
-            noteCur.moveToFirst();
-            contactNote = noteCur.getString(noteCur.getColumnIndex(ContactsContract.CommonDataKinds.Note.NOTE));
+        if(noteCur != null){
+            if (noteCur.getCount() > 0) {
+                noteCur.moveToFirst();
+                contactNote = noteCur.getString(noteCur.getColumnIndex(ContactsContract.CommonDataKinds.Note.NOTE));
+            }
+            noteCur.close();
         }
-        noteCur.close();
 
         return contactNote;
     }
@@ -100,11 +104,13 @@ public class ContactsService {
                 uSelectionArgs,
                 null);
         String contactImagePath = "";
-        if (pathCur.getCount() > 0) {
-            pathCur.moveToFirst();
-            contactImagePath = pathCur.getString(pathCur.getColumnIndex(BC_IMAGE_PATH));
+        if(pathCur != null){
+            if (pathCur.getCount() > 0) {
+                pathCur.moveToFirst();
+                contactImagePath = pathCur.getString(pathCur.getColumnIndex(BC_IMAGE_PATH));
+            }
+            pathCur.close();
         }
-        pathCur.close();
 
         return contactImagePath;
     }

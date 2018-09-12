@@ -1,9 +1,7 @@
 package com.zikorico.intouch;
 
 import android.annotation.TargetApi;
-import android.app.Activity;
 import android.content.ContentProviderOperation;
-import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.content.res.AssetManager;
@@ -23,13 +21,12 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.ShareActionProvider;
 import android.text.TextUtils;
 import android.util.Log;
+import android.util.Pair;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
 import android.widget.ImageView;
-import android.widget.Toast;
 
 import com.zikorico.intouch.model.CopyImageTask;
 import com.zikorico.intouch.service.ContactsService;
@@ -41,7 +38,11 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
 
-import static com.zikorico.intouch.utils.Utils.*;
+import static com.zikorico.intouch.utils.Utils.PERMISSIONS_REQUEST_DELETE_CONTACTS;
+import static com.zikorico.intouch.utils.Utils.PERMISSIONS_REQUEST_WRITE_CONTACTS;
+import static com.zikorico.intouch.utils.Utils.PERMISSIONS_REQUEST_WRITE_EXT_STORAGE;
+import static com.zikorico.intouch.utils.Utils.REQUEST_IMAGE_CAPTURE;
+import static com.zikorico.intouch.utils.Utils.REQUEST_PICK_FROM_FILE;
 
 /**
  * Created by ikazme
@@ -52,25 +53,22 @@ public class EditorActivity extends AppCompatActivity {
     public static final String CONTACT_LOOKUP = "ContactLookup";
     public static final String CONTACT_NAME = "ContactName";
     private static final String LOG_TAG = EditorActivity.class.getSimpleName();
-
-    private String nextAction;
     private final String NEW_CONTACT = "new";
     private final String EDIT_CONTACT = "edit";
-
+    String[] contactData;
+    private String nextAction;
     private String[] mSelectionArgs = { "" };
-
     private Uri mSelectedContactUri;
     private String mName;
     private String mContactShare;
-
     private String mLookup;
-
-    String[] contactData;
-
     private ImageView mImageView;
     private FloatingActionButton mRotateImage;
 
     private Bitmap mSelectedBitmap;
+
+    private Integer mImageMaxWidth;
+    private Integer mImageMaxHeight;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -81,6 +79,7 @@ public class EditorActivity extends AppCompatActivity {
         mRotateImage = findViewById(R.id.rotateFloatingButton);
 
         //TODO - USE CONSTRAINT LAYOUT
+        //TODO - ADD BC IMAGE/PICTURE TO EXISTING CONTACT
         EditText nameEditor = (EditText) findViewById(R.id.name_editText);
         EditText emailEditor = (EditText) findViewById(R.id.email_editText);
         EditText phoneEditor = (EditText) findViewById(R.id.phone_editText);
@@ -103,7 +102,7 @@ public class EditorActivity extends AppCompatActivity {
             phoneEditor.setText(contactData[2]);
             noteEditor.setText(contactData[3]);
 
-            if(contactData[5] != null){
+            if(!TextUtils.isEmpty(contactData[5])){
                 Uri bcUri = Uri.parse(contactData[5]);
                 showBcImage(bcUri);
             }
@@ -117,7 +116,7 @@ public class EditorActivity extends AppCompatActivity {
         }else {
             setTitle("New Contact");
             nextAction = NEW_CONTACT;
-            FloatingActionButton newContactFl = (FloatingActionButton) findViewById(R.id.editorFloatingButton);
+            FloatingActionButton newContactFl = findViewById(R.id.editorFloatingButton);
             newContactFl.setImageResource(R.drawable.ic_action_add);
         }
     }
@@ -148,7 +147,7 @@ public class EditorActivity extends AppCompatActivity {
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        if (nextAction == EDIT_CONTACT) {
+        if (EDIT_CONTACT.equals(nextAction)) {
             getMenuInflater().inflate(R.menu.menu_editor, menu);
             MenuItem menuItem = menu.findItem(R.id.action_share);
             ShareActionProvider mShareActionProvider =
@@ -158,7 +157,7 @@ public class EditorActivity extends AppCompatActivity {
             } else {
                 Log.w(LOG_TAG, "onCreateOptionsMenu(): Share Action Provider is null!");
             }
-        } else if(nextAction == NEW_CONTACT){
+        } else if(NEW_CONTACT.equals(nextAction)){
             getMenuInflater().inflate(R.menu.menu_editor_new, menu);
         }
         return true;
@@ -242,7 +241,7 @@ public class EditorActivity extends AppCompatActivity {
     }
 
     protected void removeCurrentBc(){
-        if(nextAction == NEW_CONTACT){
+        if(NEW_CONTACT.equals(nextAction)){
             ScanningService.getInstance().clearImage();
             mImageView.invalidate();
             mImageView.setVisibility(View.INVISIBLE);
@@ -257,10 +256,10 @@ public class EditorActivity extends AppCompatActivity {
     }
 
     public void openContactsEditor(View view) {
-        EditText nameEditor = (EditText) findViewById(R.id.name_editText);
-        EditText emailEditor = (EditText) findViewById(R.id.email_editText);
-        EditText phoneEditor = (EditText) findViewById(R.id.phone_editText);
-        EditText noteEditor = (EditText) findViewById(R.id.note_editText);
+        EditText nameEditor = findViewById(R.id.name_editText);
+        EditText emailEditor = findViewById(R.id.email_editText);
+        EditText phoneEditor = findViewById(R.id.phone_editText);
+        EditText noteEditor = findViewById(R.id.note_editText);
 
         String nameNw = String.valueOf(nameEditor.getText());
         String emailNw = String.valueOf(emailEditor.getText());
@@ -282,13 +281,11 @@ public class EditorActivity extends AppCompatActivity {
                         .withValue(ContactsContract.RawContacts.ACCOUNT_NAME, null)
                         .build());
 
-                if(nameNw != null){
-                    ops.add(ContentProviderOperation.newInsert(ContactsContract.Data.CONTENT_URI)
-                            .withValueBackReference(ContactsContract.Data.RAW_CONTACT_ID, 0)
-                            .withValue(ContactsContract.Data.MIMETYPE, ContactsContract.CommonDataKinds.StructuredName.CONTENT_ITEM_TYPE)
-                            .withValue(ContactsContract.CommonDataKinds.StructuredName.DISPLAY_NAME, nameNw)
-                            .build());
-                }
+                ops.add(ContentProviderOperation.newInsert(ContactsContract.Data.CONTENT_URI)
+                        .withValueBackReference(ContactsContract.Data.RAW_CONTACT_ID, 0)
+                        .withValue(ContactsContract.Data.MIMETYPE, ContactsContract.CommonDataKinds.StructuredName.CONTENT_ITEM_TYPE)
+                        .withValue(ContactsContract.CommonDataKinds.StructuredName.DISPLAY_NAME, nameNw)
+                        .build());
 
                 if(emailNw != null){
                     ops.add(ContentProviderOperation.newInsert(ContactsContract.Data.CONTENT_URI)
@@ -405,7 +402,7 @@ public class EditorActivity extends AppCompatActivity {
 
     private void showImage(Bitmap bitmap){
         mImageView.setVisibility(View.VISIBLE);
-        mImageView.setImageBitmap(bitmap);
+        mImageView.setImageBitmap(scaleImageBitmap(bitmap));
         mImageView.setClickable(true);
         mRotateImage.setVisibility(View.VISIBLE);
     }
@@ -490,6 +487,50 @@ public class EditorActivity extends AppCompatActivity {
         }
 
         return bitmap;
+    }
+
+    private Bitmap scaleImageBitmap(Bitmap bitmap){
+        Pair<Integer, Integer> targetedSize = getTargetedWidthHeight();
+        int targetWidth = targetedSize.first;
+        int maxHeight = targetedSize.second;
+
+        float scaleFactor =
+                Math.max(
+                        (float) bitmap.getWidth() / (float) targetWidth,
+                        (float) bitmap.getHeight() / (float) maxHeight);
+
+        if(scaleFactor < 0.0) return bitmap;
+
+        return Bitmap.createScaledBitmap(
+                        bitmap,
+                        (int) (bitmap.getWidth() / scaleFactor),
+                        (int) (bitmap.getHeight() / scaleFactor),
+                        true);
+
+    }
+
+    private Integer getImageMaxWidth() {
+        if (mImageMaxWidth == null) {
+            mImageMaxWidth = mImageView.getWidth();
+        }
+        return mImageMaxWidth;
+    }
+
+    private Integer getImageMaxHeight() {
+        if (mImageMaxHeight == null) {
+            mImageMaxHeight = mImageView.getHeight();
+        }
+        return mImageMaxHeight;
+    }
+
+    private Pair<Integer, Integer> getTargetedWidthHeight() {
+        int targetWidth;
+        int targetHeight;
+        int maxWidthForPortraitMode = getImageMaxWidth();
+        int maxHeightForPortraitMode = getImageMaxHeight();
+        targetWidth = maxWidthForPortraitMode;
+        targetHeight = maxHeightForPortraitMode;
+        return new Pair<>(targetWidth, targetHeight);
     }
 
 }
