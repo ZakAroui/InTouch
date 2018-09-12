@@ -47,6 +47,8 @@ public class ContactAdapter extends CursorAdapter {
             String[] mSelectionArgs = { cursor.getString(cursor.getColumnIndex(Data.LOOKUP_KEY)) };
             String phoneNumber = cs.getPhoneNumber(mSelectionArgs, context);
             phoneTv.setText(phoneNumber);
+        } else {
+            phoneTv.setText("");
         }
     }
 
