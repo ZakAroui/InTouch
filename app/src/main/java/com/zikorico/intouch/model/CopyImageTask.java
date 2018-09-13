@@ -1,5 +1,6 @@
 package com.zikorico.intouch.model;
 
+import android.app.Activity;
 import android.content.ContentResolver;
 import android.content.Context;
 import android.graphics.Bitmap;
@@ -26,9 +27,12 @@ import java.util.Locale;
 public class CopyImageTask extends AsyncTask<Uri, Void, String> {
 
     private Context context;
+    private Activity activity;
 
-    public CopyImageTask(Context context){
+    public CopyImageTask(Context context, Activity activity){
+
         this.context = context;
+        this.activity = activity;
     }
 
     protected String doInBackground(Uri... uris) {
@@ -44,7 +48,7 @@ public class CopyImageTask extends AsyncTask<Uri, Void, String> {
         ScanningService.getInstance().setmCurrentPhotoPath(result);
         Toast.makeText(context, result+" copied.", Toast.LENGTH_SHORT).show();
 
-        ScanningService.getInstance().processImage(ScanningService.getInstance().getUriOfImage(), context);
+        ScanningService.getInstance().processImage(ScanningService.getInstance().getUriOfImage(), context, activity);
 
     }
 

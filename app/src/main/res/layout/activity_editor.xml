@@ -91,10 +91,10 @@
         android:layout_centerHorizontal="true"
         android:layout_margin="1dp"
         android:clickable="true"
-        android:visibility="invisible"
         android:onClick="rotateCurrentImage"
         android:scaleType="center"
-        app:backgroundTint="@color/common_google_signin_btn_text_dark_default"
+        android:visibility="invisible"
+        app:backgroundTint="@android:color/transparent"
         app:elevation="1dp"
         app:fabSize="normal"
         app:srcCompat="@drawable/ic_rotate_right" />

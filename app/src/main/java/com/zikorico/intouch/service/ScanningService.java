@@ -1,5 +1,6 @@
 package com.zikorico.intouch.service;
 
+import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
@@ -12,7 +13,9 @@ import android.provider.MediaStore;
 import android.support.annotation.NonNull;
 import android.support.v4.content.FileProvider;
 import android.support.v7.app.AppCompatActivity;
+import android.text.TextUtils;
 import android.util.Log;
+import android.widget.EditText;
 
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
@@ -21,6 +24,7 @@ import com.google.firebase.ml.vision.common.FirebaseVisionImage;
 import com.google.firebase.ml.vision.text.FirebaseVisionText;
 import com.google.firebase.ml.vision.text.FirebaseVisionTextRecognizer;
 import com.google.firebase.ml.vision.text.RecognizedLanguage;
+import com.zikorico.intouch.R;
 import com.zikorico.intouch.utils.Utils;
 
 import java.io.File;
@@ -29,6 +33,8 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
 import java.util.Locale;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import static android.content.ContentValues.TAG;
 import static com.zikorico.intouch.utils.Utils.REQUEST_IMAGE_CAPTURE;
@@ -43,6 +49,11 @@ public class ScanningService {
     private static ScanningService scanningService;
 
     private String mCurrentPhotoPath;
+    private String mName;
+    private String mEmailAddress;
+    private String mPhoneNumber;
+    private String mNote;
+
 
     private ScanningService() {
     }
@@ -96,14 +107,14 @@ public class ScanningService {
         return image;
     }
 
-    public void processImage(Bitmap bitmap, final Context applicationContext){
+    public void processImage(Bitmap bitmap, final Context applicationContext, Activity activity){
 
         FirebaseVisionImage image = FirebaseVisionImage.fromBitmap(bitmap);
 
-        processResult(image, applicationContext);
+        processResult(image, applicationContext, activity);
     }
 
-    public void processImage(Uri imageUri, final Context applicationContext){
+    public void processImage(Uri imageUri, final Context applicationContext, Activity activity){
 
         FirebaseVisionImage image;
         try {
@@ -113,10 +124,12 @@ public class ScanningService {
             return;
         }
 
-        processResult(image, applicationContext);
+        processResult(image, applicationContext, activity);
     }
 
-    private void processResult(FirebaseVisionImage image, final Context applicationContext){
+    private void processResult(FirebaseVisionImage image, final Context applicationContext, final Activity activity){
+
+        clearData();
 
         FirebaseVisionTextRecognizer textRecognizer = FirebaseVision.getInstance()
                 .getOnDeviceTextRecognizer();
@@ -126,6 +139,7 @@ public class ScanningService {
                     @Override
                     public void onSuccess(FirebaseVisionText result) {
                         processResultText(result, applicationContext);
+                        updateFieldOnSuccess(activity);
                     }
                 })
                 .addOnFailureListener( new OnFailureListener() {
@@ -143,22 +157,33 @@ public class ScanningService {
 
         for (FirebaseVisionText.TextBlock block: result.getTextBlocks()) {
             String blockText = block.getText();
-            Float blockConfidence = block.getConfidence();
-            List<RecognizedLanguage> blockLanguages = block.getRecognizedLanguages();
-            Point[] blockCornerPoints = block.getCornerPoints();
-            Rect blockFrame = block.getBoundingBox();
             for (FirebaseVisionText.Line line: block.getLines()) {
                 String lineText = line.getText();
-                Float lineConfidence = line.getConfidence();
-                List<RecognizedLanguage> lineLanguages = line.getRecognizedLanguages();
-                Point[] lineCornerPoints = line.getCornerPoints();
-                Rect lineFrame = line.getBoundingBox();
+
+                if(TextUtils.isEmpty(mEmailAddress) && lineText.contains("@")){
+                    Pattern ePattern = Pattern.compile("\\S+@\\S+\\.\\S+");
+                    Matcher eMatcher = ePattern.matcher(lineText);
+                    if(eMatcher.find()){
+                        int s = eMatcher.start();
+                        int e = eMatcher.end();
+                        mEmailAddress = lineText.substring(s,e);
+                    }
+                }
+
+                if(TextUtils.isEmpty(mPhoneNumber)){
+                    Pattern p = Pattern.compile("(\\d)+?");
+                    Matcher m = p.matcher(lineText);
+                    int count = 0;
+                    while (m.find()){
+                        count++;
+                    }
+                    if(count > 9) mPhoneNumber = lineText;
+                }
+
                 for (FirebaseVisionText.Element element: line.getElements()) {
                     String elementText = element.getText();
-                    Float elementConfidence = element.getConfidence();
-                    List<RecognizedLanguage> elementLanguages = element.getRecognizedLanguages();
-                    Point[] elementCornerPoints = element.getCornerPoints();
-                    Rect elementFrame = element.getBoundingBox();
+
+
                 }
             }
         }
@@ -184,6 +209,12 @@ public class ScanningService {
 
     }
 
+    public void clearData(){
+        mEmailAddress = null;
+        mPhoneNumber = null;
+        mName = null;
+    }
+
 
     public void clearImage(String imagePath){
         if(imagePath != null){
@@ -194,6 +225,20 @@ public class ScanningService {
                 e.printStackTrace();
             }
         }
+
+    }
+
+    protected void updateFieldOnSuccess(Activity activity){
+        EditText nameEditor =  activity.findViewById(R.id.name_editText);
+        EditText emailEditor =  activity.findViewById(R.id.email_editText);
+        EditText phoneEditor =  activity.findViewById(R.id.phone_editText);
+        EditText noteEditor =  activity.findViewById(R.id.note_editText);
+
+        nameEditor.setText(mName);
+        emailEditor.setText(mEmailAddress);
+        phoneEditor.setText(mPhoneNumber);
+        noteEditor.setText(mNote);
+
 
     }
 

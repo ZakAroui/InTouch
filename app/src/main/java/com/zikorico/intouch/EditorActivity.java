@@ -80,10 +80,10 @@ public class EditorActivity extends AppCompatActivity {
 
         //TODO - USE CONSTRAINT LAYOUT
         //TODO - ADD BC IMAGE/PICTURE TO EXISTING CONTACT
-        EditText nameEditor = (EditText) findViewById(R.id.name_editText);
-        EditText emailEditor = (EditText) findViewById(R.id.email_editText);
-        EditText phoneEditor = (EditText) findViewById(R.id.phone_editText);
-        EditText noteEditor = (EditText) findViewById(R.id.note_editText);
+        EditText nameEditor =  findViewById(R.id.name_editText);
+        EditText emailEditor =  findViewById(R.id.email_editText);
+        EditText phoneEditor =  findViewById(R.id.phone_editText);
+        EditText noteEditor =  findViewById(R.id.note_editText);
 
 
         Intent intent = getIntent();
@@ -193,6 +193,7 @@ public class EditorActivity extends AppCompatActivity {
             case R.id.action_open_asset:
                 mSelectedBitmap = getBitmapFromAsset("work_street_sign.png");
                 showImage(mSelectedBitmap);
+                ScanningService.getInstance().processImage(mSelectedBitmap, getApplicationContext(), this);
                 break;
         }
 
@@ -377,7 +378,7 @@ public class EditorActivity extends AppCompatActivity {
                  Uri imageUri = ScanningService.getInstance().getUriOfImage();
                  showBcImage(imageUri);
 
-                 ScanningService.getInstance().processImage(imageUri, getApplicationContext());
+                 ScanningService.getInstance().processImage(imageUri, getApplicationContext(), this);
              } else if(resultCode == RESULT_CANCELED){
                  ScanningService.getInstance().clearImage();
              }
@@ -385,7 +386,7 @@ public class EditorActivity extends AppCompatActivity {
              if(data != null){
                  Uri pickedBcUri = data.getData();
 
-                 new CopyImageTask(this).execute(pickedBcUri);
+                 new CopyImageTask(getApplicationContext(), this).execute(pickedBcUri);
 
                  ScanningService.getInstance().clearImage();
                  showBcImageFromBitmap(pickedBcUri);
@@ -393,18 +394,22 @@ public class EditorActivity extends AppCompatActivity {
          }
     }
 
-    private void showBcImage(Uri imageUri){
+    private void showBcImageView(){
         mImageView.setVisibility(View.VISIBLE);
-        mImageView.setImageURI(imageUri);
         mImageView.setClickable(true);
-        mRotateImage.setVisibility(View.VISIBLE);
+        if(mImageView.getDrawable() != null){
+            mRotateImage.setVisibility(View.VISIBLE);
+        }
+    }
+
+    private void showBcImage(Uri imageUri){
+        mImageView.setImageURI(imageUri);
+        showBcImageView();
     }
 
     private void showImage(Bitmap bitmap){
-        mImageView.setVisibility(View.VISIBLE);
         mImageView.setImageBitmap(scaleImageBitmap(bitmap));
-        mImageView.setClickable(true);
-        mRotateImage.setVisibility(View.VISIBLE);
+        showBcImageView();
     }
 
     private void showBcImageFromBitmap(Uri pickedBcUri){
@@ -417,10 +422,7 @@ public class EditorActivity extends AppCompatActivity {
             Log.e("showBcImageFromBitmap", e.toString());
         }
         if(bitmap != null){
-            mImageView.setVisibility(View.VISIBLE);
-            mImageView.setImageBitmap(bitmap);
-            mImageView.setClickable(true);
-            mRotateImage.setVisibility(View.VISIBLE);
+            showImage(bitmap);
         }
     }
 
@@ -470,7 +472,7 @@ public class EditorActivity extends AppCompatActivity {
                 matrix, true);
         imageView.setImageBitmap(rotated);
 
-        ScanningService.getInstance().processImage(rotated, this);
+        ScanningService.getInstance().processImage(rotated, getApplicationContext(), this);
 
     }
 
