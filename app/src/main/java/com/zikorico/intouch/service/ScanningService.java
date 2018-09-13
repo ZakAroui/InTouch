@@ -129,7 +129,7 @@ public class ScanningService {
 
     private void processResult(FirebaseVisionImage image, final Context applicationContext, final Activity activity){
 
-        clearData();
+        clearData(activity);
 
         FirebaseVisionTextRecognizer textRecognizer = FirebaseVision.getInstance()
                 .getOnDeviceTextRecognizer();
@@ -188,6 +188,21 @@ public class ScanningService {
             }
         }
 
+        for (FirebaseVisionText.TextBlock block: result.getTextBlocks()) {
+            for (FirebaseVisionText.Line line: block.getLines()) {
+                String lineText = line.getText();
+                for (FirebaseVisionText.Element element: line.getElements()) {
+                    String elementText = element.getText();
+                    if(mEmailAddress != null){
+                        String es = mEmailAddress.substring(0, mEmailAddress.indexOf("@"));
+                        if(es.toLowerCase().contains(elementText.toLowerCase())) mName = lineText;
+                    }
+
+
+                }
+            }
+        }
+
     }
 
     public Uri getUriOfImage(){
@@ -209,10 +224,12 @@ public class ScanningService {
 
     }
 
-    public void clearData(){
+    public void clearData(Activity activity){
         mEmailAddress = null;
         mPhoneNumber = null;
         mName = null;
+        mNote = null;
+        updateFieldOnSuccess(activity);
     }
 
 
@@ -228,6 +245,7 @@ public class ScanningService {
 
     }
 
+    //TODO - fixed this
     protected void updateFieldOnSuccess(Activity activity){
         EditText nameEditor =  activity.findViewById(R.id.name_editText);
         EditText emailEditor =  activity.findViewById(R.id.email_editText);
