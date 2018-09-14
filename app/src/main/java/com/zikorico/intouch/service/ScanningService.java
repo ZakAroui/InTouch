@@ -27,6 +27,8 @@ import com.google.firebase.ml.vision.text.RecognizedLanguage;
 import com.zikorico.intouch.R;
 import com.zikorico.intouch.utils.Utils;
 
+import org.w3c.dom.Text;
+
 import java.io.File;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
@@ -169,7 +171,6 @@ public class ScanningService {
                     }
                 }
 
-                //TODO - DELETE NON NUMERIC CHARS FROM PHONE NUMBER
                 if(TextUtils.isEmpty(mPhoneNumber)){
                     Pattern p = Pattern.compile("(\\d)+?");
                     Matcher m = p.matcher(lineText);
@@ -177,7 +178,18 @@ public class ScanningService {
                     while (m.find()){
                         count++;
                     }
-                    if(count > 9) mPhoneNumber = lineText;
+
+                    if(count > 9){
+                        StringBuilder sb = new StringBuilder(lineText);
+                        for (int i = 0; i < sb.length(); i++){
+                            if(!Character.isDigit(sb.charAt(i))){
+                                sb.deleteCharAt(i);
+                                i = i - 1;
+                            }
+                        }
+                        mPhoneNumber = sb.toString();
+                    }
+
                 }
 
                 for (FirebaseVisionText.Element element: line.getElements()) {
@@ -193,7 +205,7 @@ public class ScanningService {
                 String lineText = line.getText();
                 for (FirebaseVisionText.Element element: line.getElements()) {
                     String elementText = element.getText();
-                    if(mEmailAddress != null){
+                    if(!TextUtils.isEmpty(mEmailAddress) && TextUtils.isEmpty(mName)){
                         String es = mEmailAddress.substring(0, mEmailAddress.indexOf("@"));
                         if(es.toLowerCase().contains(elementText.toLowerCase())) mName = lineText;
                     }
