@@ -78,7 +78,6 @@ public class EditorActivity extends AppCompatActivity {
         mImageView = findViewById(R.id.bcImageView);
         mRotateImage = findViewById(R.id.rotateFloatingButton);
 
-        //TODO - USE CONSTRAINT LAYOUT
         //TODO - ADD BC IMAGE/PICTURE TO EXISTING CONTACT
         EditText nameEditor =  findViewById(R.id.name_editText);
         EditText emailEditor =  findViewById(R.id.email_editText);

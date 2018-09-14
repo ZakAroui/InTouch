@@ -151,7 +151,6 @@ public class ScanningService {
     }
 
     private void processResultText(FirebaseVisionText result, Context applicationContext){
-        //TODO - PROCESS TEXT RESULT
         String resultText = result.getText();
         Utils.showLongToast(resultText, applicationContext);
 
@@ -170,6 +169,7 @@ public class ScanningService {
                     }
                 }
 
+                //TODO - DELETE NON NUMERIC CHARS FROM PHONE NUMBER
                 if(TextUtils.isEmpty(mPhoneNumber)){
                     Pattern p = Pattern.compile("(\\d)+?");
                     Matcher m = p.matcher(lineText);
