@@ -337,6 +337,7 @@ public class EditorActivity extends AppCompatActivity {
             case EDIT_CONTACT:
                 Intent editIntent = new Intent(Intent.ACTION_EDIT);
                 editIntent.setDataAndType(mSelectedContactUri, ContactsContract.Contacts.CONTENT_ITEM_TYPE);
+                //TODO - GO TO THE EDIT CONTACT ACTIVITY
                 if (editIntent.resolveActivity(getPackageManager()) != null) {
                     startActivity(editIntent);
                     finish();
