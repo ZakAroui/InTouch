@@ -91,7 +91,7 @@ public class ScanningService {
     }
 
 
-    public File createImageFile() throws IOException {
+    private File createImageFile() throws IOException {
 
         String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss", Locale.US).format(new Date());
         String imageFileName = "JPEG_" + timeStamp + "_";
@@ -236,7 +236,7 @@ public class ScanningService {
 
     }
 
-    public void clearData(Activity activity){
+    private void clearData(Activity activity){
         mEmailAddress = null;
         mPhoneNumber = null;
         mName = null;
@@ -258,7 +258,7 @@ public class ScanningService {
     }
 
     //TODO - fixed this
-    protected void updateFieldOnSuccess(Activity activity){
+    private void updateFieldOnSuccess(Activity activity){
         EditText nameEditor =  activity.findViewById(R.id.name_editText);
         EditText emailEditor =  activity.findViewById(R.id.email_editText);
         EditText phoneEditor =  activity.findViewById(R.id.phone_editText);

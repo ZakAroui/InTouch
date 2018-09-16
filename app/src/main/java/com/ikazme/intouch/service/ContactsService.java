@@ -3,6 +3,7 @@ package com.ikazme.intouch.service;
 import android.content.Context;
 import android.database.Cursor;
 import android.provider.ContactsContract;
+import android.text.TextUtils;
 
 /**
  * Created by ikazme on 8/30/18.
@@ -36,9 +37,9 @@ public class ContactsService {
         if(pNumbersCur != null){
             if (pNumbersCur.getCount() > 0)
             {
-                pNumbersCur.moveToFirst();
-                contactPhone = pNumbersCur.getString(pNumbersCur.getColumnIndex(ContactsContract.CommonDataKinds.Phone.NUMBER));
-
+                while (TextUtils.isEmpty(contactPhone) && pNumbersCur.moveToNext()){
+                    contactPhone = pNumbersCur.getString(pNumbersCur.getColumnIndex(ContactsContract.CommonDataKinds.Phone.NUMBER));
+                }
             }
             pNumbersCur.close();
         }

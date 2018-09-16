@@ -69,6 +69,7 @@ public class CopyImageTask extends AsyncTask<Uri, Void, String> {
             );
 
             String cPath = image.getAbsolutePath();
+            ScanningService.getInstance().setmCurrentPhotoPath(cPath);
 
             FileOutputStream fOut = new FileOutputStream(image);
             bitmap.compress(Bitmap.CompressFormat.JPEG, 97, fOut);

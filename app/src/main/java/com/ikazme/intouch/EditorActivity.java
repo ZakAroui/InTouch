@@ -38,11 +38,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
 
-import static com.ikazme.intouch.utils.Utils.PERMISSIONS_REQUEST_DELETE_CONTACTS;
-import static com.ikazme.intouch.utils.Utils.PERMISSIONS_REQUEST_WRITE_CONTACTS;
-import static com.ikazme.intouch.utils.Utils.PERMISSIONS_REQUEST_WRITE_EXT_STORAGE;
-import static com.ikazme.intouch.utils.Utils.REQUEST_IMAGE_CAPTURE;
-import static com.ikazme.intouch.utils.Utils.REQUEST_PICK_FROM_FILE;
+import static com.ikazme.intouch.utils.Utils.*;
 
 /**
  * Created by ikazme
@@ -52,10 +48,11 @@ public class EditorActivity extends AppCompatActivity {
     public static final String EDITOR_TYPE = "Type";
     public static final String CONTACT_LOOKUP = "ContactLookup";
     public static final String CONTACT_NAME = "ContactName";
+
     private static final String LOG_TAG = EditorActivity.class.getSimpleName();
     private final String NEW_CONTACT = "new";
     private final String EDIT_CONTACT = "edit";
-    String[] contactData;
+    private String[] contactData;
     private String nextAction;
     private String[] mSelectionArgs = { "" };
     private Uri mSelectedContactUri;
@@ -64,9 +61,7 @@ public class EditorActivity extends AppCompatActivity {
     private String mLookup;
     private ImageView mImageView;
     private FloatingActionButton mRotateImage;
-
     private Bitmap mSelectedBitmap;
-
     private Integer mImageMaxWidth;
     private Integer mImageMaxHeight;
 
@@ -120,14 +115,14 @@ public class EditorActivity extends AppCompatActivity {
         }
     }
 
-    public void disableTexteditor(EditText editText){
+    private void disableTexteditor(EditText editText){
         editText.setClickable(false);
         editText.setCursorVisible(false);
         editText.setFocusable(false);
         editText.setFocusableInTouchMode(false);
     }
 
-    public String[] getContactData(String[] uSelectionArgs){
+    private String[] getContactData(String[] uSelectionArgs){
         ContactsService cs = ContactsService.getInstance();
 
         String[] nameEmailContactid = cs.getNameEmailContactId(uSelectionArgs, getApplicationContext());
@@ -207,7 +202,7 @@ public class EditorActivity extends AppCompatActivity {
                 Utils.showShortToast("Permission granted!", this);
                 addOrOpenContactsEditor(null);
             } else {
-                Utils.showShortToast("Grant the permission to delete the contact.", this);
+                Utils.showShortToast("Grant the permission to Add/Edit contacts.", this);
             }
         } else if (requestCode == PERMISSIONS_REQUEST_DELETE_CONTACTS) {
             if (grantResults[0] == PackageManager.PERMISSION_GRANTED) {
@@ -216,7 +211,16 @@ public class EditorActivity extends AppCompatActivity {
             } else {
                 Utils.showShortToast("Grant the permission to delete the contact.", this);
             }
-        } else if(requestCode == PERMISSIONS_REQUEST_WRITE_EXT_STORAGE){
+        } else if (requestCode == PERMISSIONS_REQUEST_USE_EXT_STORAGE){
+            if (grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                Utils.showShortToast("Permission granted!", this);
+                launchFilePicker();
+            } else {
+                Utils.showShortToast("Grant the permission to pick an BC image.", this);
+            }
+        }
+
+        else if(requestCode == PERMISSIONS_REQUEST_USE_CAMERA){
             if (grantResults[0] == PackageManager.PERMISSION_GRANTED) {
                 Utils.showShortToast("Permission granted!", this);
                 ScanningService.getInstance().clearImage();
@@ -240,7 +244,7 @@ public class EditorActivity extends AppCompatActivity {
         setResult(RESULT_OK);
     }
 
-    protected void removeCurrentBc(){
+    private void removeCurrentBc(){
         if(NEW_CONTACT.equals(nextAction)){
             ScanningService.getInstance().clearImage();
             mImageView.invalidate();
@@ -249,13 +253,13 @@ public class EditorActivity extends AppCompatActivity {
         }
     }
 
-    public void addOrOpenContactsEditor(View view){
+    protected void addOrOpenContactsEditor(View view){
         if(PermissionsService.getInstance().hasContactsWritePerm(this, PERMISSIONS_REQUEST_WRITE_CONTACTS)){
             openContactsEditor(view);
         }
     }
 
-    public void openContactsEditor(View view) {
+    private void openContactsEditor(View view) {
         EditText nameEditor = findViewById(R.id.name_editText);
         EditText emailEditor = findViewById(R.id.email_editText);
         EditText phoneEditor = findViewById(R.id.phone_editText);
@@ -326,8 +330,8 @@ public class EditorActivity extends AppCompatActivity {
                     getContentResolver().applyBatch(ContactsContract.AUTHORITY, ops);
                     Utils.showShortToast("Contact Created!", this);
                     ScanningService.getInstance().setmCurrentPhotoPath(null);
-                    finish();
                     setResult(RESULT_OK);
+                    finish();
                 } catch (Exception e) {
                     Utils.showShortToast("Can't create contact!", this);
                     e.printStackTrace();
@@ -337,14 +341,18 @@ public class EditorActivity extends AppCompatActivity {
             case EDIT_CONTACT:
                 Intent editIntent = new Intent(Intent.ACTION_EDIT);
                 editIntent.setDataAndType(mSelectedContactUri, ContactsContract.Contacts.CONTENT_ITEM_TYPE);
-                //TODO - GO TO THE EDIT CONTACT ACTIVITY
                 if (editIntent.resolveActivity(getPackageManager()) != null) {
                     startActivity(editIntent);
-                    finish();
-                    setResult(RESULT_OK);
                 }
                 break;
         }
+    }
+
+    @Override
+    protected void onStart() {
+        //TODO - IF EDIT THEN RELOAD
+        super.onStart();
+
     }
 
     @Override
@@ -364,16 +372,22 @@ public class EditorActivity extends AppCompatActivity {
         super.onDestroy();
     }
 
-    public void pickBcFromFile(){
+    private void pickBcFromFile(){
+        if(PermissionsService.getInstance().hasWriteExternalStoragePerm(this, PERMISSIONS_REQUEST_USE_EXT_STORAGE)) {
+            launchFilePicker();
+        }
+    }
+
+    private void launchFilePicker(){
         Intent intent = new Intent();
         intent.setType("image/*");
         intent.setAction(Intent.ACTION_GET_CONTENT);
         startActivityForResult(Intent.createChooser(intent, "Complete action using"), REQUEST_PICK_FROM_FILE);
     }
 
-    public void scanBusinessCard(View view){
+    protected void scanBusinessCard(View view){
         if(getPackageManager().hasSystemFeature(PackageManager.FEATURE_CAMERA_ANY)){
-            if(PermissionsService.getInstance().hasWriteExternalStoragePerm(this)){
+            if(PermissionsService.getInstance().hasWriteExternalStoragePerm(this, PERMISSIONS_REQUEST_USE_CAMERA)){
                 ScanningService.getInstance().clearImage();
                 ScanningService.getInstance().dispatchTakePictureIntent(getPackageManager(), getApplicationContext(), this);
             }
@@ -436,7 +450,7 @@ public class EditorActivity extends AppCompatActivity {
     }
 
     @TargetApi(Build.VERSION_CODES.N)
-    public int getCameraPhotoOrientation(Uri imageUri){
+    private int getCameraPhotoOrientation(Uri imageUri){
         int rotate = 0;
         InputStream in = null;
         try {
@@ -470,7 +484,7 @@ public class EditorActivity extends AppCompatActivity {
         return rotate;
     }
 
-    public void rotateCurrentImage(View view){
+    protected void rotateCurrentImage(View view){
         ImageView imageView = findViewById(R.id.bcImageView);
         imageView.invalidate();
         Bitmap bitmap = ((BitmapDrawable)imageView.getDrawable()).getBitmap();
@@ -485,7 +499,7 @@ public class EditorActivity extends AppCompatActivity {
 
     }
 
-    public Bitmap getBitmapFromAsset(String filePath) {
+    private Bitmap getBitmapFromAsset(String filePath) {
         AssetManager assetManager = this.getAssets();
 
         InputStream is;

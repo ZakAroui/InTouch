@@ -31,11 +31,11 @@ public class PermissionsService {
 
 
 
-    public boolean hasWriteExternalStoragePerm(AppCompatActivity activity){
+    public boolean hasWriteExternalStoragePerm(AppCompatActivity activity, int reqCode){
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M
                 && activity.checkSelfPermission(Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
-            activity.requestPermissions(new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE}, PERMISSIONS_REQUEST_WRITE_EXT_STORAGE);
+            activity.requestPermissions(new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE}, reqCode);
             return false;
         } else {
             return true;

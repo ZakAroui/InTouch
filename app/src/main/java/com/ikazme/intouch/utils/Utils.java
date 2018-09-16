@@ -19,9 +19,8 @@ public class Utils {
     public static final int PERMISSIONS_REQUEST_READ_CONTACTS = 100;
     public static final int PERMISSIONS_REQUEST_WRITE_CONTACTS = 101;
     public static final int PERMISSIONS_REQUEST_DELETE_CONTACTS = 102;
-    public static final int PERMISSIONS_REQUEST_WRITE_EXT_STORAGE = 103;
-
-    public int INSERT_CONTACT_REQUEST = 201;
+    public static final int PERMISSIONS_REQUEST_USE_EXT_STORAGE = 103;
+    public static final int PERMISSIONS_REQUEST_USE_CAMERA = 104;
 
     public static final int EMAIL_QUERY_ID = 0;
 

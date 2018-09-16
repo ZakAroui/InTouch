@@ -20,10 +20,7 @@ import com.ikazme.intouch.model.ContactAdapter;
 import com.ikazme.intouch.service.PermissionsService;
 import com.ikazme.intouch.utils.Utils;
 
-import static com.ikazme.intouch.utils.Utils.EDITOR_REQUEST_CODE;
-import static com.ikazme.intouch.utils.Utils.EMAIL_QUERY_ID;
-import static com.ikazme.intouch.utils.Utils.NEW_REQUEST_CODE;
-import static com.ikazme.intouch.utils.Utils.PERMISSIONS_REQUEST_READ_CONTACTS;
+import static com.ikazme.intouch.utils.Utils.*;
 
 /**
  * Created by ikazme
@@ -80,7 +77,7 @@ public class MainActivity extends AppCompatActivity
                 Utils.showShortToast("Permission granted!", this);
                 populateContacts();
             } else {
-                Utils.showShortToast("Grant the permission to display contacts.", this);
+                Utils.showShortToast("Display contacts by granting contacts permission.", this);
             }
         }
     }
@@ -130,7 +127,7 @@ public class MainActivity extends AppCompatActivity
         mCursorAdapterEmail.swapCursor(null);
     }
 
-    public void openContactsInsert(View view) {
+    protected void openContactsInsert(View view) {
         Intent intent = new Intent(this, EditorActivity.class);
         intent.putExtra(EditorActivity.EDITOR_TYPE, "insert");
         startActivityForResult(intent, NEW_REQUEST_CODE);
@@ -153,9 +150,25 @@ public class MainActivity extends AppCompatActivity
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         if (requestCode == EDITOR_REQUEST_CODE && resultCode == RESULT_OK){
-            restartLoader();
+            if(getLoaderManager().getLoader(EMAIL_QUERY_ID) != null) {
+                restartLoader();
+            } else {
+                if(PermissionsService.getInstance().hasContactsReadPerm(this)){
+                    populateContacts();
+                }
+            }
         } else if (requestCode == NEW_REQUEST_CODE && resultCode == RESULT_OK){
-            restartLoader();
+            if(getLoaderManager().getLoader(EMAIL_QUERY_ID) != null){
+                restartLoader();
+            } else {
+                if(PermissionsService.getInstance().hasContactsReadPerm(this)){
+                    populateContacts();
+                }
+            }
+        } else if(requestCode == NEW_REQUEST_CODE){
+            if(getLoaderManager().getLoader(EMAIL_QUERY_ID) == null && PermissionsService.getInstance().hasContactsReadPerm(this)){
+                populateContacts();
+            }
         }
     }
 
