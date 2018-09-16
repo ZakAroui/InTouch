@@ -1,4 +1,4 @@
-package com.zikorico.intouch.model;
+package com.ikazme.intouch.model;
 
 import android.content.Context;
 import android.database.Cursor;
@@ -11,8 +11,8 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 import android.provider.ContactsContract.CommonDataKinds;
 
-import com.zikorico.intouch.R;
-import com.zikorico.intouch.service.ContactsService;
+import com.ikazme.intouch.R;
+import com.ikazme.intouch.service.ContactsService;
 
 /**
  * Created by ikazme

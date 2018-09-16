@@ -1,4 +1,4 @@
-package com.zikorico.intouch.model;
+package com.ikazme.intouch.model;
 
 import android.app.Activity;
 import android.content.ContentResolver;
@@ -10,7 +10,7 @@ import android.os.Environment;
 import android.provider.MediaStore;
 import android.widget.Toast;
 
-import com.zikorico.intouch.service.ScanningService;
+import com.ikazme.intouch.service.ScanningService;
 
 import java.io.File;
 import java.io.FileOutputStream;

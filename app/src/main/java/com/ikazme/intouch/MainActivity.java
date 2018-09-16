@@ -1,4 +1,4 @@
-package com.zikorico.intouch;
+package com.ikazme.intouch;
 
 import android.app.LoaderManager;
 import android.content.CursorLoader;
@@ -16,14 +16,14 @@ import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ListView;
 
-import com.zikorico.intouch.model.ContactAdapter;
-import com.zikorico.intouch.service.PermissionsService;
-import com.zikorico.intouch.utils.Utils;
+import com.ikazme.intouch.model.ContactAdapter;
+import com.ikazme.intouch.service.PermissionsService;
+import com.ikazme.intouch.utils.Utils;
 
-import static com.zikorico.intouch.utils.Utils.EDITOR_REQUEST_CODE;
-import static com.zikorico.intouch.utils.Utils.EMAIL_QUERY_ID;
-import static com.zikorico.intouch.utils.Utils.NEW_REQUEST_CODE;
-import static com.zikorico.intouch.utils.Utils.PERMISSIONS_REQUEST_READ_CONTACTS;
+import static com.ikazme.intouch.utils.Utils.EDITOR_REQUEST_CODE;
+import static com.ikazme.intouch.utils.Utils.EMAIL_QUERY_ID;
+import static com.ikazme.intouch.utils.Utils.NEW_REQUEST_CODE;
+import static com.ikazme.intouch.utils.Utils.PERMISSIONS_REQUEST_READ_CONTACTS;
 
 /**
  * Created by ikazme
@@ -57,6 +57,7 @@ public class MainActivity extends AppCompatActivity
         }
 
         //TODO - SHOW PHOTO OF CONTACT
+        //TODO - FIRST TIME USER LANDING EXPERIENCE
         // TODO - add a search bar at the top of the listview
         // TODO - IMPLEMENT LANDING PAGE
         // TODO - IMPLEMENT BOTTOM NAVIGATION MENU

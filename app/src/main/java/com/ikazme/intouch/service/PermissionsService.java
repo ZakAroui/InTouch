@@ -1,4 +1,4 @@
-package com.zikorico.intouch.service;
+package com.ikazme.intouch.service;
 
 import android.Manifest;
 import android.content.Context;
@@ -7,7 +7,7 @@ import android.os.Build;
 import android.support.v7.app.AppCompatActivity;
 
 import static android.content.Intent.ACTION_OPEN_DOCUMENT;
-import static com.zikorico.intouch.utils.Utils.*;
+import static com.ikazme.intouch.utils.Utils.*;
 
 /**
  * Created by ikazme on 9/3/18.

@@ -4,7 +4,7 @@ android {
     compileSdkVersion 26
     buildToolsVersion '27.0.3'
     defaultConfig {
-        applicationId "com.zikorico.intouch"
+        applicationId "com.ikazme.intouch"
         minSdkVersion 15
         targetSdkVersion 26
         versionCode 1

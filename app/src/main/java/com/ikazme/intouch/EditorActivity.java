@@ -1,4 +1,4 @@
-package com.zikorico.intouch;
+package com.ikazme.intouch;
 
 import android.annotation.TargetApi;
 import android.content.ContentProviderOperation;
@@ -28,21 +28,21 @@ import android.view.View;
 import android.widget.EditText;
 import android.widget.ImageView;
 
-import com.zikorico.intouch.model.CopyImageTask;
-import com.zikorico.intouch.service.ContactsService;
-import com.zikorico.intouch.service.PermissionsService;
-import com.zikorico.intouch.service.ScanningService;
-import com.zikorico.intouch.utils.Utils;
+import com.ikazme.intouch.model.CopyImageTask;
+import com.ikazme.intouch.service.ContactsService;
+import com.ikazme.intouch.service.PermissionsService;
+import com.ikazme.intouch.service.ScanningService;
+import com.ikazme.intouch.utils.Utils;
 
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
 
-import static com.zikorico.intouch.utils.Utils.PERMISSIONS_REQUEST_DELETE_CONTACTS;
-import static com.zikorico.intouch.utils.Utils.PERMISSIONS_REQUEST_WRITE_CONTACTS;
-import static com.zikorico.intouch.utils.Utils.PERMISSIONS_REQUEST_WRITE_EXT_STORAGE;
-import static com.zikorico.intouch.utils.Utils.REQUEST_IMAGE_CAPTURE;
-import static com.zikorico.intouch.utils.Utils.REQUEST_PICK_FROM_FILE;
+import static com.ikazme.intouch.utils.Utils.PERMISSIONS_REQUEST_DELETE_CONTACTS;
+import static com.ikazme.intouch.utils.Utils.PERMISSIONS_REQUEST_WRITE_CONTACTS;
+import static com.ikazme.intouch.utils.Utils.PERMISSIONS_REQUEST_WRITE_EXT_STORAGE;
+import static com.ikazme.intouch.utils.Utils.REQUEST_IMAGE_CAPTURE;
+import static com.ikazme.intouch.utils.Utils.REQUEST_PICK_FROM_FILE;
 
 /**
  * Created by ikazme

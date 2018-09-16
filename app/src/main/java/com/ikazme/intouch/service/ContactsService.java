@@ -1,4 +1,4 @@
-package com.zikorico.intouch.service;
+package com.ikazme.intouch.service;
 
 import android.content.Context;
 import android.database.Cursor;
@@ -11,7 +11,7 @@ import android.provider.ContactsContract;
 public class ContactsService {
 
     public static final String BC_IMAGE_PATH = "data2";
-    public static final String BC_CONTENT_TYPE = "com.zikorico.intouch/bc_path";
+    public static final String BC_CONTENT_TYPE = "com.ikazme.intouch/bc_path";
 
     private static ContactsService contactsService;
 

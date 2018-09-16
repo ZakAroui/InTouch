@@ -1,4 +1,4 @@
-package com.zikorico.intouch.service;
+package com.ikazme.intouch.service;
 
 import android.app.Activity;
 import android.content.Context;
@@ -24,8 +24,8 @@ import com.google.firebase.ml.vision.common.FirebaseVisionImage;
 import com.google.firebase.ml.vision.text.FirebaseVisionText;
 import com.google.firebase.ml.vision.text.FirebaseVisionTextRecognizer;
 import com.google.firebase.ml.vision.text.RecognizedLanguage;
-import com.zikorico.intouch.R;
-import com.zikorico.intouch.utils.Utils;
+import com.ikazme.intouch.R;
+import com.ikazme.intouch.utils.Utils;
 
 import org.w3c.dom.Text;
 
@@ -39,7 +39,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import static android.content.ContentValues.TAG;
-import static com.zikorico.intouch.utils.Utils.REQUEST_IMAGE_CAPTURE;
+import static com.ikazme.intouch.utils.Utils.REQUEST_IMAGE_CAPTURE;
 
 /**
  * Created by ikazme on 9/03/18.
@@ -81,7 +81,7 @@ public class ScanningService {
             }
             if (photoFile != null) {
                 Uri photoURI = FileProvider.getUriForFile(activity,
-                        "com.zikorico.intouch.fileprovider",
+                        "com.ikazme.intouch.fileprovider",
                         photoFile);
 
                 takePictureIntent.putExtra(MediaStore.EXTRA_OUTPUT, photoURI);

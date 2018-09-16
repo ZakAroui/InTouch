@@ -1,4 +1,4 @@
-package com.zikorico.intouch;
+package com.ikazme.intouch;
 
 import org.junit.Test;
 

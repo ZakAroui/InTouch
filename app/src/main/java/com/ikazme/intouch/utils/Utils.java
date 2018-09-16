@@ -1,4 +1,4 @@
-package com.zikorico.intouch.utils;
+package com.ikazme.intouch.utils;
 
 import android.content.Context;
 import android.widget.Toast;

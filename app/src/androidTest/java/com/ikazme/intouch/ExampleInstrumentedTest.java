@@ -1,4 +1,4 @@
-package com.zikorico.intouch;
+package com.ikazme.intouch;
 
 import android.content.Context;
 import android.support.test.InstrumentationRegistry;
@@ -21,6 +21,6 @@ public class ExampleInstrumentedTest {
         // Context of the app under test.
         Context appContext = InstrumentationRegistry.getTargetContext();
 
-        assertEquals("com.zikorico.intouch", appContext.getPackageName());
+        assertEquals("com.ikazme.intouch", appContext.getPackageName());
     }
 }
