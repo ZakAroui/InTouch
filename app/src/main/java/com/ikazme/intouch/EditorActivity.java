@@ -28,6 +28,7 @@ import android.view.View;
 import android.widget.EditText;
 import android.widget.ImageView;
 
+import com.google.android.gms.flags.impl.DataUtils;
 import com.ikazme.intouch.model.CopyImageTask;
 import com.ikazme.intouch.service.ContactsService;
 import com.ikazme.intouch.service.PermissionsService;
@@ -47,18 +48,24 @@ import static com.ikazme.intouch.utils.Utils.*;
 public class EditorActivity extends AppCompatActivity {
     public static final String EDITOR_TYPE = "Type";
     public static final String CONTACT_LOOKUP = "ContactLookup";
-    public static final String CONTACT_NAME = "ContactName";
+    public static final String CONTACT_ID = "ContactId";
 
     private static final String LOG_TAG = EditorActivity.class.getSimpleName();
     private final String NEW_CONTACT = "new";
     private final String EDIT_CONTACT = "edit";
     private String[] contactData;
     private String nextAction;
+    private Boolean fromEditor = null;
     private String[] mSelectionArgs = { "" };
     private Uri mSelectedContactUri;
     private String mName;
     private String mContactShare;
     private String mLookup;
+    private String mContactId;
+    private EditText nameEditor;
+    private EditText emailEditor;
+    private EditText phoneEditor;
+    private EditText noteEditor;
     private ImageView mImageView;
     private FloatingActionButton mRotateImage;
     private Bitmap mSelectedBitmap;
@@ -74,39 +81,20 @@ public class EditorActivity extends AppCompatActivity {
         mRotateImage = findViewById(R.id.rotateFloatingButton);
 
         //TODO - ADD BC IMAGE/PICTURE TO EXISTING CONTACT
-        EditText nameEditor =  findViewById(R.id.name_editText);
-        EditText emailEditor =  findViewById(R.id.email_editText);
-        EditText phoneEditor =  findViewById(R.id.phone_editText);
-        EditText noteEditor =  findViewById(R.id.note_editText);
-
+        nameEditor =  findViewById(R.id.name_editText);
+        emailEditor =  findViewById(R.id.email_editText);
+        phoneEditor =  findViewById(R.id.phone_editText);
+        noteEditor =  findViewById(R.id.note_editText);
 
         Intent intent = getIntent();
         String newActionType = intent.getStringExtra(EDITOR_TYPE);
         if (newActionType == null) {
             mLookup = intent.getStringExtra(CONTACT_LOOKUP);
+            mContactId = intent.getStringExtra(CONTACT_ID);
             nextAction = EDIT_CONTACT;
             mSelectionArgs[0] = mLookup;
-            mName = intent.getStringExtra(CONTACT_NAME);
-            contactData = getContactData(mSelectionArgs);
-            setTitle(contactData[0]);
-            mContactShare = contactData[0]+"\n"+contactData[1]+"\n"+contactData[2];
 
-            nameEditor.setText(contactData[0]);
-            emailEditor.setText(contactData[1]);
-            phoneEditor.setText(contactData[2]);
-            noteEditor.setText(contactData[3]);
-
-            if(!TextUtils.isEmpty(contactData[5])){
-                Uri bcUri = Uri.parse(contactData[5]);
-                showBcImage(bcUri);
-            }
-
-            disableTexteditor(nameEditor);
-            disableTexteditor(emailEditor);
-            disableTexteditor(phoneEditor);
-            disableTexteditor(noteEditor);
-
-            mSelectedContactUri = ContactsContract.Contacts.getLookupUri(Long.parseLong(contactData[4]), mLookup);
+            populateEditFields();
         }else {
             setTitle("New Contact");
             nextAction = NEW_CONTACT;
@@ -114,6 +102,31 @@ public class EditorActivity extends AppCompatActivity {
             newContactFl.setImageResource(R.drawable.ic_action_add);
         }
     }
+
+    private void populateEditFields(){
+        contactData = getContactData(mSelectionArgs);
+        setTitle(contactData[0]);
+        mName = contactData[0];
+        mContactShare = contactData[0]+"\n"+contactData[1]+"\n"+contactData[2];
+
+        nameEditor.setText(contactData[0]);
+        emailEditor.setText(contactData[1]);
+        phoneEditor.setText(contactData[2]);
+        noteEditor.setText(contactData[3]);
+
+        if(!TextUtils.isEmpty(contactData[5])){
+            Uri bcUri = Uri.parse(contactData[5]);
+            showBcImage(bcUri);
+        }
+
+        disableTexteditor(nameEditor);
+        disableTexteditor(emailEditor);
+        disableTexteditor(phoneEditor);
+        disableTexteditor(noteEditor);
+
+        mSelectedContactUri = ContactsContract.Contacts.getLookupUri(Long.parseLong(contactData[4]), mLookup);
+    }
+
 
     private void disableTexteditor(EditText editText){
         editText.setClickable(false);
@@ -260,11 +273,6 @@ public class EditorActivity extends AppCompatActivity {
     }
 
     private void openContactsEditor(View view) {
-        EditText nameEditor = findViewById(R.id.name_editText);
-        EditText emailEditor = findViewById(R.id.email_editText);
-        EditText phoneEditor = findViewById(R.id.phone_editText);
-        EditText noteEditor = findViewById(R.id.note_editText);
-
         String nameNw = String.valueOf(nameEditor.getText());
         String emailNw = String.valueOf(emailEditor.getText());
         String phoneNw = String.valueOf(phoneEditor.getText());
@@ -342,6 +350,7 @@ public class EditorActivity extends AppCompatActivity {
                 Intent editIntent = new Intent(Intent.ACTION_EDIT);
                 editIntent.setDataAndType(mSelectedContactUri, ContactsContract.Contacts.CONTENT_ITEM_TYPE);
                 if (editIntent.resolveActivity(getPackageManager()) != null) {
+                    fromEditor = true;
                     startActivity(editIntent);
                 }
                 break;
@@ -350,9 +359,20 @@ public class EditorActivity extends AppCompatActivity {
 
     @Override
     protected void onStart() {
-        //TODO - IF EDIT THEN RELOAD
         super.onStart();
+        if(fromEditor != null && fromEditor.booleanValue()){
+            updateLookupKey();
+            populateEditFields();
+            fromEditor = false;
+        }
+    }
 
+    private void updateLookupKey(){
+        ContactsService cs = ContactsService.getInstance();
+
+        String[] selectArgs = { mContactId };
+        mLookup = cs.getLookupKey(mSelectedContactUri, getApplicationContext());
+        mSelectionArgs[0] = mLookup;
     }
 
     @Override

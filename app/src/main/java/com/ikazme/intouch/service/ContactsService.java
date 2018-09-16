@@ -2,6 +2,7 @@ package com.ikazme.intouch.service;
 
 import android.content.Context;
 import android.database.Cursor;
+import android.net.Uri;
 import android.provider.ContactsContract;
 import android.text.TextUtils;
 
@@ -45,6 +46,27 @@ public class ContactsService {
         }
 
         return contactPhone;
+    }
+
+    public String getLookupKey(Uri contactUri, Context context){
+        Cursor lookupKeyCur = context.getContentResolver().query(contactUri,
+                null,
+                null,
+                null,
+                null);
+
+        String lookupKey = "";
+        if(lookupKeyCur != null){
+            if (lookupKeyCur.getCount() > 0)
+            {
+                while (TextUtils.isEmpty(lookupKey) && lookupKeyCur.moveToNext()){
+                    lookupKey = lookupKeyCur.getString(lookupKeyCur.getColumnIndex(ContactsContract.Data.LOOKUP_KEY));
+                }
+            }
+            lookupKeyCur.close();
+        }
+
+        return lookupKey;
     }
 
     public String[] getNameEmailContactId(String[] uSelectionArgs, Context context){

@@ -32,6 +32,7 @@ public class MainActivity extends AppCompatActivity
 {
     private static final String[] EMAIL_PROJECTION  = new String[] {
             ContactsContract.Data._ID,
+            ContactsContract.Data.CONTACT_ID,
             ContactsContract.Data.LOOKUP_KEY,
             ContactsContract.Data.DISPLAY_NAME_PRIMARY,
             ContactsContract.CommonDataKinds.Email.ADDRESS,
@@ -139,11 +140,11 @@ public class MainActivity extends AppCompatActivity
         Cursor cursor = mCursorAdapterEmail.getCursor();
         cursor.moveToPosition(position);
         String mContactKey = cursor.getString(cursor.getColumnIndex(ContactsContract.Data.LOOKUP_KEY));
-        String mContactName = cursor.getString(cursor.getColumnIndex(ContactsContract.Data.DISPLAY_NAME_PRIMARY));
+        String mContactId = cursor.getString(cursor.getColumnIndex(ContactsContract.Data.CONTACT_ID));
 
         Intent intent = new Intent(MainActivity.this, EditorActivity.class);
         intent.putExtra(EditorActivity.CONTACT_LOOKUP, mContactKey);
-        intent.putExtra(EditorActivity.CONTACT_NAME, mContactName);
+        intent.putExtra(EditorActivity.CONTACT_ID, mContactId);
         startActivityForResult(intent, EDITOR_REQUEST_CODE);
     }
 
