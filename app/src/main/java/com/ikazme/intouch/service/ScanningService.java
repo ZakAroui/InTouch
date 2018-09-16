@@ -24,6 +24,7 @@ import com.google.firebase.ml.vision.common.FirebaseVisionImage;
 import com.google.firebase.ml.vision.text.FirebaseVisionText;
 import com.google.firebase.ml.vision.text.FirebaseVisionTextRecognizer;
 import com.google.firebase.ml.vision.text.RecognizedLanguage;
+import com.ikazme.intouch.EditorActivity;
 import com.ikazme.intouch.R;
 import com.ikazme.intouch.utils.Utils;
 
@@ -68,7 +69,7 @@ public class ScanningService {
     }
 
 
-    public void dispatchTakePictureIntent(PackageManager packageManager, Context applicationContext, AppCompatActivity activity) {
+    public void dispatchTakePictureIntent(PackageManager packageManager, Context applicationContext, EditorActivity activity) {
 
         Intent takePictureIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
         if (takePictureIntent.resolveActivity(packageManager) != null) {
@@ -109,14 +110,14 @@ public class ScanningService {
         return image;
     }
 
-    public void processImage(Bitmap bitmap, final Context applicationContext, Activity activity){
+    public void processImage(Bitmap bitmap, final Context applicationContext, EditorActivity activity){
 
         FirebaseVisionImage image = FirebaseVisionImage.fromBitmap(bitmap);
 
         processResult(image, applicationContext, activity);
     }
 
-    public void processImage(Uri imageUri, final Context applicationContext, Activity activity){
+    public void processImage(Uri imageUri, final Context applicationContext, EditorActivity activity){
 
         FirebaseVisionImage image;
         try {
@@ -129,7 +130,7 @@ public class ScanningService {
         processResult(image, applicationContext, activity);
     }
 
-    private void processResult(FirebaseVisionImage image, final Context applicationContext, final Activity activity){
+    private void processResult(FirebaseVisionImage image, final Context applicationContext, final EditorActivity activity){
 
         clearData(activity);
 
@@ -141,7 +142,8 @@ public class ScanningService {
                     @Override
                     public void onSuccess(FirebaseVisionText result) {
                         processResultText(result, applicationContext);
-                        updateFieldOnSuccess(activity);
+                        String[] values = {mName, mEmailAddress, mPhoneNumber, mNote};
+                        activity.updateFieldOnSuccess(values);
                     }
                 })
                 .addOnFailureListener( new OnFailureListener() {
@@ -236,14 +238,14 @@ public class ScanningService {
 
     }
 
-    private void clearData(Activity activity){
+    private void clearData(EditorActivity activity){
         mEmailAddress = null;
         mPhoneNumber = null;
         mName = null;
         mNote = null;
-        updateFieldOnSuccess(activity);
+        String[] values = {mName, mEmailAddress, mPhoneNumber, mNote};
+        activity.updateFieldOnSuccess(values);
     }
-
 
     public void clearImage(String imagePath){
         if(imagePath != null){
@@ -257,20 +259,6 @@ public class ScanningService {
 
     }
 
-    //TODO - fixed this
-    private void updateFieldOnSuccess(Activity activity){
-        EditText nameEditor =  activity.findViewById(R.id.name_editText);
-        EditText emailEditor =  activity.findViewById(R.id.email_editText);
-        EditText phoneEditor =  activity.findViewById(R.id.phone_editText);
-        EditText noteEditor =  activity.findViewById(R.id.note_editText);
-
-        nameEditor.setText(mName);
-        emailEditor.setText(mEmailAddress);
-        phoneEditor.setText(mPhoneNumber);
-        noteEditor.setText(mNote);
-
-
-    }
 
     public String getmCurrentPhotoPath() {
         return mCurrentPhotoPath;

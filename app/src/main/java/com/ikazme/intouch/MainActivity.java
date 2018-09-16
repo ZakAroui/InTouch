@@ -57,8 +57,6 @@ public class MainActivity extends AppCompatActivity
         //TODO - SHOW PHOTO OF CONTACT
         //TODO - FIRST TIME USER LANDING EXPERIENCE
         // TODO - add a search bar at the top of the listview
-        // TODO - IMPLEMENT LANDING PAGE
-        // TODO - IMPLEMENT BOTTOM NAVIGATION MENU
     }
 
     private void populateContacts(){

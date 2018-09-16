@@ -1,6 +1,7 @@
 package com.ikazme.intouch;
 
 import android.annotation.TargetApi;
+import android.app.Activity;
 import android.content.ContentProviderOperation;
 import android.content.Intent;
 import android.content.pm.PackageManager;
@@ -383,14 +384,13 @@ public class EditorActivity extends AppCompatActivity {
         super.onBackPressed();
     }
 
-    //TODO - TEST THIS
     @Override
     protected void onDestroy() {
-        if(nextAction == NEW_CONTACT){
-            ScanningService.getInstance().clearImage();
-        }
+        ScanningService.getInstance().clearImage();
         super.onDestroy();
     }
+
+
 
     private void pickBcFromFile(){
         if(PermissionsService.getInstance().hasWriteExternalStoragePerm(this, PERMISSIONS_REQUEST_USE_EXT_STORAGE)) {
@@ -576,6 +576,13 @@ public class EditorActivity extends AppCompatActivity {
         targetWidth = maxWidthForPortraitMode;
         targetHeight = maxHeightForPortraitMode;
         return new Pair<>(targetWidth, targetHeight);
+    }
+
+    public void updateFieldOnSuccess(String[] values){
+        nameEditor.setText(values[0]);
+        emailEditor.setText(values[1]);
+        phoneEditor.setText(values[2]);
+        noteEditor.setText(values[3]);
     }
 
 }
