@@ -355,6 +355,15 @@ public class EditorActivity extends AppCompatActivity {
         super.onBackPressed();
     }
 
+    //TODO - TEST THIS
+    @Override
+    protected void onDestroy() {
+        if(nextAction == NEW_CONTACT){
+            ScanningService.getInstance().clearImage();
+        }
+        super.onDestroy();
+    }
+
     public void pickBcFromFile(){
         Intent intent = new Intent();
         intent.setType("image/*");
