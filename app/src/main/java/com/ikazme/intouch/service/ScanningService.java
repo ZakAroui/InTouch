@@ -156,6 +156,7 @@ public class ScanningService {
 
     private void processResultText(FirebaseVisionText result, Context applicationContext){
         String resultText = result.getText();
+        mNote = resultText;
         Utils.showLongToast(resultText, applicationContext);
 
         for (FirebaseVisionText.TextBlock block: result.getTextBlocks()) {
@@ -191,13 +192,6 @@ public class ScanningService {
                         }
                         mPhoneNumber = sb.toString();
                     }
-
-                }
-
-                for (FirebaseVisionText.Element element: line.getElements()) {
-                    String elementText = element.getText();
-
-
                 }
             }
         }
@@ -211,8 +205,6 @@ public class ScanningService {
                         String es = mEmailAddress.substring(0, mEmailAddress.indexOf("@"));
                         if(es.toLowerCase().contains(elementText.toLowerCase())) mName = lineText;
                     }
-
-
                 }
             }
         }

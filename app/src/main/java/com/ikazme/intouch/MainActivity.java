@@ -9,6 +9,7 @@ import android.database.Cursor;
 import android.os.Bundle;
 import android.provider.ContactsContract;
 import android.provider.ContactsContract.CommonDataKinds.Email;
+import android.provider.MediaStore;
 import android.support.v7.app.AppCompatActivity;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -20,7 +21,10 @@ import com.ikazme.intouch.model.ContactAdapter;
 import com.ikazme.intouch.service.PermissionsService;
 import com.ikazme.intouch.utils.Utils;
 
-import static com.ikazme.intouch.utils.Utils.*;
+import static com.ikazme.intouch.utils.Utils.EDITOR_REQUEST_CODE;
+import static com.ikazme.intouch.utils.Utils.EMAIL_QUERY_ID;
+import static com.ikazme.intouch.utils.Utils.NEW_REQUEST_CODE;
+import static com.ikazme.intouch.utils.Utils.PERMISSIONS_REQUEST_READ_CONTACTS;
 
 /**
  * Created by ikazme
@@ -33,6 +37,7 @@ public class MainActivity extends AppCompatActivity
     private static final String[] EMAIL_PROJECTION  = new String[] {
             ContactsContract.Data._ID,
             ContactsContract.Data.CONTACT_ID,
+            ContactsContract.Data.PHOTO_THUMBNAIL_URI,
             ContactsContract.Data.LOOKUP_KEY,
             ContactsContract.Data.DISPLAY_NAME_PRIMARY,
             ContactsContract.CommonDataKinds.Email.ADDRESS,
@@ -54,13 +59,12 @@ public class MainActivity extends AppCompatActivity
             populateContacts();
         }
 
-        //TODO - SHOW PHOTO OF CONTACT
         //TODO - FIRST TIME USER LANDING EXPERIENCE
-        // TODO - add a search bar at the top of the listview
+        //TODO - add a search bar at the top of the listview
     }
 
     private void populateContacts(){
-        mCursorAdapterEmail = new ContactAdapter(this,null,0);
+        mCursorAdapterEmail = new ContactAdapter(getApplicationContext(),null,0);
 
         ListView list = findViewById(R.id.contactsListview);
         list.setAdapter(mCursorAdapterEmail);
@@ -137,12 +141,12 @@ public class MainActivity extends AppCompatActivity
     public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
         Cursor cursor = mCursorAdapterEmail.getCursor();
         cursor.moveToPosition(position);
-        String mContactKey = cursor.getString(cursor.getColumnIndex(ContactsContract.Data.LOOKUP_KEY));
-        String mContactId = cursor.getString(cursor.getColumnIndex(ContactsContract.Data.CONTACT_ID));
+        String contactKey = cursor.getString(cursor.getColumnIndex(ContactsContract.Data.LOOKUP_KEY));
+        String contactId = cursor.getString(cursor.getColumnIndex(ContactsContract.Data.CONTACT_ID));
 
         Intent intent = new Intent(MainActivity.this, EditorActivity.class);
-        intent.putExtra(EditorActivity.CONTACT_LOOKUP, mContactKey);
-        intent.putExtra(EditorActivity.CONTACT_ID, mContactId);
+        intent.putExtra(EditorActivity.CONTACT_LOOKUP, contactKey);
+        intent.putExtra(EditorActivity.CONTACT_ID, contactId);
         startActivityForResult(intent, EDITOR_REQUEST_CODE);
     }
 

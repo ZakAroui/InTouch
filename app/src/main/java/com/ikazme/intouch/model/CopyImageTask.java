@@ -10,6 +10,7 @@ import android.os.Environment;
 import android.provider.MediaStore;
 import android.widget.Toast;
 
+import com.ikazme.intouch.EditorActivity;
 import com.ikazme.intouch.service.ScanningService;
 
 import java.io.File;
@@ -27,9 +28,9 @@ import java.util.Locale;
 public class CopyImageTask extends AsyncTask<Uri, Void, String> {
 
     private Context context;
-    private Activity activity;
+    private EditorActivity activity;
 
-    public CopyImageTask(Context context, Activity activity){
+    public CopyImageTask(Context context, EditorActivity activity){
 
         this.context = context;
         this.activity = activity;
