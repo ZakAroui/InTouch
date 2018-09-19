@@ -88,8 +88,8 @@ public class MainActivity extends AppCompatActivity
 
 
         //TODO - add personal bc screen 
-        //TODO - FIRST TIME USER LANDING EXPERIENCE
         //TODO - add a search bar at the top of the listview
+        //TODO - ANDROID STAGING AND DEVELOPMENT MODES
     }
 
     private void populateContacts(){
