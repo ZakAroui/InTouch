@@ -21,28 +21,36 @@ public class OnboardingActivity extends AppIntro {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-//        addSlide(firstFragment);
-//        addSlide(secondFragment);
-//        addSlide(thirdFragment);
-
         SliderPage sliderPage1 = new SliderPage();
         sliderPage1.setTitle("slide 1");
+        sliderPage1.setTitleColor(Color.BLACK);
         sliderPage1.setDescription("just trying things");
+        sliderPage1.setDescColor(Color.BLACK);
         sliderPage1.setImageDrawable(R.drawable.ic_image_gallery);
-        sliderPage1.setBgColor(Color.parseColor("#B2C4DE"));
+        sliderPage1.setBgColor(Color.parseColor("#B8E1DE"));
         addSlide(AppIntroFragment.newInstance(sliderPage1));
 
         SliderPage sliderPage2 = new SliderPage();
         sliderPage2.setTitle("slide 2");
+        sliderPage2.setTitleColor(Color.BLACK);
         sliderPage2.setDescription("just trying things again");
+        sliderPage2.setDescColor(Color.BLACK);
         sliderPage2.setImageDrawable(R.drawable.ic_image_gallery);
-        sliderPage2.setBgColor(Color.parseColor("#CDE5F7"));
+        sliderPage2.setBgColor(Color.parseColor("#B8E1DE"));
         addSlide(AppIntroFragment.newInstance(sliderPage2));
 
-        setBarColor(Color.parseColor("#3F51B5"));
-        setSeparatorColor(Color.parseColor("#2196F3"));
+        SliderPage sliderPage3 = new SliderPage();
+        sliderPage3.setTitle("slide 2");
+        sliderPage3.setTitleColor(Color.BLACK);
+        sliderPage3.setDescription("just trying things again");
+        sliderPage3.setDescColor(Color.BLACK);
+        sliderPage3.setImageDrawable(R.drawable.ic_image_gallery);
+        sliderPage3.setBgColor(Color.parseColor("#B8E1DE"));
+        addSlide(AppIntroFragment.newInstance(sliderPage3));
 
-        showSkipButton(true);
+        setBarColor(Color.parseColor("#4ea740"));
+
+        showSkipButton(false);
         setProgressButtonEnabled(true);
 
     }

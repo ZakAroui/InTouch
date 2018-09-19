@@ -4,14 +4,11 @@ import android.app.LoaderManager;
 import android.content.CursorLoader;
 import android.content.Intent;
 import android.content.Loader;
-import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.database.Cursor;
 import android.os.Bundle;
-import android.preference.PreferenceManager;
 import android.provider.ContactsContract;
 import android.provider.ContactsContract.CommonDataKinds.Email;
-import android.provider.MediaStore;
 import android.support.v7.app.AppCompatActivity;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -19,7 +16,7 @@ import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ListView;
 
-import com.ikazme.intouch.model.ContactAdapter;
+import com.ikazme.intouch.ui.ContactAdapter;
 import com.ikazme.intouch.service.PermissionsService;
 import com.ikazme.intouch.utils.Utils;
 
@@ -62,29 +59,33 @@ public class MainActivity extends AppCompatActivity
         }
 
 
-        Thread t = new Thread(new Runnable() {
-            @Override
-            public void run() {
-                SharedPreferences getPrefs = PreferenceManager.getDefaultSharedPreferences(getBaseContext());
-                boolean isFirstStart = getPrefs.getBoolean("firstStart", true);
+//        Thread t = new Thread(new Runnable() {
+//            @Override
+//            public void run() {
+//                SharedPreferences getPrefs = PreferenceManager.getDefaultSharedPreferences(getBaseContext());
+//                boolean isFirstStart = getPrefs.getBoolean("firstStart", true);
+//
+//                if (isFirstStart) {
+//
+//                    final Intent i = new Intent(MainActivity.this, OnboardingActivity.class);
+//
+//                    runOnUiThread(new Runnable() {
+//                        @Override public void run() {
+//                            startActivity(i);
+//                        }
+//                    });
+//
+//                    SharedPreferences.Editor e = getPrefs.edit();
+//                    e.putBoolean("firstStart", false);
+//                    e.apply();
+//                }
+//            }
+//        });
+//        t.start();
 
-                if (isFirstStart) {
+        final Intent i = new Intent(MainActivity.this, OnboardingActivity.class);
+        startActivity(i);
 
-                    final Intent i = new Intent(MainActivity.this, OnboardingActivity.class);
-
-                    runOnUiThread(new Runnable() {
-                        @Override public void run() {
-                            startActivity(i);
-                        }
-                    });
-
-                    SharedPreferences.Editor e = getPrefs.edit();
-                    e.putBoolean("firstStart", false);
-                    e.apply();
-                }
-            }
-        });
-        t.start();
 
         //TODO - add personal bc screen 
         //TODO - FIRST TIME USER LANDING EXPERIENCE

@@ -48,14 +48,10 @@
         </provider>
 
         <activity
-            android:name=".OnboardingPagerActivity"
-            android:label="@string/title_activity_onboarding_pager"
-            android:theme="@style/AppTheme.NoActionBar" />
-        <activity
             android:name=".OnboardingActivity"
             android:configChanges="orientation|keyboardHidden|screenSize"
             android:label="@string/title_activity_onboarding"
-            android:theme="@style/AppTheme.NoActionBar" />
+            android:theme="@style/Theme.Design.Light.NoActionBar" />
     </application>
 
 </manifest>
