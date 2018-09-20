@@ -81,7 +81,6 @@ public class EditorActivity extends AppCompatActivity {
         mImageView = findViewById(R.id.bcImageView);
         mRotateImage = findViewById(R.id.rotateFloatingButton);
 
-        //TODO - ADD BC IMAGE/PICTURE TO EXISTING CONTACT
         nameEditor =  findViewById(R.id.name_editText);
         emailEditor =  findViewById(R.id.email_editText);
         phoneEditor =  findViewById(R.id.phone_editText);
@@ -440,7 +439,7 @@ public class EditorActivity extends AppCompatActivity {
     private void showBcImageView(){
         mImageView.setVisibility(View.VISIBLE);
         mImageView.setClickable(true);
-        if(mImageView.getDrawable() != null){
+        if(mImageView.getDrawable() != null && NEW_CONTACT.equals(nextAction)){
             mRotateImage.setVisibility(View.VISIBLE);
         }
     }

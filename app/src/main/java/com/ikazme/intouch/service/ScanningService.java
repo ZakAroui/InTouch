@@ -157,7 +157,6 @@ public class ScanningService {
     private void processResultText(FirebaseVisionText result, Context applicationContext){
         String resultText = result.getText();
         mNote = resultText;
-        Utils.showLongToast(resultText, applicationContext);
 
         for (FirebaseVisionText.TextBlock block: result.getTextBlocks()) {
             String blockText = block.getText();
