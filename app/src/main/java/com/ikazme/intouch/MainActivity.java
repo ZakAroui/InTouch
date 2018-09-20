@@ -1,6 +1,7 @@
 package com.ikazme.intouch;
 
 import android.app.LoaderManager;
+import android.app.SearchManager;
 import android.content.CursorLoader;
 import android.content.Intent;
 import android.content.Loader;
@@ -90,6 +91,16 @@ public class MainActivity extends AppCompatActivity
         //TODO - add personal bc screen 
         //TODO - add a search bar at the top of the listview
         //TODO - ANDROID STAGING AND PROD MODES
+
+        Intent intent = getIntent();
+        if (Intent.ACTION_SEARCH.equals(intent.getAction())) {
+            String query = intent.getStringExtra(SearchManager.QUERY);
+            doMySearch(query);
+        }
+    }
+
+    private void doMySearch(String query) {
+        Utils.showLongToast(query, this);
     }
 
     private void populateContacts(){
@@ -129,6 +140,9 @@ public class MainActivity extends AppCompatActivity
                 Intent intent = new Intent(this, EditorActivity.class);
                 intent.putExtra(EditorActivity.EDITOR_TYPE, "insert");
                 startActivityForResult(intent, NEW_REQUEST_CODE);
+                break;
+            case R.id.app_bar_search:
+                onSearchRequested();
                 break;
         }
         return super.onOptionsItemSelected(item);
