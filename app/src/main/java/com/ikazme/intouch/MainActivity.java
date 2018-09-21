@@ -5,9 +5,11 @@ import android.app.SearchManager;
 import android.content.CursorLoader;
 import android.content.Intent;
 import android.content.Loader;
+import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.database.Cursor;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.provider.ContactsContract;
 import android.provider.ContactsContract.CommonDataKinds.Email;
 import android.support.v7.app.AppCompatActivity;
@@ -60,32 +62,27 @@ public class MainActivity extends AppCompatActivity
         }
 
 
-//        Thread t = new Thread(new Runnable() {
-//            @Override
-//            public void run() {
-//                SharedPreferences getPrefs = PreferenceManager.getDefaultSharedPreferences(getBaseContext());
-//                boolean isFirstStart = getPrefs.getBoolean("firstStart", true);
-//
-//                if (isFirstStart) {
-//
-//                    final Intent i = new Intent(MainActivity.this, OnboardingActivity.class);
-//
-//                    runOnUiThread(new Runnable() {
-//                        @Override public void run() {
-//                            startActivity(i);
-//                        }
-//                    });
-//
-//                    SharedPreferences.Editor e = getPrefs.edit();
-//                    e.putBoolean("firstStart", false);
-//                    e.apply();
-//                }
-//            }
-//        });
-//        t.start();
+        Thread t = new Thread(new Runnable() {
+            @Override
+            public void run() {
+                SharedPreferences getPrefs = PreferenceManager.getDefaultSharedPreferences(getBaseContext());
+                boolean isFirstStart = getPrefs.getBoolean("firstStart", true);
 
-        final Intent i = new Intent(MainActivity.this, OnboardingActivity.class);
-        startActivity(i);
+                if (isFirstStart) {
+                    final Intent i = new Intent(MainActivity.this, OnboardingActivity.class);
+                    runOnUiThread(new Runnable() {
+                        @Override public void run() {
+                            startActivity(i);
+                        }
+                    });
+
+                    SharedPreferences.Editor e = getPrefs.edit();
+                    e.putBoolean("firstStart", false);
+                    e.apply();
+                }
+            }
+        });
+        t.start();
 
 
         //TODO - add personal bc screen 

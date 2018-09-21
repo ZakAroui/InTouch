@@ -19,19 +19,19 @@ public class OnboardingActivity extends AppIntro {
         SliderPage sliderPage1 = createSliderPage(
                 "Scan Business Cards on the Fly",
                 "Share contacts seamlessly.",
-                R.drawable.ic_image_gallery);
+                R.drawable.on_the_fly);
         addSlide(AppIntroFragment.newInstance(sliderPage1));
 
         SliderPage sliderPage2 =  createSliderPage(
                 "From Everywhere",
                 "From camera or shared business cards, everything will populate.",
-                R.drawable.ic_image_gallery);
+                R.drawable.from_everywhere);
         addSlide(AppIntroFragment.newInstance(sliderPage2));
 
         SliderPage sliderPage3 = createSliderPage(
                 "All In One Place",
                 "Don't worry, all your contacts are still at the same place.",
-                R.drawable.ic_image_gallery);
+                R.drawable.all_in_one_place);
         addSlide(AppIntroFragment.newInstance(sliderPage3));
 
         setBarColor(Color.parseColor("#4ea740"));
@@ -64,7 +64,7 @@ public class OnboardingActivity extends AppIntro {
         sliderPage.setTitleColor(Color.parseColor("#44444C"));
         sliderPage.setDescTypeface("font/roboto_condensed_regular.ttf");
         sliderPage.setDescColor(Color.BLACK);
-        sliderPage.setBgColor(Color.parseColor("#B8E1DE"));
+        sliderPage.setBgColor(Color.parseColor("#f5f9f4"));
     }
 
 }
