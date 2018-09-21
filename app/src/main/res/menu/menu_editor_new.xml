@@ -8,7 +8,7 @@
         android:orderInCategory="98"
         android:title="@string/scan_card"
         android:icon="@drawable/ic_camera"
-        app:showAsAction="ifRoom" />
+        app:showAsAction="never" />
 
     <item
         android:id="@+id/action_bc_picker"

@@ -32,5 +32,4 @@
         app:layout_constraintRight_toRightOf="parent"
         android:focusable="true" />
 
-
 </android.support.constraint.ConstraintLayout>
