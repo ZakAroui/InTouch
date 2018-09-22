@@ -1,7 +1,6 @@
 package com.ikazme.intouch;
 
 import android.annotation.TargetApi;
-import android.app.Activity;
 import android.content.ContentProviderOperation;
 import android.content.Intent;
 import android.content.pm.PackageManager;
@@ -29,7 +28,6 @@ import android.view.View;
 import android.widget.EditText;
 import android.widget.ImageView;
 
-import com.google.android.gms.flags.impl.DataUtils;
 import com.ikazme.intouch.model.CopyImageTask;
 import com.ikazme.intouch.service.ContactsService;
 import com.ikazme.intouch.service.PermissionsService;
@@ -184,7 +182,7 @@ public class EditorActivity extends AppCompatActivity {
         int id = item.getItemId();
         switch (id){
             case R.id.action_delete:
-                if(PermissionsService.getInstance().hasContactsWritePerm(this, PERMISSIONS_REQUEST_DELETE_CONTACTS)){
+                if(PermissionsService.getInstance().hasOrRequestContactsWritePerm(this, PERMISSIONS_REQUEST_DELETE_CONTACTS)){
                     deleteContact();
                 }
                 break;
@@ -267,7 +265,7 @@ public class EditorActivity extends AppCompatActivity {
     }
 
     protected void addOrOpenContactsEditor(View view){
-        if(PermissionsService.getInstance().hasContactsWritePerm(this, PERMISSIONS_REQUEST_WRITE_CONTACTS)){
+        if(PermissionsService.getInstance().hasOrRequestContactsWritePerm(this, PERMISSIONS_REQUEST_WRITE_CONTACTS)){
             openContactsEditor(view);
         }
     }
@@ -392,7 +390,7 @@ public class EditorActivity extends AppCompatActivity {
 
 
     private void pickBcFromFile(){
-        if(PermissionsService.getInstance().hasWriteExternalStoragePerm(this, PERMISSIONS_REQUEST_USE_EXT_STORAGE)) {
+        if(PermissionsService.getInstance().hasOrRequestWriteExtStoragePerm(this, PERMISSIONS_REQUEST_USE_EXT_STORAGE)) {
             launchFilePicker();
         }
     }
@@ -406,7 +404,7 @@ public class EditorActivity extends AppCompatActivity {
 
     protected void scanBusinessCard(View view){
         if(getPackageManager().hasSystemFeature(PackageManager.FEATURE_CAMERA_ANY)){
-            if(PermissionsService.getInstance().hasWriteExternalStoragePerm(this, PERMISSIONS_REQUEST_USE_CAMERA)){
+            if(PermissionsService.getInstance().hasOrRequestWriteExtStoragePerm(this, PERMISSIONS_REQUEST_USE_CAMERA)){
                 ScanningService.getInstance().clearImage();
                 ScanningService.getInstance().dispatchTakePictureIntent(getPackageManager(), getApplicationContext(), this);
             }

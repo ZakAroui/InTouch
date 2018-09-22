@@ -31,7 +31,7 @@ public class PermissionsService {
 
 
 
-    public boolean hasWriteExternalStoragePerm(AppCompatActivity activity, int reqCode){
+    public boolean hasOrRequestWriteExtStoragePerm(AppCompatActivity activity, int reqCode){
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M
                 && activity.checkSelfPermission(Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
@@ -42,7 +42,7 @@ public class PermissionsService {
         }
     }
 
-    public boolean hasContactsReadPerm(AppCompatActivity activity){
+    public boolean hasOrRequestContactsReadPerm(AppCompatActivity activity){
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M
                 && activity.checkSelfPermission(Manifest.permission.READ_CONTACTS) != PackageManager.PERMISSION_GRANTED) {
@@ -53,7 +53,16 @@ public class PermissionsService {
         }
     }
 
-    public boolean hasContactsWritePerm(AppCompatActivity activity, int reqCode){
+    public boolean hasContactsReadPerm(AppCompatActivity activity){
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M
+                && activity.checkSelfPermission(Manifest.permission.READ_CONTACTS) != PackageManager.PERMISSION_GRANTED) {
+            return false;
+        } else {
+            return true;
+        }
+    }
+
+    public boolean hasOrRequestContactsWritePerm(AppCompatActivity activity, int reqCode){
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M
                 && activity.checkSelfPermission(Manifest.permission.WRITE_CONTACTS) != PackageManager.PERMISSION_GRANTED) {

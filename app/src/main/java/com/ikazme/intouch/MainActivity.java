@@ -12,6 +12,7 @@ import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.provider.ContactsContract;
 import android.provider.ContactsContract.CommonDataKinds.Email;
+import android.support.design.widget.FloatingActionButton;
 import android.support.v7.app.AppCompatActivity;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -49,6 +50,13 @@ public class MainActivity extends AppCompatActivity
     private static final String SORT_ORDER = ContactsContract.Data.DISPLAY_NAME_PRIMARY + " ASC ";
     private ContactAdapter mCursorAdapterEmail;
 
+    private final String SEARCH_CONTACT = "search";
+    private String currentAction;
+    private String mSearchQuery;
+    private FloatingActionButton mAddContact;
+
+
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -57,10 +65,11 @@ public class MainActivity extends AppCompatActivity
         getSupportActionBar().setDisplayUseLogoEnabled(true);
         setContentView(R.layout.activity_main);
 
-        if(PermissionsService.getInstance().hasContactsReadPerm(this)){
+        mAddContact = findViewById(R.id.mainFloatingButton);
+
+        if(PermissionsService.getInstance().hasOrRequestContactsReadPerm(this)){
             populateContacts();
         }
-
 
         Thread t = new Thread(new Runnable() {
             @Override
@@ -90,16 +99,22 @@ public class MainActivity extends AppCompatActivity
 
         Intent intent = getIntent();
         if (Intent.ACTION_SEARCH.equals(intent.getAction())) {
-            String query = intent.getStringExtra(SearchManager.QUERY);
-            doMySearch(query);
+            currentAction = SEARCH_CONTACT;
+            mAddContact.setVisibility(View.INVISIBLE);
+            mSearchQuery = intent.getStringExtra(SearchManager.QUERY);
+            getSupportActionBar().setSubtitle("search: \""+ mSearchQuery +"\"");
+
+            searchInContacts(mSearchQuery);
         }
     }
 
-    private void doMySearch(String query) {
+    private void searchInContacts(String query) {
         Utils.showLongToast(query, this);
+        restartLoader();
     }
 
     private void populateContacts(){
+        invalidateOptionsMenu();
         mCursorAdapterEmail = new ContactAdapter(getApplicationContext(),null,0);
 
         ListView list = findViewById(R.id.contactsListview);
@@ -123,7 +138,17 @@ public class MainActivity extends AppCompatActivity
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
+        if(SEARCH_CONTACT.equals(currentAction)){
+            return false;
+        }
+
         getMenuInflater().inflate(R.menu.menu_main, menu);
+
+        if(!PermissionsService.getInstance().hasContactsReadPerm(this)){
+            MenuItem searchItem = menu.findItem(R.id.app_bar_search);
+            searchItem.setVisible(false);
+        }
+
         return true;
     }
 
@@ -151,6 +176,23 @@ public class MainActivity extends AppCompatActivity
 
     @Override
     public Loader<Cursor> onCreateLoader(int id, Bundle args) {
+        if(SEARCH_CONTACT.equals(currentAction)){
+            String searchSelection = ContactsContract.Data.DISPLAY_NAME_PRIMARY + " LIKE ? AND " +
+                    ContactsContract.Data.MIMETYPE + " = '"
+                    + Email.CONTENT_ITEM_TYPE + "'";
+            String[] searchQuery = mSearchQuery.split("\\s+");
+            String[] mSelectionArgs = { "%"+mSearchQuery+"%" };
+
+
+            return new CursorLoader(this,
+                    ContactsContract.Data.CONTENT_URI,
+                    EMAIL_PROJECTION,
+                    searchSelection,
+                    mSelectionArgs,
+                    SORT_ORDER);
+
+        }
+
         return new CursorLoader(this,
                 ContactsContract.Data.CONTENT_URI,
                 EMAIL_PROJECTION,
@@ -195,7 +237,7 @@ public class MainActivity extends AppCompatActivity
             if(getLoaderManager().getLoader(EMAIL_QUERY_ID) != null) {
                 restartLoader();
             } else {
-                if(PermissionsService.getInstance().hasContactsReadPerm(this)){
+                if(PermissionsService.getInstance().hasOrRequestContactsReadPerm(this)){
                     populateContacts();
                 }
             }
@@ -203,12 +245,12 @@ public class MainActivity extends AppCompatActivity
             if(getLoaderManager().getLoader(EMAIL_QUERY_ID) != null){
                 restartLoader();
             } else {
-                if(PermissionsService.getInstance().hasContactsReadPerm(this)){
+                if(PermissionsService.getInstance().hasOrRequestContactsReadPerm(this)){
                     populateContacts();
                 }
             }
         } else if(requestCode == NEW_REQUEST_CODE){
-            if(getLoaderManager().getLoader(EMAIL_QUERY_ID) == null && PermissionsService.getInstance().hasContactsReadPerm(this)){
+            if(getLoaderManager().getLoader(EMAIL_QUERY_ID) == null && PermissionsService.getInstance().hasOrRequestContactsReadPerm(this)){
                 populateContacts();
             }
         }
