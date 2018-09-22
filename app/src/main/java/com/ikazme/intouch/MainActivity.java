@@ -177,12 +177,26 @@ public class MainActivity extends AppCompatActivity
     @Override
     public Loader<Cursor> onCreateLoader(int id, Bundle args) {
         if(SEARCH_CONTACT.equals(currentAction)){
-            String searchSelection = ContactsContract.Data.DISPLAY_NAME_PRIMARY + " LIKE ? AND " +
+            String[] searchQueryArgs = mSearchQuery.split("\\s+");
+            String selPrefixPart = "";
+            for (int i = 0; i<searchQueryArgs.length;i++) {
+                if(i == 0) selPrefixPart += "( ";
+                selPrefixPart += ContactsContract.Data.DISPLAY_NAME_PRIMARY + " LIKE ? ";
+                if(i == (searchQueryArgs.length-1)){
+                    selPrefixPart += ") AND ";
+                } else{
+                    selPrefixPart += "AND ";
+                }
+            }
+
+            String searchSelection = selPrefixPart +
                     ContactsContract.Data.MIMETYPE + " = '"
                     + Email.CONTENT_ITEM_TYPE + "'";
-            String[] searchQuery = mSearchQuery.split("\\s+");
-            String[] mSelectionArgs = { "%"+mSearchQuery+"%" };
 
+            String[] mSelectionArgs = new String[searchQueryArgs.length];
+            for (int i=0;i<searchQueryArgs.length;i++) {
+                mSelectionArgs[i] = "%"+searchQueryArgs[i]+"%";
+            }
 
             return new CursorLoader(this,
                     ContactsContract.Data.CONTENT_URI,
