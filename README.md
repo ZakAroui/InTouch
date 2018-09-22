@@ -21,51 +21,38 @@ The Search Dialog at the top of the screen helps you find a contact from the lis
 
 __The New Contact Activity__
 
-The below screenshot represents the new contact activity that will start when you presse the "Plus" floating point or choose "Create Contact" from the drop-down menu.
+The below screenshot represents the new contact activity that will start when you press the "Plus" floating point or choose "Create Contact" from the drop-down menu.
+Again, for simplicity, this activity has inputs for name, email, phone number, a note, and business card's picture; you can add more info to the contact by editing it using the contact app after adding it. You can add a new contact by scanning a business card, choosing a business card from the phone's image gallery, or by typing the contact's info in the respective fields. After filling in the fields, you can add the contact by just pressing the "Plus" floating buttom. 
 
-Again, for the simplicity of the app, this activity has inputs for name, email, phone number, a note, and business card's picture. You can add a new contact by scanning a business card, choosing a business card from the phone's image gallery, or by typing the contact's info in the fields. After filling in the fields, when you press the "Plus" floating point. 
-
-The app uses implicit intents to store contacts to the phone, by using the phone's default contacts app.
+The app uses implicit intents to store contacts to the phone, by using the phone's default contacts app, which means that all your contacts are in one place!
 
 ![new activity](Screenshot_newTouch.png)
 
-__The phone's Default Contacts App Activity__
-
-When you type the contact's information in the specified fields and then press the "Plus" floating point, the app starts the phone's default contacts app with the activity responsible for creating a new contact (as shown in the screenshot below). Then you can finish the creation of the new contact or add more information about the contact. When done creating the contact or pressing Back, you will go back to InTouch's mainactivity.
-
-![phone contact app activity](Screenshot_phoneContactApp.png)
-
 __The Contact's Edit Activity__
 
-You can click on any of his contacts in the main activity to see more info about that specific contact; when you do this, the below activity starts. This activity provides some functions to be done on the contact's information, like: sharing, editing or deleting.
-
+Using InTouch, You can click on any of your contacts from the list in the main activity to see details about that contact; when you do this, the below activity starts. This activity provides some feature actions, like: sharing the contact, editing it or deleting it.
 The share button in the action bar allows you to share some information about the contact with other contacts, using any of the apps that have the share action, which you have installed in the phone, like the Messaging app.
+The delete button allows you to delete the selected contact and all its information definitely  from your phone !!
 
-The delete button in the action bar allows you to delete the selected contact and all its information definitely  from the phone !!
-
-The floating point in the bottom right side of the screen allows you to edit the selected contact. If pressed, you will be able to continue editing the contact using the phone's default contacts app. Once done or by pressing Back, you will go back to InTouch's mainactivity.
+The floating button at the bottom right side of the screen allows you to edit the selected contact using the phone's default contacts app. Once done editing the contact.
 
 ![edit activity](Screenshot_editTouch.png)
 
-__The Share Button__
-
-When you press the share button, a menu of all the available apps that can share the contacts information are provided, which will allow you to choose the convenient app. An example of the available sharing apps is shown in the below screenshot.
-
-![share](Screenshot_shareTouch.png)
-
 # Try InTouch
 
-You can try InTouch in two different ways. One, by downloading the source code, and then build the app using Android Studio (which is the IDE used to develop InTouch). Two, by downloading the apk file included in this repo under the name of __InTouch_debug.apk__ (this is a debug apk) and then install it in your phone.
+You can try InTouch in two different ways: 
+- One, by downloading InTouch from the Google Play store.
+- Two, by cloning the source code of this project, and importing the app to Android Studio. You would need your own google-services credentials. 
+- Three, by downloading the apk file included in this repo under the name of __InTouch_debug.apk__ (this is a debug apk) and then install it in your phone.
 
 # Needed Permissions
 
-As InTouch focuses on user contacts, it needs permission to access user contacts stored locally in the phone.
+As InTouch focuses on user contacts, so it needs permission to access user contacts stored locally in the phone.
 
 # Third Party Libraries/APIs
 
-InTouch is pretty simple (Actually that's what the app is intended for. Simplicity!!); However, a couple of features make the app more enjoyable. First, the integration of a search bar to allow you to search for contacts in the contacts list; for this purpose, we used the [Android Search Dialog][1], which was really useful with some cool features.
-
-Second, we used Google's [ML Kit][2], Machine learning for mobile developers kit, to allow you to scan business cards and retrieve the contact's information from them.
+InTouch is pretty simple (Actually that's what the app is intended for, Simplicity!!); However, a couple of features make the app more enjoyable. First, the integration of a search bar to allow you to search for contacts in the contacts list; for this purpose, we used the [Android Search Dialog][1], which was really useful with some cool features.
+Second, we used Google's [ML Kit][2], Machine learning for mobile developers kit, to recognize the text in business cards, when scanning them and retrieve the contact's information from them.
 
 ## Further resources
 
