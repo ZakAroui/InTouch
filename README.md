@@ -3,7 +3,7 @@ This repo includes the source code of the project InTouch.
 
 ![InTouch icon](GetInTouch_icon.png)
 
-InTouch is a mobile app developed for Android devices. The app has a simple approach of saving the contact information of the people you get in touch with at events or meetups, in an easy and simple way, just by saving the person's name, email, phone, a note about how you met (to help you memorize your people!!!), and an optional picture of the contact's business card. The app's core feature is scanning business cards and populating the details on the respective fields.
+InTouch is a mobile app developed for Android devices. The app has a simple approach of saving contact information of the people you get in touch with at events or meetups, in an easy and simple way, just by scanning the business card of the person you meet, and saving the person's name, email, phone, a note about how you met (to help you memorize them people!!!). The app's core feature is scanning business cards and populating the details on them to the respective fields.
 All the contacts that you save using InTouch, are stored in your phone's contacts local database with your other contacts, and can be accessed from your default contacts app.
 
 # Description
@@ -12,10 +12,10 @@ InTouch is a simply designed app that helps you stay in touch with the people th
 
 __The Main Activity__
 
-The below screenshot is the first activity (screen), which is started when the app is launched (except for the onboarding experience, that is displayed only the first time the app was installed). Is shows the list of contacts that you have stored in your phone. This app makes use of Android's content providers to get the contacts list stored in your phone. The app is designed to show only the contact that have email addresses, meaning that if you have a contact that doesn't have an email address then it won't show up on the list (**NOTE:** _**the contacts that are shown in the below screenshot are fake as well as all of their information, even mine !!**_ ). 
-Additionally, the contacts' info shown in this activity includes only name, email and phone number, which makes the app simple and gives quick outline of the contact.
+The below screenshot is the first activity (screen), which is started when the app is launched (except for the onboarding experience, that is displayed only at the first time the app was installed). Is shows the list of contacts that you have stored in your phone. This app makes use of Android's content providers to get the contacts list stored in your phone. The app is designed to show only contacts that have email addresses, meaning that if you have a contact that doesn't have an email address then it won't show up on the list (**NOTE:** _**the contacts that are shown in the below screenshot are fake as well as all of their information, including mine !!**_ ). 
+Additionally, the contacts' info shown in this activity includes only name, email and phone number, which makes the app simple and gives a quick outline of the contact.
 
-The Search Dialog at the top of the screen helps you find a contact in the list quickly. Also, the "Plus" floating button at the bottom of the screen helps you add a new Touch (new contact); when pressed, it will take you to the new contact activity.
+The Search Dialog at the top of the screen helps you find a contact from the list quickly. Also, the "Plus" floating button at the bottom of the screen helps you add a new Touch (new contact); when pressed, it will take you to the new contact activity.
 
 ![main activity](Screenshot_mainactivity.png)
 
