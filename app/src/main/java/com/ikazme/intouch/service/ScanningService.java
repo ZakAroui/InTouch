@@ -156,7 +156,9 @@ public class ScanningService {
 
     private void processResultText(FirebaseVisionText result, Context applicationContext){
         String resultText = result.getText();
-        mNote = resultText;
+        StringBuilder noteSb = new StringBuilder();
+        String phoneNbrLine = null;
+        String emailLine = null;
 
         for (FirebaseVisionText.TextBlock block: result.getTextBlocks()) {
             String blockText = block.getText();
@@ -167,6 +169,7 @@ public class ScanningService {
                     Pattern ePattern = Pattern.compile("\\S+@\\S+\\.\\S+");
                     Matcher eMatcher = ePattern.matcher(lineText);
                     if(eMatcher.find()){
+                        emailLine = lineText;
                         int s = eMatcher.start();
                         int e = eMatcher.end();
                         mEmailAddress = lineText.substring(s,e);
@@ -182,6 +185,7 @@ public class ScanningService {
                     }
 
                     if(count > 9){
+                        phoneNbrLine = lineText;
                         StringBuilder sb = new StringBuilder(lineText);
                         for (int i = 0; i < sb.length(); i++){
                             if(!Character.isDigit(sb.charAt(i))){
@@ -205,8 +209,16 @@ public class ScanningService {
                         if(es.toLowerCase().contains(elementText.toLowerCase())) mName = lineText;
                     }
                 }
+
+                if(lineText != null && (mName == null || !lineText.toLowerCase().equals(mName.toLowerCase()))
+                        && (phoneNbrLine == null || !lineText.toLowerCase().equals(phoneNbrLine.toLowerCase()))
+                        && (emailLine == null || !lineText.toLowerCase().equals(emailLine.toLowerCase())) ){
+                    noteSb.append(lineText).append("\n");
+                }
             }
         }
+
+        mNote = noteSb.toString();
 
     }
 

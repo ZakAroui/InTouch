@@ -67,6 +67,7 @@ public class EditorActivity extends AppCompatActivity {
     private EditText noteEditor;
     private ImageView mImageView;
     private FloatingActionButton mRotateImage;
+    private FloatingActionButton mBcCapture;
     private Bitmap mSelectedBitmap;
     private Integer mImageMaxWidth;
     private Integer mImageMaxHeight;
@@ -78,6 +79,7 @@ public class EditorActivity extends AppCompatActivity {
 
         mImageView = findViewById(R.id.bcImageView);
         mRotateImage = findViewById(R.id.rotateFloatingButton);
+        mBcCapture = findViewById(R.id.bcCaptureFloatingButton);
 
         nameEditor =  findViewById(R.id.name_editText);
         emailEditor =  findViewById(R.id.email_editText);
@@ -98,6 +100,7 @@ public class EditorActivity extends AppCompatActivity {
             nextAction = NEW_CONTACT;
             FloatingActionButton newContactFl = findViewById(R.id.editorFloatingButton);
             newContactFl.setImageResource(R.drawable.ic_action_add);
+            mBcCapture.setVisibility(View.VISIBLE);
         }
     }
 

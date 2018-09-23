@@ -98,6 +98,7 @@
         android:clickable="true"
         android:focusable="true"
         android:onClick="scanBusinessCard"
+        android:visibility="invisible"
         app:backgroundTint="?android:attr/textColorSecondaryInverseNoDisable"
         app:elevation="0dp"
         app:fabSize="mini"
