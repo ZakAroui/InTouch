@@ -1,9 +1,11 @@
 package com.ikazme.intouch;
 
+import android.app.AlertDialog;
 import android.app.LoaderManager;
 import android.app.SearchManager;
 import android.content.Context;
 import android.content.CursorLoader;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.Loader;
 import android.content.SharedPreferences;
@@ -13,6 +15,7 @@ import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.provider.ContactsContract;
 import android.provider.ContactsContract.CommonDataKinds.Email;
+import android.provider.SearchRecentSuggestions;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v7.app.AppCompatActivity;
 import android.view.Menu;
@@ -22,6 +25,7 @@ import android.widget.AdapterView;
 import android.widget.ListView;
 import android.widget.SearchView;
 
+import com.ikazme.intouch.database.SearchSuggestionsProvider;
 import com.ikazme.intouch.ui.ContactAdapter;
 import com.ikazme.intouch.service.PermissionsService;
 import com.ikazme.intouch.utils.Utils;
@@ -106,13 +110,42 @@ public class MainActivity extends AppCompatActivity
             mSearchQuery = intent.getStringExtra(SearchManager.QUERY);
             getSupportActionBar().setSubtitle("Searched: \""+ mSearchQuery +"\"");
 
+            SearchRecentSuggestions suggestions = new SearchRecentSuggestions(this,
+                    SearchSuggestionsProvider.AUTHORITY, SearchSuggestionsProvider.MODE);
+            suggestions.saveRecentQuery(mSearchQuery, null);
+
             searchInContacts(mSearchQuery);
         }
     }
 
     private void searchInContacts(String query) {
-        Utils.showLongToast(query, this);
         restartLoader();
+    }
+
+    private void clearSearchHistory(){
+        SearchRecentSuggestions suggestions = new SearchRecentSuggestions(this,
+                SearchSuggestionsProvider.AUTHORITY, SearchSuggestionsProvider.MODE);
+        suggestions.clearHistory();
+    }
+
+    private void confirmClearHistory() {
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+
+        builder.setTitle("Are you sure?")
+                .setMessage("Do you really want to clear your app's contact search history?")
+                .setPositiveButton("Yes",  new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int id) {
+                        clearSearchHistory();
+                    }
+                })
+                .setNegativeButton("No", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog,int id) {
+                        dialog.cancel();
+                    }
+                })
+                .show();
     }
 
     private void populateContacts(){
@@ -172,6 +205,9 @@ public class MainActivity extends AppCompatActivity
                 break;
             case R.id.app_bar_search:
                 onSearchRequested();
+                break;
+            case R.id.action_clear_history:
+                confirmClearHistory();
                 break;
         }
         return super.onOptionsItemSelected(item);

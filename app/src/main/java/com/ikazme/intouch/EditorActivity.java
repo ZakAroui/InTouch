@@ -28,7 +28,7 @@ import android.view.View;
 import android.widget.EditText;
 import android.widget.ImageView;
 
-import com.ikazme.intouch.model.CopyImageTask;
+import com.ikazme.intouch.ui.CopyImageTask;
 import com.ikazme.intouch.service.ContactsService;
 import com.ikazme.intouch.service.PermissionsService;
 import com.ikazme.intouch.service.ScanningService;

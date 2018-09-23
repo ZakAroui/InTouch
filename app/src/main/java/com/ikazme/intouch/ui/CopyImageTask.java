@@ -1,4 +1,4 @@
-package com.ikazme.intouch.model;
+package com.ikazme.intouch.ui;
 
 import android.app.Activity;
 import android.content.ContentResolver;

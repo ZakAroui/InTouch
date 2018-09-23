@@ -55,6 +55,9 @@
                 android:resource="@xml/file_paths" />
         </provider>
 
+        <provider android:name=".database.SearchSuggestionsProvider"
+            android:authorities="com.ikazme.intouch.database.SearchSuggestionsProvider" />
+
         <activity
             android:name=".OnboardingActivity"
             android:configChanges="orientation|keyboardHidden|screenSize"

@@ -4,14 +4,22 @@
     tools:context=".MainActivity">
     <item
         android:id="@+id/app_bar_search"
+        android:orderInCategory="99"
         android:icon="@drawable/ic_search_black_24dp"
         app:showAsAction="ifRoom"
         android:title="Search"
         app:actionViewClass="android.widget.SearchView" />
+
     <item
         android:id="@+id/action_create_contact"
         android:orderInCategory="100"
         android:title="@string/create_contact"
+        app:showAsAction="never" />
+
+    <item
+        android:id="@+id/action_clear_history"
+        android:orderInCategory="101"
+        android:title="Clear Search History"
         app:showAsAction="never" />
 
 </menu>
