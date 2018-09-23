@@ -2,6 +2,7 @@ package com.ikazme.intouch;
 
 import android.app.LoaderManager;
 import android.app.SearchManager;
+import android.content.Context;
 import android.content.CursorLoader;
 import android.content.Intent;
 import android.content.Loader;
@@ -19,6 +20,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ListView;
+import android.widget.SearchView;
 
 import com.ikazme.intouch.ui.ContactAdapter;
 import com.ikazme.intouch.service.PermissionsService;
@@ -102,7 +104,7 @@ public class MainActivity extends AppCompatActivity
             currentAction = SEARCH_CONTACT;
             mAddContact.setVisibility(View.INVISIBLE);
             mSearchQuery = intent.getStringExtra(SearchManager.QUERY);
-            getSupportActionBar().setSubtitle("search: \""+ mSearchQuery +"\"");
+            getSupportActionBar().setSubtitle("Searched: \""+ mSearchQuery +"\"");
 
             searchInContacts(mSearchQuery);
         }
@@ -148,6 +150,12 @@ public class MainActivity extends AppCompatActivity
             MenuItem searchItem = menu.findItem(R.id.app_bar_search);
             searchItem.setVisible(false);
         }
+
+        SearchManager searchManager = (SearchManager) getSystemService(Context.SEARCH_SERVICE);
+        SearchView searchView = (SearchView) menu.findItem(R.id.app_bar_search).getActionView();
+        searchView.setSearchableInfo(searchManager.getSearchableInfo(getComponentName()));
+        searchView.setIconifiedByDefault(true);
+        searchView.setQueryRefinementEnabled(true);
 
         return true;
     }
