@@ -19,7 +19,11 @@ import android.widget.EditText;
 
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.android.gms.tasks.Task;
 import com.google.firebase.ml.vision.FirebaseVision;
+import com.google.firebase.ml.vision.barcode.FirebaseVisionBarcode;
+import com.google.firebase.ml.vision.barcode.FirebaseVisionBarcodeDetector;
+import com.google.firebase.ml.vision.barcode.FirebaseVisionBarcodeDetectorOptions;
 import com.google.firebase.ml.vision.common.FirebaseVisionImage;
 import com.google.firebase.ml.vision.text.FirebaseVisionText;
 import com.google.firebase.ml.vision.text.FirebaseVisionTextRecognizer;
@@ -56,6 +60,8 @@ public class ScanningService {
     private String mEmailAddress;
     private String mPhoneNumber;
     private String mNote;
+
+    private String imageType;
 
 
     private ScanningService() {
@@ -114,7 +120,11 @@ public class ScanningService {
 
         FirebaseVisionImage image = FirebaseVisionImage.fromBitmap(bitmap);
 
-        processResult(image, applicationContext, activity);
+        if (Utils.BARCODE_IMAGE_TYPE.equals(imageType)){
+            processBarcodeImage(image, applicationContext, activity);
+        } else {
+            processResult(image, applicationContext, activity);
+        }
     }
 
     public void processImage(Uri imageUri, final Context applicationContext, EditorActivity activity){
@@ -127,10 +137,63 @@ public class ScanningService {
             return;
         }
 
-        processResult(image, applicationContext, activity);
+        if (Utils.BARCODE_IMAGE_TYPE.equals(imageType)){
+            processBarcodeImage(image, applicationContext, activity);
+        } else {
+            processResult(image, applicationContext, activity);
+        }
     }
 
-    private void processResult(FirebaseVisionImage image, final Context applicationContext, final EditorActivity activity){
+    private void processBarcodeImage(FirebaseVisionImage image, final Context applicationContext, final EditorActivity activity){
+
+        FirebaseVisionBarcodeDetector barcodeDetector = FirebaseVision.getInstance()
+            .getVisionBarcodeDetector();
+
+
+        barcodeDetector.detectInImage(image)
+                .addOnSuccessListener(new OnSuccessListener<List<FirebaseVisionBarcode>>() {
+                    @Override
+                    public void onSuccess(List<FirebaseVisionBarcode> barcodes) {
+                        processBarcodeResultText(barcodes, applicationContext);
+                    }
+                })
+                .addOnFailureListener(new OnFailureListener() {
+                    @Override
+                    public void onFailure(@NonNull Exception e) {
+                        Utils.showShortToast("Failed to process barcode text!", applicationContext);
+                    }
+                });
+
+    }
+
+    private void processBarcodeResultText(List<FirebaseVisionBarcode> barcodes, Context applicationContext){
+
+        //TODO - FINISH BARCODE PROCESSING
+        for (FirebaseVisionBarcode barcode: barcodes) {
+            Rect bounds = barcode.getBoundingBox();
+            Point[] corners = barcode.getCornerPoints();
+
+            String rawValue = barcode.getRawValue();
+            Utils.showLongToast(rawValue, applicationContext);
+
+            int valueType = barcode.getValueType();
+            // See API reference for complete list of supported types
+            switch (valueType) {
+                case FirebaseVisionBarcode.TYPE_WIFI:
+                    String ssid = barcode.getWifi().getSsid();
+                    String password = barcode.getWifi().getPassword();
+                    int type = barcode.getWifi().getEncryptionType();
+                    break;
+                case FirebaseVisionBarcode.TYPE_URL:
+                    String title = barcode.getUrl().getTitle();
+                    String url = barcode.getUrl().getUrl();
+                    break;
+            }
+        }
+    }
+
+
+        private void processResult(FirebaseVisionImage image, final Context applicationContext, final EditorActivity activity){
 
         clearData(activity);
 
@@ -271,6 +334,13 @@ public class ScanningService {
         this.mCurrentPhotoPath = mCurrentPhotoPath;
     }
 
+    public String getImageType() {
+        return imageType;
+    }
+
+    public void setImageType(String imageType) {
+        this.imageType = imageType;
+    }
 
 }
 

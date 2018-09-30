@@ -190,9 +190,13 @@ public class EditorActivity extends AppCompatActivity {
                 }
                 break;
             case R.id.action_scan_bc_card:
-                scanBusinessCard(null);
+                scanBusinessCard(null, null);
+                break;
+            case R.id.action_barcode_scan:
+                scanBusinessCard(null, Utils.BARCODE_IMAGE_TYPE);
                 break;
             case R.id.action_bc_picker:
+                ScanningService.getInstance().setImageType(null);
                 pickBcFromFile();
                 break;
             case R.id.action_remove_bc:
@@ -405,7 +409,8 @@ public class EditorActivity extends AppCompatActivity {
         startActivityForResult(Intent.createChooser(intent, "Complete action using"), REQUEST_PICK_FROM_FILE);
     }
 
-    protected void scanBusinessCard(View view){
+    public void scanBusinessCard(View view, String imageType){
+        ScanningService.getInstance().setImageType(imageType);
         if(getPackageManager().hasSystemFeature(PackageManager.FEATURE_CAMERA_ANY)){
             if(PermissionsService.getInstance().hasOrRequestWriteExtStoragePerm(this, PERMISSIONS_REQUEST_USE_CAMERA)){
                 ScanningService.getInstance().clearImage();
@@ -504,7 +509,7 @@ public class EditorActivity extends AppCompatActivity {
         return rotate;
     }
 
-    protected void rotateCurrentImage(View view){
+    public void rotateCurrentImage(View view){
         ImageView imageView = findViewById(R.id.bcImageView);
         imageView.invalidate();
         Bitmap bitmap = ((BitmapDrawable)imageView.getDrawable()).getBitmap();
@@ -585,4 +590,7 @@ public class EditorActivity extends AppCompatActivity {
         noteEditor.setText(values[3]);
     }
 
+    public void scanBusinessCard(View view) {
+        scanBusinessCard(view, null);
+    }
 }

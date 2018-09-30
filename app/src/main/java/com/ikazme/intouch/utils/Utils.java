@@ -23,6 +23,7 @@ public class Utils {
     public static final int PERMISSIONS_REQUEST_USE_CAMERA = 104;
 
     public static final int EMAIL_QUERY_ID = 0;
+    public static final String BARCODE_IMAGE_TYPE = "barcode";
 
     public static void showShortToast(String message, Context appContext){
         Toast.makeText(appContext, message, Toast.LENGTH_SHORT).show();

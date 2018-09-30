@@ -270,7 +270,7 @@ public class MainActivity extends AppCompatActivity
         mCursorAdapterEmail.swapCursor(null);
     }
 
-    protected void openContactsInsert(View view) {
+    public void openContactsInsert(View view) {
         Intent intent = new Intent(this, EditorActivity.class);
         intent.putExtra(EditorActivity.EDITOR_TYPE, "insert");
         startActivityForResult(intent, NEW_REQUEST_CODE);

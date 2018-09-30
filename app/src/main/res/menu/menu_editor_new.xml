@@ -5,10 +5,17 @@
 
     <item
         android:id="@+id/action_scan_bc_card"
-        android:orderInCategory="98"
+        android:orderInCategory="97"
         android:title="@string/scan_card"
         android:icon="@drawable/ic_camera"
         app:showAsAction="never" />
+
+    <item
+        android:id="@+id/action_barcode_scan"
+        android:orderInCategory="98"
+        android:title="@string/scan_barcode"
+        android:icon="@drawable/ic_barcode_scan"
+        app:showAsAction="ifRoom" />
 
     <item
         android:id="@+id/action_bc_picker"
