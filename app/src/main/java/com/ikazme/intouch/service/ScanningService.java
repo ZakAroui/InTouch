@@ -171,7 +171,6 @@ public class ScanningService {
 
     private void processBarcodeResultText(List<FirebaseVisionBarcode> barcodes, Context applicationContext){
 
-        //TODO - FINISH BARCODE PROCESSING
         for (FirebaseVisionBarcode barcode: barcodes) {
             Utils.showLongToast(barcode.getRawValue(), applicationContext);
 
@@ -180,12 +179,19 @@ public class ScanningService {
                 case FirebaseVisionBarcode.TYPE_URL:
                     String title = barcode.getUrl().getTitle();
                     String url = barcode.getUrl().getUrl();
+                    mNote = title + "\n" + url;
+                    if(TextUtils.isEmpty(title) && TextUtils.isEmpty(url)){
+                        mNote = barcode.getRawValue();
+                    }
                     break;
                 case FirebaseVisionBarcode.TYPE_CONTACT_INFO:
-                    String name = barcode.getContactInfo().getName().getFormattedName();
-                    String position = barcode.getContactInfo().getTitle();
-                    String phone = barcode.getContactInfo().getPhones().get(0).getNumber();
-                    String email = barcode.getContactInfo().getEmails().get(0).getAddress();
+                    mName = barcode.getContactInfo().getName().getFormattedName();
+                    mNote = barcode.getContactInfo().getTitle();
+                    mPhoneNumber = barcode.getContactInfo().getPhones().get(0).getNumber();
+                    mEmailAddress = barcode.getContactInfo().getEmails().get(0).getAddress();
+                    if(TextUtils.isEmpty(mName) && TextUtils.isEmpty(mNote) && TextUtils.isEmpty(mPhoneNumber) && TextUtils.isEmpty(mEmailAddress)){
+                        mNote = barcode.getRawValue();
+                    }
                     break;
             }
         }
