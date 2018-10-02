@@ -163,7 +163,6 @@ public class ScanningService {
                         Utils.showShortToast("Failed to process barcode text!", applicationContext);
                     }
                 });
-
     }
 
     private void processBarcodeResultText(List<FirebaseVisionBarcode> barcodes, Context applicationContext){
@@ -179,17 +178,19 @@ public class ScanningService {
             int valueType = barcode.getValueType();
             // See API reference for complete list of supported types
             switch (valueType) {
-                case FirebaseVisionBarcode.TYPE_WIFI:
-                    String ssid = barcode.getWifi().getSsid();
-                    String password = barcode.getWifi().getPassword();
-                    int type = barcode.getWifi().getEncryptionType();
-                    break;
                 case FirebaseVisionBarcode.TYPE_URL:
                     String title = barcode.getUrl().getTitle();
                     String url = barcode.getUrl().getUrl();
                     break;
+                case FirebaseVisionBarcode.TYPE_CONTACT_INFO:
+                    String name = barcode.getContactInfo().getName().getFormattedName();
+                    String position = barcode.getContactInfo().getTitle();
+                    String phone = barcode.getContactInfo().getPhones().get(0).getNumber();
+                    String email = barcode.getContactInfo().getEmails().get(0).getAddress();
+                    break;
             }
         }
+
     }
 
 

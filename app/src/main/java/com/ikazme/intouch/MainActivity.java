@@ -103,6 +103,11 @@ public class MainActivity extends AppCompatActivity
         //TODO - add personal bc screen 
         //TODO - ANDROID STAGING AND PROD MODES
         //TODO - SCAN MULTIPLE BUSINESS CARDS
+        //TODO - FULL-TEXT-SEARCH FTS
+        //TODO - ROLLBAR/ HOCKEYAPP/ CRASHLYTICS
+        //TODO - SCAN ALL BCs /TEST LOGIC
+        //TODO - MOTIONLAYOUT
+        //TODO - TRY RECYCLER VIEW
 
         Intent intent = getIntent();
         if (Intent.ACTION_SEARCH.equals(intent.getAction())) {
