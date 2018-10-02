@@ -146,6 +146,8 @@ public class ScanningService {
 
     private void processBarcodeImage(FirebaseVisionImage image, final Context applicationContext, final EditorActivity activity){
 
+        clearData(activity);
+
         FirebaseVisionBarcodeDetector barcodeDetector = FirebaseVision.getInstance()
             .getVisionBarcodeDetector();
 
@@ -155,6 +157,8 @@ public class ScanningService {
                     @Override
                     public void onSuccess(List<FirebaseVisionBarcode> barcodes) {
                         processBarcodeResultText(barcodes, applicationContext);
+                        String[] values = {mName, mEmailAddress, mPhoneNumber, mNote};
+                        activity.updateFieldOnSuccess(values);
                     }
                 })
                 .addOnFailureListener(new OnFailureListener() {
@@ -169,14 +173,9 @@ public class ScanningService {
 
         //TODO - FINISH BARCODE PROCESSING
         for (FirebaseVisionBarcode barcode: barcodes) {
-            Rect bounds = barcode.getBoundingBox();
-            Point[] corners = barcode.getCornerPoints();
-
-            String rawValue = barcode.getRawValue();
-            Utils.showLongToast(rawValue, applicationContext);
+            Utils.showLongToast(barcode.getRawValue(), applicationContext);
 
             int valueType = barcode.getValueType();
-            // See API reference for complete list of supported types
             switch (valueType) {
                 case FirebaseVisionBarcode.TYPE_URL:
                     String title = barcode.getUrl().getTitle();
